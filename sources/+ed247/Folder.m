@@ -5,6 +5,7 @@ classdef Folder
     %
     enumeration
         
+        ADAPTER         ({'c_sources'})
         DEMOS           ({'demos'})
         DOC             ({'doc','html'})
         LIBRARY         ({'libraries','ed247'})

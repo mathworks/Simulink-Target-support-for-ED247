@@ -5,7 +5,7 @@ classdef Configuration < matlab.mixin.SetGet
     
     %% CONSTANT
     properties (Constant)
-        FILE = 'ed247_configuration.mat';
+        FILE = '.metadata';
     end
     
     %% HIDDEN CONSTANT
@@ -19,6 +19,12 @@ classdef Configuration < matlab.mixin.SetGet
         
         Filename
         Platform
+        
+        Name
+        Date
+        Version
+        Developer
+        Maintainer
         
         Adapter
         ED247
@@ -35,6 +41,13 @@ classdef Configuration < matlab.mixin.SetGet
     
     %% PRIVATE PROPERTIES
     properties (Access = private)
+        
+        name_
+        date_
+        version_
+        developer_
+        maintainer_
+        
         adapter_
         ed247_
         libxml2_
@@ -84,6 +97,26 @@ classdef Configuration < matlab.mixin.SetGet
     
     %% ACCESSORS
     methods
+        
+        function name = get.Name(obj)
+            name = obj.name_;
+        end
+        
+        function date = get.Date(obj)
+            date = obj.date_;
+        end
+        
+        function version = get.Version(obj)
+            version = obj.version_;
+        end
+        
+        function developer = get.Developer(obj)
+            developer = obj.developer_;
+        end
+        
+        function maintainer = get.Maintainer(obj)
+            maintainer = obj.maintainer_;
+        end
         
         function filename = get.Filename(obj)
             filename = obj.filename_;
@@ -279,22 +312,38 @@ classdef Configuration < matlab.mixin.SetGet
         
         function reload(obj)
             
-            configuration = loadFile(obj);
-            if isfield(configuration,'Platform') && any(strcmp({configuration.Platform},obj.platform_))
-                configuration = configuration(strcmp({configuration.Platform},obj.platform_));
+            [configuration,groups] = loadFile(obj);
+            
+            common = configuration{strcmpi(groups,'common')};
+            
+            if isfield(common,'Name')
+                obj.name_ = common.Name;
             end
             
-            if numel(configuration) > 1
-                configuration = configuration(1);
+            if isfield(common,'Date')
+                obj.date_ = common.Date;
+            end
+            
+            if isfield(common,'Version')
+                obj.version_ = common.Version;
+            end
+            
+            if isfield(common,'Developer')
+                obj.developer_ = common.Developer;
+            end
+            
+            if isfield(common,'Maintainer')
+                obj.maintainer_ = common.Maintainer;
+            end
+            
+            if any(strcmp(groups,obj.platform_))
+                configuration = configuration(strcmp(groups,obj.platform_));
+            end
+            
+            if numel(configuration) > 0
+                configuration = configuration{1};
             elseif isempty(configuration)
-                configuration = struct(...
-                    'Platform',     '', ...
-                    'Adapter',      '', ...
-                    'ED247',        '', ...
-                    'LibXML2',      '', ...
-                    'MEX',          '', ...
-                    'MinGW',        ''  ...
-                    );
+                configuration = struct();
             end
             
             if isfield(configuration,'Adapter') && isdir(configuration.Adapter) %#ok<ISDIR> Backward compatibility with r2016b
@@ -328,21 +377,24 @@ classdef Configuration < matlab.mixin.SetGet
                 mkdir(folder)
             end
             
-            configuration = loadFile(obj);
+            [configuration,groupnames] = loadFile(obj);
             
             % Remove duplicates & empty platform (legacy)
-            configuration(cellfun(@isempty,{configuration.Platform})) = [];
-            [~,idx] = unique({configuration.Platform});
+            configuration(cellfun(@isempty,groupnames)) = [];
+            [~,idx] = unique(groupnames,'stable');
             configuration = configuration(idx);
-            
-            mask = strcmp({configuration.Platform},obj.platform_);
+                        
+            %
+            % Platform dependent
+            %
+            mask = strcmp(groupnames,obj.platform_);
             
             if ~any(mask)
                 mask = numel(configuration) + 1;
+                groupnames{end+1} = obj.platform_;
             end
             
-            configuration(mask) = struct( ...
-                'Platform',     obj.platform_,  ...
+            configuration{mask} = struct( ...
                 'Adapter',      obj.adapter_,   ...
                 'ED247',        obj.ed247_,     ...
                 'LibXML2',      obj.libxml2_,   ...
@@ -350,7 +402,7 @@ classdef Configuration < matlab.mixin.SetGet
                 'MinGW',        obj.mingw_      ...
                 );
             
-            save(obj.filename_,'configuration')
+            saveFile(obj,configuration,groupnames)
             
         end
         
@@ -359,41 +411,58 @@ classdef Configuration < matlab.mixin.SetGet
     %% PROTECTED METHODS
     methods (Access = protected)
         
-        function configuration = loadFile(obj)
-            
-            configuration = {};
+        function [configuration,groupnames] = loadFile(obj)
+                                        
             if exist(obj.filename_,'file') == 2
                 
-                configuration = load(obj.filename_);
+                configtxt = fileread(obj.filename_);                
+                configtxt = deblank(strsplit(configtxt,'\n')');
                 
-                if isfield(configuration,'configuration')
-                    configuration = configuration.configuration;
-                end
+                groups = startsWith(configtxt, '---');
+                groups = cumsum(groups);
                 
-                if ~isfield(configuration,'Platform') % Field added after release
-                    if ispc()
-                        configuration.Platform = 'Windows';
-                    else
-                        configuration.Platform = 'Linux';
+                groupnames = cell(length(unique(groups)),1);
+                configuration = cell(length(unique(groups)),1);
+                for i_group = unique(groups)'
+                    
+                    group = configtxt(groups == i_group);
+                    
+                    name = regexp(group{1}, '--- (.*?) ---', 'tokens');                    
+                    name = char(name{1});
+                    groupnames{i_group} = name;
+                    
+                    props = textscan(strjoin(group(2:end),'\n'), '%s %s', 'Delimiter', '=');
+                    if length(props{2}) == length(props{1}) - 1
+                        props{2}(end+1) = {''};
                     end
+                    props = [props{:}];                                        
+                    configuration{i_group} = cell2struct(props(:,2),props(:,1),1);
+                    
+                end
+            
+            else
+                groupnames = {};
+                configuration = {};
+            end
+                        
+        end
+        
+        function saveFile(obj,configuration,groupnames)
+           
+            fid = fopen(obj.filename_,'wt');
+            if fid > 0
+                closeFile = onCleanup(@() fclose(fid));
+                
+                for i_group = 1:length(groupnames)
+                    
+                    fprintf(fid, '--- %s ---\n', groupnames{i_group});
+                    
+                    props = configuration{i_group};
+                    props = [fieldnames(props),struct2cell(props)]';
+                    fprintf(fid, '%s=%s\n', props{:});
+                    
                 end
                 
-                % Remove configurations with no Platform
-                toremove = cellfun(@isempty,{configuration.Platform});
-                configuration(toremove) = [];
-                
-            end
-            
-            if isempty(configuration)
-                
-                configuration = struct(...
-                    'Platform',     obj.platform_, ...
-                    'Adapter',      '', ...
-                    'ED247',        '', ...
-                    'LibXML2',      '', ...
-                    'MEX',          '', ...
-                    'MinGW',        ''  ...
-                    );
             end
             
         end
@@ -412,7 +481,7 @@ classdef Configuration < matlab.mixin.SetGet
         
         function obj = reset(varargin)
             
-            defaultfilename = fullfile(ed247.Folder.DATA.Path,ed247.Configuration.FILE);
+            defaultfilename = fullfile(pwd,ed247.Configuration.FILE);
             
             if nargin >= 1 && ismember(varargin{1},{'Windows','Linux'})
                 platform = varargin{1};
@@ -423,15 +492,15 @@ classdef Configuration < matlab.mixin.SetGet
                 platform = 'Linux';
             end
             
-            defaultadapter  = fullfile(ed247.Folder.DEPENDENCIES.Path,'ed247_simulink_adapter');
-            defaultlibxml2  = fullfile(ed247.Folder.DEPENDENCIES.Path,'libxml2');
+            defaultadapter  = ed247.Folder.ADAPTER.Path;
+            defaultlibxml2  = '';
             defaultmex      = ed247.Folder.LIBRARY.Path;
             
             if strcmp(platform,'Windows')
-                defaulted247    = fullfile(ed247.Folder.DEPENDENCIES.Path,'ed247','windows','mingw4.9.2','x64');
+                defaulted247    = '';
                 defaultmingw    = getenv('MW_MINGW64_LOC');
             else
-                defaulted247    = fullfile(ed247.Folder.DEPENDENCIES.Path,'ed247','linux','gcc4.8.5','x64');
+                defaulted247    = '';
                 defaultmingw    = '';
             end
             
