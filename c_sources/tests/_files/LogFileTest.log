@@ -1,0 +1,44 @@
+[       DEBUG    ] # Log level [DEBUG]
+[ DEBUG    ] ## DEBUG
+[ INFO     ] ## INFO
+[ WARNING  ] ## WARNING
+[ DEBUG    ] # [Context] Ctor
+[ DEBUG    ] ## Context 
+# ECIC [C:/Files/SANDBOX/git/P11222-AirbusOperationsSAS-ED247/ed247_for_simulink/dependencies/ed247_simulink_adapter/tests/_files/dis_mc_1.xml]
+# Configuration / MemoryHooks [0]
+[ DEBUG    ] # [XmlParser] load_filepath()
+[ DEBUG    ] # Initialize socket [0.0.0.0:2589]
+[ DEBUG    ] # Create socket [0.0.0.0:2589]
+[ DEBUG    ] # Socket [0.0.0.0:2589] created
+[ DEBUG    ] # Factory socket number: 1
+[ DEBUG    ] # Initialize socket [0.0.0.0:1910]
+[ DEBUG    ] # Create socket [0.0.0.0:1910]
+[ DEBUG    ] # Socket [0.0.0.0:1910] created
+[ DEBUG    ] # Factory socket number: 2
+[ INFO     ] # Socket[UdpSocket - DstIP[224.1.1.1] DstPort[2589] SrcIP[] SrcPort[1910] MulticastInterfaceIP[] MulticastTTL[1]] [MULTICAST] Emitter[0.0.0.0:1910] Receiver[0.0.0.0:2589]
+[ DEBUG    ] # Socket [0.0.0.0:1910] appends the destination [224.1.1.1:2589] for channel [Channel0]
+[ DEBUG    ] # Channel [Channel0] append emitter [UdpSocket[0.0.0.0:1910]]
+[ DEBUG    ] # Channel [Channel0] append receiver [UdpSocket[0.0.0.0:2589]]
+[ DEBUG    ] # Create signal based stream [Stream0] ...
+[ DEBUG    ] Allocate internal RECV buffer of type [DISCRETE] with SampleMaxSizeBytes[2] SampleMaxNumber[10]
+[ DEBUG    ] Allocate internal SEND buffer of type [DISCRETE] with SampleMaxSizeBytes[2] SampleMaxNumber[10]
+[ DEBUG    ] # Create stream [Stream0] OK
+[ DEBUG    ] # Channel [Channel0] append stream [Stream0]
+[ DEBUG    ] # Size [1]
+[ DEBUG    ] # Create signal based stream [Stream1] ...
+[ DEBUG    ] Allocate internal RECV buffer of type [DISCRETE] with SampleMaxSizeBytes[2] SampleMaxNumber[10]
+[ DEBUG    ] Allocate internal SEND buffer of type [DISCRETE] with SampleMaxSizeBytes[2] SampleMaxNumber[10]
+[ DEBUG    ] # Create stream [Stream1] OK
+[ DEBUG    ] # Channel [Channel0] append stream [Stream1]
+[ DEBUG    ] # Size [2]
+[ DEBUG    ] # Allocate Channel internal buffer with [48] bytes
+[ INFO     ] # Socket [0.0.0.0:1910] sends a frame of channel [Channel0]
+[ INFO     ] # Socket [0.0.0.0:1910] send to [224.1.1.1:2589] a frame of [12] bytes
+[ DEBUG    ] Sent frame of [12] bytes
+[ DEBUG    ] Frame: 00 00 00 02 01 02 00 01 00 02 03 04 
+[ DEBUG    ] # Socket [0.0.0.0:1910] is not needed anymore, destroy it
+[ DEBUG    ] # Socket [0.0.0.0:2589] is not needed anymore, destroy it
+[ DEBUG    ] ### MEMHOOKS - COUNT ###
+[ DEBUG    ] # Malloc: 0
+[ DEBUG    ] # Free:   0
+[ DEBUG    ] ###
