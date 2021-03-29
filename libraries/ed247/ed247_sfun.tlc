@@ -1,0 +1,75 @@
+%% file : ed247_sfun.tlc
+%% 
+%% Description:
+%%   Simulink Coder TLC Code Generation file for ed247_sfun
+%% 
+%% Simulink version      : 8.8 (R2016b) 25-Aug-2016
+%% TLC file generated on : 26-Mar-2020 18:01:07
+
+%implements ed247_sfun "C"
+
+%% Function: BlockTypeSetup ===============================================
+%function BlockTypeSetup (block, system) void
+
+    %<LibAddToCommonIncludes("ed247_interface.h")>
+    %<SLibAddToStaticSources("ed247_interface.c")>
+    %<SLibAddToStaticSources("ed247_cmd_xml.c")>
+    %<SLibAddToStaticSources("tools.c")>
+
+%endfunction
+
+%% Function: BlockInstanceSetup ===========================================
+%function BlockInstanceSetup (block, system) void
+    %<LibBlockSetIsExpressionCompliant(block)>
+%endfunction
+
+%% Function: Start ======================================================
+%function Start (block, system) Output
+
+    %assign filename = STRING(SFcnParamSettings.Filename)
+
+    %assign ptrName = LibBlockPWork("io", "", "", 0)
+    io_allocate_memory((IO_t **)&(%<ptrName>));
+
+    read_ed247_configuration("%<filename>", (IO_t *)%<ptrName>);
+
+%endfunction
+
+%% Function: Outputs ======================================================
+%function Outputs (block, system) Output
+    %% 
+
+    %assign ptrName = LibBlockPWork("io", "", "", 0)
+
+    %if ISEQUAL(block.NumDataInputPorts, 0.0)
+    %else
+        %assign rollVars = ["U"]
+        %foreach port = block.NumDataInputPorts - 1
+            %roll sigIdx=RollRegions, lcv = RollThreshold, block, "Roller", rollVars
+                ((IO_t *)%<ptrName>)->inputs->signals[%<port>].valuePtr = (void*)%<LibBlockInputSignalAddr(port, "", lcv, sigIdx)>;
+            %endroll
+        %endforeach
+        send_simulink_to_ed247(((IO_t *)%<ptrName>));
+    %endif
+
+    %if ISEQUAL(block.NumDataOutputPorts, 0.0)
+    %else
+        %assign rollVars = ["Y"]
+        %foreach port = block.NumDataOutputPorts - 1
+            %roll sigIdx=RollRegions, lcv = RollThreshold, block, "Roller", rollVars
+                ((IO_t *)%<ptrName>)->outputs->signals[%<port>].valuePtr = (void*)%<LibBlockOutputSignalAddr(port, "", lcv, sigIdx)>;
+            %endroll
+        %endforeach
+        receive_ed247_to_simulink(((IO_t *)%<ptrName>),NULL);
+    %endif
+
+%endfunction
+
+%% Function: Terminate ====================================================
+%function Terminate (block, system) Output
+    %%     
+    %assign ptrName = LibBlockPWork("io", "", "", 0)
+    io_free_memory((IO_t *)%<ptrName>);
+%endfunction
+
+%% [EOF]
