@@ -406,6 +406,23 @@ classdef Configuration < matlab.mixin.SetGet
             
         end
         
+        function reset(obj)
+                        
+            %
+            % Common
+            %
+            configuration = struct( ...
+                'Name',         obj.name_,      ...
+                'Date',         obj.date_,      ...
+                'Version',      obj.version_,   ...
+                'Developer',    obj.developer_, ...
+                'Maintainer',   obj.maintainer_ ...
+                );
+            
+            saveFile(obj,{configuration},{'Common'})
+            
+        end
+        
     end
     
     %% PROTECTED METHODS
@@ -474,14 +491,7 @@ classdef Configuration < matlab.mixin.SetGet
         
         function obj = default(varargin)
             
-            obj = ed247.Configuration.reset(varargin{:});
-            reload(obj)
-            
-        end
-        
-        function obj = reset(varargin)
-            
-            defaultfilename = fullfile(pwd,ed247.Configuration.FILE);
+            defaultfilename = fullfile(ed247.Folder.ROOT.Path,ed247.Configuration.FILE);
             
             if nargin >= 1 && ismember(varargin{1},{'Windows','Linux'})
                 platform = varargin{1};
@@ -526,6 +536,8 @@ classdef Configuration < matlab.mixin.SetGet
             end
             
             obj.platform_ = platform;
+            
+            reload(obj)
             
         end
         
