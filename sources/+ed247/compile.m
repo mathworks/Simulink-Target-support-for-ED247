@@ -25,6 +25,10 @@ adapterfolder   = config.Adapter;
 ed247folder     = config.ED247;
 libxml2folder   = config.LibXML2;
 
+assert(isdir(mingwpath), sprintf('Invalid MinGW configuration "%s".\nSet folder using <a href="matlab:ed247.ConfigurationUI.open()">Configuration App</a>.', mingwpath)) %#ok<ISDIR>
+assert(isdir(ed247folder), sprintf('Invalid ED247 configuration "%s".\nSet folder using <a href="matlab:ed247.ConfigurationUI.open()">Configuration App</a>.', ed247folder)) %#ok<ISDIR>
+assert(isdir(libxml2folder), sprintf('Invalid LibXML2 configuration "%s".\nSet folder using <a href="matlab:ed247.ConfigurationUI.open()">Configuration App</a>.', libxml2folder)) %#ok<ISDIR>
+
 %% Inputs
 % Analyze optional arguments
 p = inputParser();
