@@ -39,7 +39,7 @@ p.addParameter('Mode','ed247',@(x) ischar(x) && ismember(x,{'mock','ed247'}))
 p.addParameter('OutputFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR> Backward compatibility with r2016b
 p.addParameter('Verbose',false,@(x) validateattributes(x,{'logical'},{'scalar'}))
 p.addParameter('MEXFile','ed247_sfun.c',@(x) ischar(x) || isstring(x))
-p.addParameter('MEXFolder',mexfolder,@(x) isdir(x))
+p.addParameter('MEXFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR>
 parse(p,varargin{:})
 
 %% MEX argument definition
