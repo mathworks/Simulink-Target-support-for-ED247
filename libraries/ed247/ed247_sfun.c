@@ -52,6 +52,7 @@ static void mdlInitializeSizes(SimStruct *S)
         /*
          * INPUTS
          */
+        myprintf("%d inputs\n", io->inputs->nsignals);
         if (!ssSetNumInputPorts(S, io->inputs->nsignals)) return;
         for (i = 0; i < io->inputs->nsignals; i++){
             
@@ -83,6 +84,7 @@ static void mdlInitializeSizes(SimStruct *S)
         /*
          * OUTPUTS
          */
+        myprintf("%d outputs\n", io->outputs->nsignals);
         if (!ssSetNumOutputPorts(S, io->outputs->nsignals)) return;
         for (i = 0; i < io->outputs->nsignals; i++){
             
@@ -113,6 +115,9 @@ static void mdlInitializeSizes(SimStruct *S)
             myprintf("Configuration file = '%s'\n", configurationFile);
             myprintf("Log file = '%s'\n", logFile);
             read_ed247_configuration(configurationFile, io, logFile);
+            
+            myprintf("%d inputs\n", io->outputs->nsignals);
+            myprintf("%d outputs\n", io->outputs->nsignals);
         }
         
         /*

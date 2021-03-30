@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ecicpath=../../_files/ecic/ecic_func_exchange_a429_mc_tester_simple.xml
+ecicpath=../../_files/ecic/ecic_func_exchange_nad_mc_tester.xml
 dumpfile=./dump.log
 timeout=100
 
