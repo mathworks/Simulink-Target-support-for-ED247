@@ -35,9 +35,11 @@ classdef ConfigurationTest < matlab.unittest.TestCase
             
             % [ SETUP ]
             filename = fullfile(tempdir(),'.metadataXX');
+            if exist(filename,'file') == 2
+                delete(filename)
+            end
             conf = ed247.Configuration(filename);
-            testCase.assumeNotEqual(exist(filename,'file'),2)
-            
+                        
             % [ EXERCISE ]
             testCase.assertFalse(conf.IsDirty)
             delete(conf)
@@ -45,22 +47,34 @@ classdef ConfigurationTest < matlab.unittest.TestCase
             % [ VERIFY ]
             testCase.verifyNotEqual(exist(filename,'file'),2)
             
+            % [ TEARDOWN ]
+            if exist(filename,'file') == 2
+                delete(filename)
+            end
+            
         end
         
         function testDestructorDirty(testCase)
             
             % [ SETUP ]
             filename = fullfile(tempdir(),'.metadataXX');
+            if exist(filename,'file') == 2
+                delete(filename)
+            end
             conf = ed247.Configuration(filename);
-            testCase.assumeNotEqual(exist(filename,'file'),2)
             
             % [ EXERCISE ]
-            conf.Adapter = tempdir;
+            conf.ED247 = tempdir;
             testCase.assertTrue(conf.IsDirty)
             delete(conf)
             
             % [ VERIFY ]
             testCase.verifyEqual(exist(filename,'file'),2)
+            
+            % [ TEARDOWN ]
+            if exist(filename,'file') == 2
+                delete(filename)
+            end
             
         end
         
@@ -74,42 +88,10 @@ classdef ConfigurationTest < matlab.unittest.TestCase
             actual = conf.Adapter;
             
             % [ VERIFY ]
-            testCase.verifyEmpty(actual)
+            testCase.verifyTrue(isdir(actual)) %#ok<ISDIR>
             
         end
-        
-        function testSetGetAdapter(testCase)
-            
-            % [ SETUP ]
-            expected = tempdir;
-            filename = fullfile(testCase.filefolder_,'.metadata01');
-            conf = ed247.Configuration(filename);
-            
-            % [ EXERCISE ]
-            conf.Adapter = expected;
-            actual = conf.Adapter;
-            
-            % [ VERIFY ]
-            testCase.verifyEqual(actual,expected)
-            
-        end
-        
-        function testSetGetAdapterHeaderFileNonExistingFolder(testCase)
-            
-            % [ SETUP ]
-            filename = fullfile(testCase.filefolder_,'.metadata01');
-            conf = ed247.Configuration(filename);
-            filename = fullfile(tempdir,'testSetGetAdapterHeaderFileNonExistingFolder');
-            
-            % [ EXERCISE ]
-            conf.Adapter = filename;
-            actual = conf.Adapter;
-            
-            % [ VERIFY ]
-            testCase.verifyEmpty(actual)
-            
-        end
-        
+                        
         function testGetED247(testCase)
             
             % [ SETUP ]
@@ -212,42 +194,10 @@ classdef ConfigurationTest < matlab.unittest.TestCase
             actual = conf.MEX;
             
             % [ VERIFY ]
-            testCase.verifyEmpty(actual)
+            testCase.verifyTrue(isdir(actual)) %#ok<ISDIR>
             
         end
-        
-        function testSetGetMEX(testCase)
-            
-            % [ SETUP ]
-            expected = tempdir;
-            filename = fullfile(testCase.filefolder_,'.metadata01');
-            conf = ed247.Configuration(filename);
-            
-            % [ EXERCISE ]
-            conf.MEX = expected;
-            actual = conf.MEX;
-            
-            % [ VERIFY ]
-            testCase.verifyEqual(actual,expected)
-            
-        end
-        
-        function testSetGetMEXHeaderFileNonExistingFolder(testCase)
-            
-            % [ SETUP ]
-            filename = fullfile(testCase.filefolder_,'.metadata01');
-            conf = ed247.Configuration(filename);
-            filename = fullfile(tempdir,'testSetGetMEXHeaderFileNonExistingFolder');
-            
-            % [ EXERCISE ]
-            conf.MEX = filename;
-            actual = conf.MEX;
-            
-            % [ VERIFY ]
-            testCase.verifyEmpty(actual)
-            
-        end
-        
+                
         function testGetMinGW(testCase)
             
             % [ SETUP ]
@@ -332,10 +282,8 @@ classdef ConfigurationTest < matlab.unittest.TestCase
         function testSave(testCase)
             
             % [ SETUP ]            
-            adapterfolder   = tempdir;
             ed247folder     = tempdir;
             libxml2folder   = tempdir;
-            mexfolder       = tempdir;
             mingwfolder     = tempdir;
             
             original = fullfile(testCase.filefolder_,'.metadata01');
@@ -345,10 +293,8 @@ classdef ConfigurationTest < matlab.unittest.TestCase
             
             conf = ed247.Configuration(filename); 
                         
-            conf.Adapter    = adapterfolder;
             conf.ED247      = ed247folder;
             conf.LibXML2    = libxml2folder;
-            conf.MEX        = mexfolder;
             conf.MinGW      = mingwfolder;
             
             % [ EXERCISE ]
@@ -368,10 +314,8 @@ classdef ConfigurationTest < matlab.unittest.TestCase
             platform_config = vertcat(platform_config{1}{:});
             
             expected = { ...
-                'Adapter',  adapterfolder; ...
                 'ED247',    ed247folder; ...
                 'LibXML2',  libxml2folder; ...
-                'MEX',      mexfolder; ...
                 'MinGW',    mingwfolder; ...
                 };
             testCase.verifyEqual(platform_config,expected)

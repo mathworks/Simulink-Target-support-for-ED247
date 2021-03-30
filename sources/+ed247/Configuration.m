@@ -122,14 +122,8 @@ classdef Configuration < matlab.mixin.SetGet
             filename = obj.filename_;
         end
         
-        function adapter = get.Adapter(obj)
-            
-            if isdir(obj.adapter_) %#ok<ISDIR> Backward compatibility with r2016b
-                adapter = obj.adapter_;
-            else
-                adapter = '';
-            end
-            
+        function adapter = get.Adapter(obj) %#ok<MANU>
+            adapter = ed247.Folder.ADAPTER.Path;
         end
         
         function ed247 = get.ED247(obj)
@@ -152,14 +146,8 @@ classdef Configuration < matlab.mixin.SetGet
             
         end
         
-        function mex = get.MEX(obj)
-            
-            if isdir(obj.mex_) %#ok<ISDIR> Backward compatibility with r2016b
-                mex = obj.mex_;
-            else
-                mex = '';
-            end
-            
+        function mex = get.MEX(obj) %#ok<MANU>
+            mex = ed247.Folder.LIBRARY.Path;            
         end
         
         function mingw = get.MinGW(obj)
@@ -185,11 +173,6 @@ classdef Configuration < matlab.mixin.SetGet
     %% MUTATORS
     methods
         
-        function set.Adapter(obj,adapter)
-            obj.adapter_ = adapter;
-            obj.isdirty_ = true;
-        end
-        
         function set.ED247(obj,ed247)
             obj.ed247_ = ed247;
             obj.isdirty_ = true;
@@ -199,12 +182,7 @@ classdef Configuration < matlab.mixin.SetGet
             obj.libxml2_ = libxml2;
             obj.isdirty_ = true;
         end
-        
-        function set.MEX(obj,mex)
-            obj.mex_ = mex;
-            obj.isdirty_ = true;
-        end
-        
+                
         function set.MinGW(obj,MinGW)
             obj.mingw_ = MinGW;
             obj.isdirty_ = true;
@@ -345,11 +323,7 @@ classdef Configuration < matlab.mixin.SetGet
             elseif isempty(configuration)
                 configuration = struct();
             end
-            
-            if isfield(configuration,'Adapter') && isdir(configuration.Adapter) %#ok<ISDIR> Backward compatibility with r2016b
-                obj.adapter_ = configuration.Adapter;
-            end
-            
+                        
             if isfield(configuration,'ED247') && isdir(configuration.ED247) %#ok<ISDIR> Backward compatibility with r2016b
                 obj.ed247_ = configuration.ED247;
             end
@@ -357,11 +331,7 @@ classdef Configuration < matlab.mixin.SetGet
             if isfield(configuration,'LibXML2') && isdir(configuration.LibXML2) %#ok<ISDIR> Backward compatibility with r2016b
                 obj.libxml2_ = configuration.LibXML2;
             end
-            
-            if isfield(configuration,'MEX') && isdir(configuration.MEX) %#ok<ISDIR> Backward compatibility with r2016b
-                obj.mex_ = configuration.MEX;
-            end
-            
+                        
             if isfield(configuration,'MinGW') && isdir(configuration.MinGW) %#ok<ISDIR> Backward compatibility with r2016b
                 obj.mingw_ = configuration.MinGW;
             end
@@ -395,10 +365,8 @@ classdef Configuration < matlab.mixin.SetGet
             end
             
             configuration{mask} = struct( ...
-                'Adapter',      obj.adapter_,   ...
                 'ED247',        obj.ed247_,     ...
                 'LibXML2',      obj.libxml2_,   ...
-                'MEX',          obj.mex_,       ...
                 'MinGW',        obj.mingw_      ...
                 );
             
@@ -502,9 +470,7 @@ classdef Configuration < matlab.mixin.SetGet
                 platform = 'Linux';
             end
             
-            defaultadapter  = ed247.Folder.ADAPTER.Path;
             defaultlibxml2  = '';
-            defaultmex      = ed247.Folder.LIBRARY.Path;
             
             if strcmp(platform,'Windows')
                 defaulted247    = '';
@@ -516,10 +482,8 @@ classdef Configuration < matlab.mixin.SetGet
             
             p = inputParser();
             p.addParameter('Filename',  defaultfilename,    @(x) ischar(x) && isdir(x)) %#ok<ISDIR> Backward compatibility with r2016b
-            p.addParameter('Adapter',   defaultadapter,     @(x) ischar(x))
             p.addParameter('ED247',     defaulted247,       @(x) ischar(x))
             p.addParameter('LibXML2',   defaultlibxml2,     @(x) ischar(x))
-            p.addParameter('MEX',       defaultmex,         @(x) ischar(x))
             p.addParameter('MinGW',     defaultmingw,       @(x) ischar(x))
             parse(p,varargin{:})
             
@@ -528,10 +492,8 @@ classdef Configuration < matlab.mixin.SetGet
                 reload(obj)
             else
                 obj = ed247.Configuration( p.Results.Filename, ...
-                    'Adapter',      p.Results.Adapter,  ...
                     'ED247',        p.Results.ED247,    ...
                     'LibXML2',      p.Results.LibXML2,  ...
-                    'MEX',          p.Results.MEX,      ...
                     'MinGW',        p.Results.MinGW);
             end
             

@@ -5,10 +5,8 @@ Version=1.2.0
 Developer=MathWorks Consulting Services
 Maintainer=IYYSW
 --- Windows ---
-Adapter=C:\Temp
 ED247=C:\Temp
 LibXML2=C:\Temp
-MEX=C:\Temp
 MinGW=C:\Temp
 --- Linux ---
 ED247=/home/user/ed247
