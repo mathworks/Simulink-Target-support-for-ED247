@@ -8,6 +8,7 @@ function compile(varargin)
 %   - MEXFolder (char) Default = <projroot>/libraries/ed247
 %   - MEXFile (char) Default = ed247_sfun.c
 %   - Verbose (true|false)
+%   - EnableLog (true|false): Compile MEX with logging functionality
 %
 % Copyright 2020 The MathWorks, Inc.
 %
@@ -40,6 +41,7 @@ p.addParameter('OutputFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR> Backward comp
 p.addParameter('Verbose',false,@(x) validateattributes(x,{'logical'},{'scalar'}))
 p.addParameter('MEXFile','ed247_sfun.c',@(x) ischar(x) || isstring(x))
 p.addParameter('MEXFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR>
+p.addParameter('EnableLog',false, @(x) validateattributes(x,{'logical'},{'scalar'}))
 parse(p,varargin{:})
 
 %% MEX argument definition
@@ -102,6 +104,10 @@ end
 if p.Results.Verbose || strcmp(p.Results.Mode,'mock')
     % Defines
     defines{end+1} = 'DEBUG';
+end
+
+if ~p.Results.EnableLog
+    defines{end+1} = 'DISABLE_LOG';
 end
 
 if isunix

@@ -28,10 +28,13 @@ configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, 
 	}
 	fileparts(filename,folder);
 
+    #ifndef DISABLE_LOG // Dependending on ED247 version, the log structure contains these additional fields or not 
     if (logfilename != NULL){
         config.log_filepath = logfilename;
         config.log_level = ED247_LOG_LEVEL_DEBUG;
     }
+    #endif
+    
 	status = ed247_load(filename,&config,&(io->_context));
 	if (checkStatus(status,"ed247_load",1)){return LOAD_FAILURE;}
 
