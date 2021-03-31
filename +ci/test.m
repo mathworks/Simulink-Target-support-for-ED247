@@ -8,7 +8,7 @@ try
     proj = slproject.getCurrentProjects();
     if isempty(proj)
         rootfolder = regexprep(mfilename('fullpath'),'\+.*','');
-        proj = openProject(rootfolder);
+        proj = simulinkproject(rootfolder);
     end
     
     ts = matlab.unittest.TestSuite.fromPackage('ed247', 'IncludeSubpackages', true);

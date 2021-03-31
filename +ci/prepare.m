@@ -7,7 +7,7 @@ try
     proj = slproject.getCurrentProjects();
     if isempty(proj)
         rootfolder = regexprep(mfilename('fullpath'),'\+.*','');
-        proj = openProject(rootfolder);
+        proj = simulinkproject(rootfolder);
     end
    
     libxml2folder = getenv(ed247.Configuration.LIBXML2_FOLDER_VARIABLE);
