@@ -95,6 +95,10 @@ classdef ConfigurationTest < matlab.unittest.TestCase
         function testGetED247(testCase)
             
             % [ SETUP ]
+            ed247_envvar = getenv(ed247.Configuration.ED247_FOLDER_VARIABLE);
+            setenv(ed247.Configuration.ED247_FOLDER_VARIABLE,'');
+            resetEnvVar = onCleanup(@() setenv(ed247.Configuration.ED247_FOLDER_VARIABLE,ed247_envvar));
+            
             filename = fullfile(testCase.filefolder_,'.metadata01');
             conf = ed247.Configuration(filename);
             
@@ -109,6 +113,10 @@ classdef ConfigurationTest < matlab.unittest.TestCase
         function testSetGetED247(testCase)
             
             % [ SETUP ]
+            ed247_envvar = getenv(ed247.Configuration.ED247_FOLDER_VARIABLE);
+            setenv(ed247.Configuration.ED247_FOLDER_VARIABLE,'');
+            resetEnvVar = onCleanup(@() setenv(ed247.Configuration.ED247_FOLDER_VARIABLE,ed247_envvar));
+            
             expected = tempdir;
             filename = fullfile(testCase.filefolder_,'.metadata01');
             conf = ed247.Configuration(filename);
@@ -125,6 +133,10 @@ classdef ConfigurationTest < matlab.unittest.TestCase
         function testSetGetED247HeaderFileNonExistingFolder(testCase)
             
             % [ SETUP ]
+            ed247_envvar = getenv(ed247.Configuration.ED247_FOLDER_VARIABLE);
+            setenv(ed247.Configuration.ED247_FOLDER_VARIABLE,'');
+            resetEnvVar = onCleanup(@() setenv(ed247.Configuration.ED247_FOLDER_VARIABLE,ed247_envvar));
+            
             filename = fullfile(testCase.filefolder_,'.metadata01');
             conf = ed247.Configuration(filename);
             filename = fullfile(tempdir,'testSetGetED247HeaderFileNonExistingFolder');
@@ -141,6 +153,10 @@ classdef ConfigurationTest < matlab.unittest.TestCase
         function testGetLibXML2(testCase)
             
             % [ SETUP ]
+            libxml2_envvar = getenv(ed247.Configuration.LIBXML2_FOLDER_VARIABLE);
+            setenv(ed247.Configuration.LIBXML2_FOLDER_VARIABLE,'');
+            resetEnvVar = onCleanup(@() setenv(ed247.Configuration.LIBXML2_FOLDER_VARIABLE,libxml2_envvar));
+            
             filename = fullfile(testCase.filefolder_,'.metadata01');
             conf = ed247.Configuration(filename);
             
@@ -155,6 +171,10 @@ classdef ConfigurationTest < matlab.unittest.TestCase
         function testSetGetLibXML2(testCase)
             
             % [ SETUP ]
+            libxml2_envvar = getenv(ed247.Configuration.LIBXML2_FOLDER_VARIABLE);
+            setenv(ed247.Configuration.LIBXML2_FOLDER_VARIABLE,'');
+            resetEnvVar = onCleanup(@() setenv(ed247.Configuration.LIBXML2_FOLDER_VARIABLE,libxml2_envvar));
+            
             expected = tempdir;
             filename = fullfile(testCase.filefolder_,'.metadata01');
             conf = ed247.Configuration(filename);
@@ -171,6 +191,10 @@ classdef ConfigurationTest < matlab.unittest.TestCase
         function testSetGetLibXML2HeaderFileNonExistingFolder(testCase)
             
             % [ SETUP ]
+            libxml2_envvar = getenv(ed247.Configuration.LIBXML2_FOLDER_VARIABLE);
+            setenv(ed247.Configuration.LIBXML2_FOLDER_VARIABLE,'');
+            resetEnvVar = onCleanup(@() setenv(ed247.Configuration.LIBXML2_FOLDER_VARIABLE,libxml2_envvar));
+            
             filename = fullfile(testCase.filefolder_,'.metadata01');
             conf = ed247.Configuration(filename);
             filename = fullfile(tempdir,'testSetGetLibXML2HeaderFileNonExistingFolder');

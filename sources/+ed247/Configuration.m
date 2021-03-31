@@ -7,6 +7,8 @@ classdef Configuration < matlab.mixin.SetGet
     properties (Constant)
         FILE = '.metadata';
         MINGW_ENVIRONMENT_VARIABLE = 'MW_MINGW64_LOC';
+        LIBXML2_FOLDER_VARIABLE = 'LIBXML_LOC';
+        ED247_FOLDER_VARIABLE = 'ED247_LOC';
     end
     
     %% HIDDEN CONSTANT
@@ -129,7 +131,10 @@ classdef Configuration < matlab.mixin.SetGet
         
         function ed247 = get.ED247(obj)
             
-            if isdir(obj.ed247_) %#ok<ISDIR> Backward compatibility with r2016b
+            envvar = getenv(obj.ED247_FOLDER_VARIABLE);
+            if isdir(envvar) %#ok<ISDIR> Backward compatibility with r2016b
+                ed247 = envvar;
+            elseif isdir(obj.ed247_) %#ok<ISDIR> Backward compatibility with r2016b
                 ed247 = obj.ed247_;
             else
                 ed247 = '';
@@ -139,7 +144,10 @@ classdef Configuration < matlab.mixin.SetGet
         
         function libxml2 = get.LibXML2(obj)
             
-            if isdir(obj.libxml2_) %#ok<ISDIR> Backward compatibility with r2016b
+            envvar = getenv(obj.LIBXML2_FOLDER_VARIABLE);
+            if isdir(envvar) %#ok<ISDIR> Backward compatibility with r2016b
+                libxml2 = envvar;
+            elseif isdir(obj.libxml2_) %#ok<ISDIR> Backward compatibility with r2016b
                 libxml2 = obj.libxml2_;
             else
                 libxml2 = '';
