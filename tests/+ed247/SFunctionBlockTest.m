@@ -2,6 +2,19 @@ classdef (SharedTestFixtures={ ...
         matlab.unittest.fixtures.PathFixture(fullfile(regexprep(mfilename('fullpath'),'\+.*',''),'_files'))}) ...
         SFunctionBlockTest < matlab.unittest.TestCase
    
+    %% CLASS SETUP
+    methods (TestClassSetup)
+       
+        function compileSFunction(testCase) %#ok<MANU>
+           
+            if exist('ed247_sfun','file') ~= 3
+                ed247.compile()
+            end
+            
+        end
+        
+    end
+    
     %% TESTS
     methods (Test)
        
