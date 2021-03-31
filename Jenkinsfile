@@ -12,7 +12,7 @@ pipeline {
 		MATLAB_RELEASE = 'r2019b'
 
         USERPROFILE = 'C:\\Temp'
-        MW_MINGW64_LOC = '\\gnb-csg-win01\c$\MinGW\4.9.2-posix'
+        MW_MINGW64_LOC = '\\\\gnb-csg-win01\\c$\\MinGW\\4.9.2-posix'
         ED247_FOLDER_VARIABLE = 'C:\\Temp\\ed247'
         LIBXML2_FOLDER_VARIABLE = 'C:\\Temp\\libxml2'
 
