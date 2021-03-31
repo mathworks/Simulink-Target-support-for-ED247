@@ -39,7 +39,7 @@ classdef ConfigurationTest < matlab.unittest.TestCase
                 delete(filename)
             end
             conf = ed247.Configuration(filename);
-                        
+            
             % [ EXERCISE ]
             testCase.assertFalse(conf.IsDirty)
             delete(conf)
@@ -91,7 +91,7 @@ classdef ConfigurationTest < matlab.unittest.TestCase
             testCase.verifyTrue(isdir(actual)) %#ok<ISDIR>
             
         end
-                        
+        
         function testGetED247(testCase)
             
             % [ SETUP ]
@@ -197,10 +197,14 @@ classdef ConfigurationTest < matlab.unittest.TestCase
             testCase.verifyTrue(isdir(actual)) %#ok<ISDIR>
             
         end
-                
+        
         function testGetMinGW(testCase)
             
             % [ SETUP ]
+            mingw_envvar = getenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE);
+            setenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE,'');
+            resetEnvVar = onCleanup(@() setenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE,mingw_envvar));
+            
             filename = fullfile(testCase.filefolder_,'.metadata01');
             conf = ed247.Configuration(filename);
             
@@ -215,6 +219,10 @@ classdef ConfigurationTest < matlab.unittest.TestCase
         function testSetGetMinGW(testCase)
             
             % [ SETUP ]
+            mingw_envvar = getenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE);
+            setenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE,'');
+            resetEnvVar = onCleanup(@() setenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE,mingw_envvar));
+            
             expected = tempdir;
             filename = fullfile(testCase.filefolder_,'.metadata01');
             conf = ed247.Configuration(filename);
@@ -231,6 +239,10 @@ classdef ConfigurationTest < matlab.unittest.TestCase
         function testSetGetMinGWPathNonExistingFile(testCase)
             
             % [ SETUP ]
+            mingw_envvar = getenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE);
+            setenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE,'');
+            resetEnvVar = onCleanup(@() setenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE,mingw_envvar));
+            
             filename = fullfile(testCase.filefolder_,'.metadata01');
             conf = ed247.Configuration(filename);
             invalidpath = fullfile(tempdir,'thisisanonexistingfolder');
@@ -260,9 +272,13 @@ classdef ConfigurationTest < matlab.unittest.TestCase
         
         function testReload(testCase)
             
-            % [ SETUP ]            
+            % [ SETUP ]
+            mingw_envvar = getenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE);
+            setenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE,'');
+            resetEnvVar = onCleanup(@() setenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE,mingw_envvar));
+            
             filename = fullfile(testCase.filefolder_,'.metadata02');
-            conf = ed247.Configuration(filename);            
+            conf = ed247.Configuration(filename);
             
             % [ EXERCISE ]
             reload(conf)
@@ -281,7 +297,7 @@ classdef ConfigurationTest < matlab.unittest.TestCase
         
         function testSave(testCase)
             
-            % [ SETUP ]            
+            % [ SETUP ]
             ed247folder     = tempdir;
             libxml2folder   = tempdir;
             mingwfolder     = tempdir;
@@ -291,8 +307,8 @@ classdef ConfigurationTest < matlab.unittest.TestCase
             copyfile(original,filename,'f')
             deleteFile = onCleanup(@() delete(filename));
             
-            conf = ed247.Configuration(filename); 
-                        
+            conf = ed247.Configuration(filename);
+            
             conf.ED247      = ed247folder;
             conf.LibXML2    = libxml2folder;
             conf.MinGW      = mingwfolder;
@@ -300,7 +316,7 @@ classdef ConfigurationTest < matlab.unittest.TestCase
             % [ EXERCISE ]
             save(conf)
             
-            % [ VERIFY ]                                    
+            % [ VERIFY ]
             actual = fileread(filename);
             
             if ispc()

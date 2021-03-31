@@ -6,6 +6,7 @@ classdef Configuration < matlab.mixin.SetGet
     %% CONSTANT
     properties (Constant)
         FILE = '.metadata';
+        MINGW_ENVIRONMENT_VARIABLE = 'MW_MINGW64_LOC';
     end
     
     %% HIDDEN CONSTANT
@@ -152,7 +153,10 @@ classdef Configuration < matlab.mixin.SetGet
         
         function mingw = get.MinGW(obj)
             
-            if isdir(obj.mingw_) %#ok<ISDIR> Backward compatibility with r2016b
+            envvar = getenv(obj.MINGW_ENVIRONMENT_VARIABLE);
+            if isdir(envvar) %#ok<ISDIR> Backward compatibility with r2016b
+                mingw = envvar;
+            elseif isdir(obj.mingw_) %#ok<ISDIR> Backward compatibility with r2016b
                 mingw = obj.mingw_;
             else
                 mingw = '';
@@ -183,8 +187,8 @@ classdef Configuration < matlab.mixin.SetGet
             obj.isdirty_ = true;
         end
                 
-        function set.MinGW(obj,MinGW)
-            obj.mingw_ = MinGW;
+        function set.MinGW(obj,mingw)
+            obj.mingw_ = mingw;
             obj.isdirty_ = true;
         end
         
@@ -211,7 +215,7 @@ classdef Configuration < matlab.mixin.SetGet
                 
                 p = strsplit(curPath,';');
                 
-                mingwBinPath = fullfile(obj.mingw_,'bin');
+                mingwBinPath = fullfile(obj.MinGW,'bin');
                 if isdir(mingwBinPath) %#ok<ISDIR> Backward compatibility with r2016b
                     
                     fprintf(1, '## Remove existing MinGW64 installation folder from Windows path\n');
@@ -223,8 +227,8 @@ classdef Configuration < matlab.mixin.SetGet
                     
                     fprintf(1, '## Configure MEX to use MinGW64 as compiler\n');
                     
-                    fprintf(1, '\t- Set "%s" environment variable to "%s"\n', 'MW_MINGW64_LOC', obj.mingw_);
-                    setenv('MW_MINGW64_LOC', obj.mingw_)
+                    fprintf(1, '\t- Set "%s" environment variable to "%s"\n', obj.MINGW_ENVIRONMENT_VARIABLE, obj.MinGW);
+                    setenv(obj.MINGW_ENVIRONMENT_VARIABLE, obj.MinGW)
                     
                     warning('off','MATLAB:mex:MinGWVersion_link')
                     cc = onCleanup(@() warning('on','MATLAB:mex:MinGWVersion_link'));
@@ -243,7 +247,7 @@ classdef Configuration < matlab.mixin.SetGet
                         
                     catch me
                         if strcmp(me.identifier,'MATLAB:mex:NotConfiguredToUse')
-                            warning('ED247:invalidPath', 'MinGW64 installation folder "%s" is not a valid MinGW64 installation folder.\nTo be valid, the installation folder should contains a bin subfolder', obj.mingw_)
+                            warning('ED247:invalidPath', 'MinGW64 installation folder "%s" is not a valid MinGW64 installation folder.\nTo be valid, the installation folder should contains a bin subfolder', obj.MinGW)
                             status = false;
                         else
                             rethrow(me)
