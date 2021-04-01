@@ -99,12 +99,12 @@ def pipelineByRelease(release){
 
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 					bat """
-					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/prepare.$release.log" -r "exit(ci.prepare())"
+					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/prepare.log" -r "exit(ci.prepare())"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
 					bat """
-					type "C:%WORKSPACE:/=\\%\\prepare.$release.log"
+					type "C:%WORKSPACE:/=\\%\\prepare.log"
 					"""
 				}
 
@@ -114,12 +114,12 @@ def pipelineByRelease(release){
 
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 					bat """
-					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/test.$release.log" -r "exit(ci.test())"
+					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/test.log" -r "exit(ci.test())"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
 					bat """
-					type "C:%WORKSPACE:/=\\%\\test.$release.log"
+					type "C:%WORKSPACE:/=\\%\\test.log"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
@@ -134,12 +134,12 @@ def pipelineByRelease(release){
 
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 					bat """
-					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/package.$release.log" -r "exit(ci.package())"
+					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/package.log" -r "exit(ci.package())"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
 					bat """
-					type "C:%WORKSPACE:/=\\%\\package.$release.log"
+					type "C:%WORKSPACE:/=\\%\\package.log"
 					"""
 				}
 
@@ -149,12 +149,12 @@ def pipelineByRelease(release){
 
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 					bat """
-					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/cleanup.$release.log" -r "exit(ci.cleanup())"
+					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/cleanup.log" -r "exit(ci.cleanup())"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
 					bat """
-					type "C:%WORKSPACE:/=\\%\\cleanup.$release.log"
+					type "C:%WORKSPACE:/=\\%\\cleanup.log"
 					"""
 				}
 
