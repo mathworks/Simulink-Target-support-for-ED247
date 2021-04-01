@@ -12,6 +12,11 @@ try
         reopenProject = onCleanup(@() simulinkproject(proj.RootFolder));
     end
     
+    config = ed247.Configuration.default();
+    copyfile(config.Filename, [config.Filename,'.bckp'])
+    resetMetadata = onCleanup(@() movefile([config.Filename,'.bckp'],config.Filename));
+    reset(config)
+    
     %
     % Package toolbox
     %
