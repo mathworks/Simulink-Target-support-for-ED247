@@ -97,6 +97,8 @@ def pipelineByRelease(release){
 		
 			stage("Prepare $release") {
 
+				checkout scm
+				
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 					bat """
 					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/prepare.log" -r "exit(ci.prepare())"
