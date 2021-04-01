@@ -24,7 +24,8 @@ Jenkinsfile
 *.pdf
 Coverage*.xml
 *.tap
-*.log</param.exclude.filters>
+*.log
+archives/</param.exclude.filters>
     <param.exclude.pcodedmfiles>true</param.exclude.pcodedmfiles>
     <param.examples />
     <param.demosxml />
@@ -88,7 +89,6 @@ Coverage*.xml
     </fileset.rootdir>
     <fileset.rootfiles>
       <file>${PROJECT_ROOT}\.metadata</file>
-      <file>${PROJECT_ROOT}\archives</file>
       <file>${PROJECT_ROOT}\c_sources</file>
       <file>${PROJECT_ROOT}\CHANGELOG.md</file>
       <file>${PROJECT_ROOT}\doc</file>

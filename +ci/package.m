@@ -13,7 +13,7 @@ try
         rootfolder = regexprep(mfilename('fullpath'),'\+.*','');
         proj = simulinkproject(rootfolder);
     else
-        reopenProject = onCleanup(@() simulinkproject(proj.RootFolder));
+        %reopenProject = onCleanup(@() simulinkproject(proj.RootFolder));
     end
         
     config = ed247.Configuration.default();    
