@@ -39,7 +39,29 @@ pipeline {
 			}
 
 		}
+		
+		stage('Publish TAP results') {
 
+			agent {
+				label 'LINUX'
+			}
+			steps {
+
+				script {
+
+					catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+						sh """
+						rm *.tap
+						"""
+					}
+
+					releases.each { release ->
+						publishResults(release)
+					}
+					step([$class: "TapPublisher", testResults: "*.tap"])
+					
+				}
+			}
 	}
 
 	post {
@@ -49,8 +71,7 @@ pipeline {
 				body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}",
 				recipientProviders: [developers(), requestor()],
 				subject: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}"
-			cobertura coberturaReportFile: 'CoverageResults.xml'
-			step([$class: "TapPublisher", testResults: "TAPResults.tap"])
+			cobertura coberturaReportFile: 'CoverageResults.xml'			
 			cleanWs cleanWhenAborted: false, cleanWhenFailure: false, cleanWhenNotBuilt: false, cleanWhenUnstable: false, notFailBuild: true, deleteDirs:true
 		}
 		success {
@@ -91,13 +112,16 @@ def pipelineByRelease(release){
 
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 					bat """
-					mw -using $release:perfect matlab -wait -logfile C:%WORKSPACE%/test.$release.log -r "exit(ci.test())"
+					mw -using $release:perfect matlab -wait -logfile C:%WORKSPACE%/test.$release.log -r "exit(ci.test('TAPFile','$release.tap'))"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
 					bat """
 					type "C:%WORKSPACE:/=\\%\\test.$release.log"
 					"""
+				}
+				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+					stash includes: "$release.tap", name: "$release"
 				}
 
 			}
@@ -134,6 +158,14 @@ def pipelineByRelease(release){
 
 		}
 
+	}
+
+}
+
+def publishResults(release) {
+
+	catchError(buildResult: 'SUCCESS', message: 'unstash') {
+		unstash name: "$release"
 	}
 
 }

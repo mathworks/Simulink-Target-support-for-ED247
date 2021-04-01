@@ -4,12 +4,18 @@ status  = -1;
 results = matlab.unittest.TestResult.empty;
 
 try
-    
+            
     proj = slproject.getCurrentProjects();
     if isempty(proj)
         rootfolder = regexprep(mfilename('fullpath'),'\+.*','');
         proj = simulinkproject(rootfolder);
     end
+    
+    p = inputParser();
+    p.addParameter('Coverage',  fullfile(proj.RootFolder,'CoverageResults.xml'),@(x) validateattributes(x,{'string','char'},{'nonempty'}))
+    p.addParameter('Report',    fullfile(proj.RootFolder,'TestReport.tap'),     @(x) validateattributes(x,{'string','char'},{'nonempty'}))
+    p.addParameter('TAPFile',   fullfile(proj.RootFolder,'TAPResults.tap'),     @(x) validateattributes(x,{'string','char'},{'nonempty'}))
+    parse(p,varargin{:})
     
     ts = matlab.unittest.TestSuite.fromPackage('ed247', 'IncludeSubpackages', true);
     
@@ -19,7 +25,7 @@ try
     % Coverage
     %
     if ~verLessThan('MATLAB','9.3') % r2017b
-        reportFile = fullfile(proj.RootFolder,'CoverageResults.xml');
+        reportFile = p.Results.Coverage;
         reportFormat = matlab.unittest.plugins.codecoverage.CoberturaFormat(reportFile);
         plugin = matlab.unittest.plugins.CodeCoveragePlugin.forPackage('ed247','Producing',reportFormat);
         tr.addPlugin(plugin)
@@ -28,7 +34,7 @@ try
     %
     % TAP
     %
-    tapFile = fullfile(proj.RootFolder,'TAPResults.tap');
+    tapFile = p.Results.TAPFile;
     tapFile = matlab.unittest.plugins.ToFile(tapFile);
     plugin  = matlab.unittest.plugins.TAPPlugin.producingVersion13(tapFile);
     tr.addPlugin(plugin)
@@ -36,7 +42,7 @@ try
     %
     % Report
     %
-    pdfFile = fullfile(proj.RootFolder,'TestReport.pdf');
+    pdfFile = p.Results.Report;
     plugin = matlab.unittest.plugins.TestReportPlugin.producingPDF(pdfFile);
     tr.addPlugin(plugin)
     
