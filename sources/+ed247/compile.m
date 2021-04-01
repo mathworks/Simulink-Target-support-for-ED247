@@ -41,7 +41,7 @@ p.addParameter('OutputFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR> Backward comp
 p.addParameter('Verbose',false,@(x) validateattributes(x,{'logical'},{'scalar'}))
 p.addParameter('MEXFile','ed247_sfun.c',@(x) ischar(x) || isstring(x))
 p.addParameter('MEXFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR>
-p.addParameter('EnableLog',false, @(x) validateattributes(x,{'logical'},{'scalar'}))
+p.addParameter('EnableLog',true, @(x) validateattributes(x,{'logical'},{'scalar'}))
 parse(p,varargin{:})
 
 %% MEX argument definition
