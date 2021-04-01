@@ -25,6 +25,8 @@ try
     
     fprintf(1, '## Package toolbox into "%s"\n', toolboxfile);
     matlab.addons.toolbox.packageToolbox(toolboxproject, toolboxfile)
+    
+    status = 0;
                 
 catch me
    disp(me.getReport())    
