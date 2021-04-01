@@ -1,9 +1,9 @@
 updateGitlabCommitStatus state: 'pending'
 
 releases = [
-    //'r2016b',
-    //'r2017b',
-    //'r2018b',
+    'r2016b',
+    'r2017b',
+    'r2018b',
     'r2019b',
 	'r2020b'
 ]
