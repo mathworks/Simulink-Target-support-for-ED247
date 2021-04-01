@@ -61,7 +61,9 @@ pipeline {
 					step([$class: "TapPublisher", testResults: "*.tap"])
 					
 				}
-			}
+			}			
+		}
+		
 	}
 
 	post {
