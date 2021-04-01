@@ -99,7 +99,7 @@ def pipelineByRelease(release){
 
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 					bat """
-					mw -using $release:perfect matlab -wait -logfile C:%WORKSPACE%/prepare.$release.log -r "exit(ci.prepare())"
+					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/prepare.$release.log" -r "exit(ci.prepare())"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
@@ -114,7 +114,7 @@ def pipelineByRelease(release){
 
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 					bat """
-					mw -using $release:perfect matlab -wait -logfile C:%WORKSPACE%/test.$release.log -r "exit(ci.test('TAPFile','$release.tap'))"
+					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/test.$release.log" -r "exit(ci.test('TAPFile',$release + '.tap'))"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
@@ -132,7 +132,7 @@ def pipelineByRelease(release){
 
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 					bat """
-					mw -using $release:perfect matlab -wait -logfile C:%WORKSPACE%/package.$release.log -r "exit(ci.package())"
+					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/package.$release.log" -r "exit(ci.package())"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
@@ -147,7 +147,7 @@ def pipelineByRelease(release){
 
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 					bat """
-					mw -using $release:perfect matlab -wait -logfile C:%WORKSPACE%/cleanup.$release.log -r "exit(ci.cleanup())"
+					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/cleanup.$release.log" -r "exit(ci.cleanup())"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
