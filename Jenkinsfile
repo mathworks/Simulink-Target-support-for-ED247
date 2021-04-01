@@ -73,7 +73,9 @@ pipeline {
 				body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}",
 				recipientProviders: [developers(), requestor()],
 				subject: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}"
-			cobertura coberturaReportFile: '*.xml'			
+			catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
+				cobertura coberturaReportFile: '*.xml'			
+			}
 			cleanWs cleanWhenAborted: false, cleanWhenFailure: false, cleanWhenNotBuilt: false, cleanWhenUnstable: false, notFailBuild: true, deleteDirs:true
 		}
 		success {
@@ -125,9 +127,9 @@ def pipelineByRelease(release){
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-					stash includes: "TAPResults-r$release.tap", name: "tap-$release"
-					stash includes: "TestReport-r$release.pdf", name: "report-$release"
-					stash includes: "CoverageResults-r$release.xml", name: "coverage-$release"
+					stash includes: "*.tap", name: "tap-$release"
+					stash includes: "*.pdf", name: "report-$release"
+					stash includes: "*.xml", name: "coverage-$release"
 				}
 
 			}
