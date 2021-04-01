@@ -1,4 +1,4 @@
-function varargout = prepare(varargin)
+function varargout = install(varargin)
 
 status = -1;
 
@@ -9,7 +9,7 @@ try
         rootfolder = regexprep(mfilename('fullpath'),'\+.*','');
         proj = simulinkproject(rootfolder);
     end
-   
+    
     libxml2folder = getenv(ed247.Configuration.LIBXML2_FOLDER_VARIABLE);
     if ~isempty(libxml2folder)
         
@@ -32,13 +32,20 @@ try
             mkdir(ed247folder)
         end
         
-        ed247archive = fullfile(proj.RootFolder,'tests','_files','ed247.zip');        
+        ed247archive = fullfile(proj.RootFolder,'tests','_files','ed247.zip');
         fprintf(1, '## Extract ED247 in folder "%s"\n', ed247folder);
         unzip(ed247archive,ed247folder)
         
     end
     
-    status = 0;
+    toolboxfile = fullfile(proj.RootFolder, sprintf('ED247_for_Simulink-r%s.mltbx', version('-release')));
+    if exist(toolboxfile,'file') == 2
+        fprintf(1, '## Install toolbox ("%s")\n', toolboxfile);
+        matlab.addons.toolbox.installToolbox(toolboxfile);
+        status = 0;
+    else
+        status = 1;
+    end
     
 catch me
     disp(me.getReport())

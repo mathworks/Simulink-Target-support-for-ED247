@@ -8,7 +8,7 @@ try
     rootfolder = regexprep(mfilename('fullpath'),'\+.*','');
             
     p = inputParser();
-    p.addParameter('Mode',      'ci',   @(x) ismember(x,{'ci','dev','prod'}))
+    p.addParameter('Mode',      'prod',   @(x) ismember(x,{'ci','dev','prod'}))
     p.addParameter('Coverage',  fullfile(rootfolder,sprintf('CoverageResults-r%s.xml',version('-release'))),@(x) validateattributes(x,{'string','char'},{'nonempty'}))
     p.addParameter('Report',    fullfile(rootfolder,sprintf('TestReport-r%s.pdf',version('-release'))),     @(x) validateattributes(x,{'string','char'},{'nonempty'}))
     p.addParameter('TAPFile',   fullfile(rootfolder,sprintf('TAPResults-r%s.tap',version('-release'))),     @(x) validateattributes(x,{'string','char'},{'nonempty'}))
@@ -18,6 +18,8 @@ try
     if ismember(p.Results.Mode,{'ci','dev'}) && isempty(proj)
         fprintf(1, '## Open project ("%s")\n', rootfolder);
         simulinkproject(rootfolder);
+    elseif ismember(p.Results.Mode,{'prod'})
+        addpath(fullfile(rootfolder,'tests'))
     end
     
     fprintf(1, '## Create test suite\n');
@@ -29,7 +31,7 @@ try
     %
     % Coverage
     %
-    if ismember(p.Results.Mode,{'ci'}) && ~verLessThan('MATLAB','9.3') % r2017b
+    if ismember(p.Results.Mode,{'ci','prod'}) && ~verLessThan('MATLAB','9.3') % r2017b
         reportFile = p.Results.Coverage;
         reportFormat = matlab.unittest.plugins.codecoverage.CoberturaFormat(reportFile);
         plugin = matlab.unittest.plugins.CodeCoveragePlugin.forPackage('ed247','Producing',reportFormat);
@@ -40,7 +42,7 @@ try
     %
     % TAP
     %
-    if ismember(p.Results.Mode,{'ci'})
+    if ismember(p.Results.Mode,{'ci','prod'})
         tapFile = p.Results.TAPFile;
         if exist(tapFile,'file') == 2
             fprintf(1, '## Delete previous TAP report ("%s")\n', tapFile);
@@ -55,7 +57,7 @@ try
     %
     % Report
     %
-    if ismember(p.Results.Mode,{'ci'})
+    if ismember(p.Results.Mode,{'ci','prod'})
         pdfFile = p.Results.Report;
         plugin = matlab.unittest.plugins.TestReportPlugin.producingPDF(pdfFile);
         fprintf(1, '## Enable Report plugin\n');

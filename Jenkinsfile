@@ -101,19 +101,37 @@ def pipelineByRelease(release){
 	return { 
 
 		node("WIN"){
-		
-			stage("Prepare $release") {
 
-				checkout scm
-				
+            stage("Package $release") {
+
+                checkout scm
+
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 					bat """
-					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/prepare.log" -r "exit(ci.prepare())"
+					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/package.log" -r "exit(ci.package())"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
 					bat """
-					type "C:%WORKSPACE:/=\\%\\prepare.log"
+					type "C:%WORKSPACE:/=\\%\\package.log"
+					"""
+				}
+				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+					stash includes: "*.mltbx", name: "toolbox-$release"
+				}
+
+			}
+		
+			stage("Prepare $release") {
+								
+				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+					bat """
+					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/install.log" -r "exit(ci.install())"
+					"""
+				}
+				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
+					bat """
+					type "C:%WORKSPACE:/=\\%\\install.log"
 					"""
 				}
 
@@ -138,25 +156,7 @@ def pipelineByRelease(release){
 				}
 
 			}
-			
-			stage("Package $release") {
-
-				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-					bat """
-					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/package.log" -r "exit(ci.package())"
-					"""
-				}
-				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
-					bat """
-					type "C:%WORKSPACE:/=\\%\\package.log"
-					"""
-				}
-				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-					stash includes: "*.mltbx", name: "toolbox-$release"
-				}
-
-			}
-			
+									
 			stage("Cleanup $release") {
 
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
