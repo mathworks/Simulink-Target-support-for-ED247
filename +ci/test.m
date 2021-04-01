@@ -16,11 +16,14 @@ try
     
     proj = slproject.getCurrentProjects();
     if ismember(p.Results.Mode,{'ci','dev'}) && isempty(proj)
+        fprintf(1, '## Open project ("%s")\n', rootfolder);
         simulinkproject(rootfolder);
     end
     
+    fprintf(1, '## Create test suite\n');
     ts = matlab.unittest.TestSuite.fromPackage('ed247', 'IncludeSubpackages', true);
     
+    fprintf(1, '## Create test runner\n');
     tr = matlab.unittest.TestRunner.withTextOutput();
     
     %
@@ -30,6 +33,7 @@ try
         reportFile = p.Results.Coverage;
         reportFormat = matlab.unittest.plugins.codecoverage.CoberturaFormat(reportFile);
         plugin = matlab.unittest.plugins.CodeCoveragePlugin.forPackage('ed247','Producing',reportFormat);
+        fprintf(1, '## Enable Coverage plugin\n');
         tr.addPlugin(plugin)
     end
     
@@ -39,10 +43,12 @@ try
     if ismember(p.Results.Mode,{'ci'})
         tapFile = p.Results.TAPFile;
         if exist(tapFile,'file') == 2
+            fprintf(1, '## Delete previous TAP report ("%s")\n', tapFile);
             delete(tapFile)
         end
         tapFile = matlab.unittest.plugins.ToFile(tapFile);
         plugin  = matlab.unittest.plugins.TAPPlugin.producingVersion13(tapFile);
+        fprintf(1, '## Enable TAP plugin\n');
         tr.addPlugin(plugin)
     end
     
@@ -52,6 +58,7 @@ try
     if ismember(p.Results.Mode,{'ci'})
         pdfFile = p.Results.Report;
         plugin = matlab.unittest.plugins.TestReportPlugin.producingPDF(pdfFile);
+        fprintf(1, '## Enable Report plugin\n');
         tr.addPlugin(plugin)
     end
     

@@ -1,7 +1,11 @@
 updateGitlabCommitStatus state: 'pending'
 
 releases = [
-	'r2019b'
+    'r2016b',
+    'r2017b',
+    'r2018b',
+    'r2019b',
+	'r2020b'
 ]
 
 pipeline {
@@ -40,7 +44,7 @@ pipeline {
 
 		}
 		
-		stage('Publish TAP results') {
+		stage('Publish') {
 
 			agent {
 				label 'LINUX'
@@ -60,6 +64,10 @@ pipeline {
 					}
 					step([$class: "TapPublisher", testResults: "*.tap"])
 					
+                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
+                        cobertura coberturaReportFile: '*.xml'			
+                    }
+
 				}
 			}			
 		}
@@ -69,13 +77,10 @@ pipeline {
 	post {
 		always {
 			archiveArtifacts allowEmptyArchive: true, artifacts: '*.mltlbx'
-			emailext attachLog: true, attachmentsPattern: '*.pdf,*.mltlbx',
+			emailext attachLog: true, attachmentsPattern: '*.pdf',
 				body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}",
 				recipientProviders: [developers(), requestor()],
-				subject: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}"
-			catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
-				cobertura coberturaReportFile: '*.xml'			
-			}
+				subject: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}"			
 			cleanWs cleanWhenAborted: false, cleanWhenFailure: false, cleanWhenNotBuilt: false, cleanWhenUnstable: false, notFailBuild: true, deleteDirs:true
 		}
 		success {

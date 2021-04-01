@@ -19,7 +19,12 @@
 .git/
 .git*
 tests/
-Jenkinsfile</param.exclude.filters>
+Jenkinsfile
+*.bckp
+*.pdf
+Coverage*.xml
+*.tap
+*.log</param.exclude.filters>
     <param.exclude.pcodedmfiles>true</param.exclude.pcodedmfiles>
     <param.examples />
     <param.demosxml />
