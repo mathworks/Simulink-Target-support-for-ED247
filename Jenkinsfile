@@ -1,4 +1,9 @@
 updateGitlabCommitStatus state: 'pending'
+
+releases = [
+	'r2019b'
+]
+
 pipeline {
 
 	agent { label 'WIN' }
@@ -8,8 +13,6 @@ pipeline {
 	}
 
     environment {
-
-		MATLAB_RELEASE = 'r2019b'
 
         USERPROFILE = 'C:\\Temp'
         MW_MINGW64_LOC = '\\\\gnb-csg-win01\\c$\\MinGW\\4.9.2-posix'
@@ -22,46 +25,21 @@ pipeline {
 	}
 
 	stages {
-
-        stage('Prepare'){
-            steps {
-                bat """
-                mw -using %MATLAB_RELEASE%:perfect matlab -wait -logfile C:%WORKSPACE%/prepare.log -r "exit(ci.prepare())"
-				type "C:%WORKSPACE:/=\\%\\prepare.log"
-                """
-            }
-        }
         
-        stage('Test') {
-            steps {
-                bat """
-                mw -using %MATLAB_RELEASE%:perfect matlab -wait -logfile C:%WORKSPACE%/test.log -r "exit(ci.test())"
-				type "C:%WORKSPACE:/=\\%\\test.log"
-                """
-            }
-        }
+		stage ('Tests and packages'){
 
-        stage('Cleanup'){
-            steps {
-                bat """
-                mw -using %MATLAB_RELEASE%:perfect matlab -wait -logfile C:%WORKSPACE%/cleanup.log -r "exit(ci.cleanup())"
-				type "C:%WORKSPACE:/=\\%\\cleanup.log"
-                """
-            }
-        }
+			steps {
+				script {
+					def tests = [:]
+					releases.each { release ->
+						pip[release] = pipelineByRelease(release)
+					}
+					parallel pip
+				}
+			}
 
-/*
-        stage('Package'){
-            when {
-                branch "master"
-            }
-            steps {
-                bat """
-                mw -using %MATLAB_RELEASE%:perfect matlab -r "exit(ci.package())"
-                """
-            }
-        }
-*/
+		}
+
 	}
 
 	post {
@@ -84,6 +62,78 @@ pipeline {
 		aborted  {
 			updateGitlabCommitStatus name: 'build', state: 'canceled'
 		}
+	}
+
+}
+
+def pipelineByRelease(release){
+
+	return { 
+
+		node("WIN"){
+		
+			stage("Prepare $release") {
+
+				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+					bat """
+					mw -using $release:perfect matlab -wait -logfile C:%WORKSPACE%/prepare.$release.log -r "exit(ci.prepare())"
+					"""
+				}
+				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
+					bat """
+					type "C:%WORKSPACE:/=\\%\\prepare.$release.log"
+					"""
+				}
+
+			}
+
+			stage("Test $release") {
+
+				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+					bat """
+					mw -using $release:perfect matlab -wait -logfile C:%WORKSPACE%/test.$release.log -r "exit(ci.test())"
+					"""
+				}
+				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
+					bat """
+					type "C:%WORKSPACE:/=\\%\\test.$release.log"
+					"""
+				}
+
+			}
+			
+			stage("Package $release") {
+
+				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+					bat """
+					mw -using $release:perfect matlab -wait -logfile C:%WORKSPACE%/package.$release.log -r "exit(ci.package())"
+					"""
+				}
+				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
+					bat """
+					type "C:%WORKSPACE:/=\\%\\package.$release.log"
+					"""
+				}
+
+			}
+			
+			stage("Cleanup $release") {
+
+				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+					bat """
+					mw -using $release:perfect matlab -wait -logfile C:%WORKSPACE%/cleanup.$release.log -r "exit(ci.cleanup())"
+					"""
+				}
+				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
+					bat """
+					type "C:%WORKSPACE:/=\\%\\cleanup.$release.log"
+					"""
+				}
+
+			}
+
+		}
+
 	}
 
 }
