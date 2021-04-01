@@ -13,8 +13,8 @@ pipeline {
 
         USERPROFILE = 'C:\\Temp'
         MW_MINGW64_LOC = '\\\\gnb-csg-win01\\c$\\MinGW\\4.9.2-posix'
-        ED247_FOLDER_VARIABLE = 'C:\\Temp\\ed247'
-        LIBXML2_FOLDER_VARIABLE = 'C:\\Temp\\libxml2'
+        ED247_LOC = 'C:\\Temp\\ed247'
+        LIBXML_LOC = 'C:\\Temp\\libxml2'
 
 		// cf http://inside.mathworks.com/wiki/Using_MW_CRASH_MODE
 		MW_CRASH_MODE = 'none'
