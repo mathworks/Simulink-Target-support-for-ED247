@@ -146,6 +146,9 @@ def pipelineByRelease(release){
 					type "C:%WORKSPACE:/=\\%\\package.log"
 					"""
 				}
+				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+					stash includes: "*.mltbx", name: "toolbox-$release"
+				}
 
 			}
 			
@@ -174,8 +177,15 @@ def publishResults(release) {
 
 	catchError(buildResult: 'SUCCESS', message: 'unstash') {
 		unstash name: "tap-$release"
+	}
+	catchError(buildResult: 'SUCCESS', message: 'unstash') {
 		unstash name: "report-$release"
+	}
+	catchError(buildResult: 'SUCCESS', message: 'unstash') {
 		unstash name: "coverage-$release"
+	}
+	catchError(buildResult: 'SUCCESS', message: 'unstash') {
+		unstash name: "toolbox-$release"
 	}
 
 }
