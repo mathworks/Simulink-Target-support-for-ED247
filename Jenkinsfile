@@ -30,11 +30,11 @@ pipeline {
 
 			steps {
 				script {
-					def tests = [:]
+					def jobPerRelease = [:]
 					releases.each { release ->
-						pip[release] = pipelineByRelease(release)
+						jobPerRelease[release] = pipelineByRelease(release)
 					}
-					parallel pip
+					parallel jobPerRelease
 				}
 			}
 
