@@ -69,11 +69,11 @@ pipeline {
 	post {
 		always {
 			archiveArtifacts allowEmptyArchive: true, artifacts: '*.mltlbx'
-			emailext attachLog: true, attachmentsPattern: 'TestReport.pdf,*.mltlbx',
+			emailext attachLog: true, attachmentsPattern: '*.pdf,*.mltlbx',
 				body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}",
 				recipientProviders: [developers(), requestor()],
 				subject: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}"
-			cobertura coberturaReportFile: 'CoverageResults.xml'			
+			cobertura coberturaReportFile: '*.xml'			
 			cleanWs cleanWhenAborted: false, cleanWhenFailure: false, cleanWhenNotBuilt: false, cleanWhenUnstable: false, notFailBuild: true, deleteDirs:true
 		}
 		success {
@@ -114,7 +114,7 @@ def pipelineByRelease(release){
 
 				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 					bat """
-					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/test.$release.log" -r "exit(ci.test('TAPFile',$release + '.tap'))"
+					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/test.$release.log" -r "exit(ci.test())"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
@@ -123,7 +123,9 @@ def pipelineByRelease(release){
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-					stash includes: "$release.tap", name: "$release"
+					stash includes: "TAPResults-r$release.tap", name: "tap-$release"
+					stash includes: "TestReport-r$release.pdf", name: "report-$release"
+					stash includes: "CoverageResults-r$release.xml", name: "coverage-$release"
 				}
 
 			}
@@ -167,7 +169,9 @@ def pipelineByRelease(release){
 def publishResults(release) {
 
 	catchError(buildResult: 'SUCCESS', message: 'unstash') {
-		unstash name: "$release"
+		unstash name: "tap-$release"
+		unstash name: "report-$release"
+		unstash name: "coverage-$release"
 	}
 
 }

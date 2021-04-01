@@ -12,9 +12,9 @@ try
     end
     
     p = inputParser();
-    p.addParameter('Coverage',  fullfile(proj.RootFolder,'CoverageResults.xml'),@(x) validateattributes(x,{'string','char'},{'nonempty'}))
-    p.addParameter('Report',    fullfile(proj.RootFolder,'TestReport.tap'),     @(x) validateattributes(x,{'string','char'},{'nonempty'}))
-    p.addParameter('TAPFile',   fullfile(proj.RootFolder,'TAPResults.tap'),     @(x) validateattributes(x,{'string','char'},{'nonempty'}))
+    p.addParameter('Coverage',  fullfile(proj.RootFolder,sprintf('CoverageResults-r%s.xml',version('-release'))),@(x) validateattributes(x,{'string','char'},{'nonempty'}))
+    p.addParameter('Report',    fullfile(proj.RootFolder,sprintf('TestReport-r%s.pdf',version('-release'))),     @(x) validateattributes(x,{'string','char'},{'nonempty'}))
+    p.addParameter('TAPFile',   fullfile(proj.RootFolder,sprintf('TAPResults-r%s.tap',version('-release'))),     @(x) validateattributes(x,{'string','char'},{'nonempty'}))
     parse(p,varargin{:})
     
     ts = matlab.unittest.TestSuite.fromPackage('ed247', 'IncludeSubpackages', true);
