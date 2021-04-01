@@ -35,6 +35,9 @@ try
     % TAP
     %
     tapFile = p.Results.TAPFile;
+    if exist(tapFile,'file') == 2
+        delete(tapFile)
+    end
     tapFile = matlab.unittest.plugins.ToFile(tapFile);
     plugin  = matlab.unittest.plugins.TAPPlugin.producingVersion13(tapFile);
     tr.addPlugin(plugin)
