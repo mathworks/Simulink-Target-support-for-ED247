@@ -32,13 +32,10 @@ archives/</param.exclude.filters>
     <param.apps />
     <param.registered.apps />
     <param.docs>${PROJECT_ROOT}\doc\info.xml</param.docs>
-    <param.getting.started.guide>${PROJECT_ROOT}\doc\GettingStarted.mlx</param.getting.started.guide>
+    <param.getting.started.guide />
     <param.matlabpath.excludes />
     <param.javaclasspath.excludes />
     <param.exported.on.package>false</param.exported.on.package>
-    <param.required.addons />
-    <param.matlab.project.id>7b967d3b-f971-469b-abd6-e5a1567eebab</param.matlab.project.id>
-    <param.matlab.project.name>ed247_for_simulink</param.matlab.project.name>
     <param.release.start />
     <param.release.end />
     <param.release.current.only>false</param.release.current.only>
@@ -66,10 +63,10 @@ archives/</param.exclude.filters>
       <param.demosxml />
       <param.apps />
       <param.registered.apps />
+      <param.getting.started.guide />
       <param.matlabpath.excludes />
       <param.javaclasspath.excludes />
       <param.exported.on.package />
-      <param.required.addons />
       <param.release.start />
       <param.release.end />
       <param.release.current.only />
@@ -85,7 +82,7 @@ archives/</param.exclude.filters>
       <param.additional.sw.linux.url />
     </unset>
     <fileset.rootdir>
-      <file>${PROJECT_ROOT}</file>
+      <file>C:\Files\SANDBOX\git\ED247\ed247_for_simulink</file>
     </fileset.rootdir>
     <fileset.rootfiles>
       <file>${PROJECT_ROOT}\.metadata</file>
@@ -100,11 +97,11 @@ archives/</param.exclude.filters>
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
-      <file location="${PROJECT_ROOT}" name="ED247_for_Simulink.mltbx" optional="false">C:\Files\SANDBOX\git\ED247\ed247_for_simulink\ED247_for_Simulink.mltbx</file>
+      <file location="C:\Files\SANDBOX\git\ED247\ed247_for_simulink" name="ED247_for_Simulink.mltbx" optional="false">C:\Files\SANDBOX\git\ED247\ed247_for_simulink\ED247_for_Simulink.mltbx</file>
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>C:\Files\PROGRAMS\Mathworks\MATLAB\r2019b</root>
+      <root>C:\Files\PROGRAMS\Mathworks\MATLAB\R2018b</root>
       <toolboxes>
         <toolbox name="matlabcoder" />
         <toolbox name="embeddedcoder" />
@@ -112,7 +109,6 @@ archives/</param.exclude.filters>
         <toolbox name="fixedpoint" />
         <toolbox name="matlabhdlcoder" />
         <toolbox name="neuralnetwork" />
-        <toolbox name="polyspacebugfinder" />
       </toolboxes>
       <toolbox>
         <matlabcoder>
@@ -143,11 +139,6 @@ archives/</param.exclude.filters>
         <neuralnetwork>
           <enabled>true</enabled>
         </neuralnetwork>
-      </toolbox>
-      <toolbox>
-        <polyspacebugfinder>
-          <enabled>true</enabled>
-        </polyspacebugfinder>
       </toolbox>
     </matlab>
     <platform>
