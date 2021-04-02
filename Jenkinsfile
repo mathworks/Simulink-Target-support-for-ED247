@@ -106,7 +106,7 @@ def pipelineByRelease(release){
 
                 checkout scm
 
-				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
 					bat """
 					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/package.log" -r "exit(ci.package())"
 					"""
@@ -139,7 +139,7 @@ def pipelineByRelease(release){
 
 			stage("Test $release") {
 
-				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
 					bat """
 					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/test.log" -r "exit(ci.test())"
 					"""
