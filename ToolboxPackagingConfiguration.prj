@@ -24,33 +24,14 @@ Jenkinsfile
 *.pdf
 Coverage*.xml
 *.tap
-*.log</param.exclude.filters>
-    <param.exclude.pcodedmfiles>true</param.exclude.pcodedmfiles>
+*.log
+archives/</param.exclude.filters>
     <param.examples />
     <param.demosxml />
     <param.apps />
-    <param.registered.apps />
     <param.docs>${PROJECT_ROOT}\doc\info.xml</param.docs>
-    <param.getting.started.guide>${PROJECT_ROOT}\doc\GettingStarted.mlx</param.getting.started.guide>
     <param.matlabpath.excludes />
     <param.javaclasspath.excludes />
-    <param.exported.on.package>false</param.exported.on.package>
-    <param.required.addons />
-    <param.matlab.project.id>7b967d3b-f971-469b-abd6-e5a1567eebab</param.matlab.project.id>
-    <param.matlab.project.name>ed247_for_simulink</param.matlab.project.name>
-    <param.release.start />
-    <param.release.end />
-    <param.release.current.only>false</param.release.current.only>
-    <param.compatiblity.windows>true</param.compatiblity.windows>
-    <param.compatiblity.macos>true</param.compatiblity.macos>
-    <param.compatiblity.linux>true</param.compatiblity.linux>
-    <param.compatiblity.matlabonline>true</param.compatiblity.matlabonline>
-    <param.installation.map />
-    <param.additional.sw.names />
-    <param.additional.sw.licenses />
-    <param.additional.sw.win.url />
-    <param.additional.sw.mac.url />
-    <param.additional.sw.linux.url />
     <unset>
       <param.summary />
       <param.description />
@@ -60,35 +41,17 @@ Coverage*.xml
       <param.products.id />
       <param.products.version />
       <param.platforms />
-      <param.exclude.pcodedmfiles />
       <param.examples />
       <param.demosxml />
       <param.apps />
-      <param.registered.apps />
       <param.matlabpath.excludes />
       <param.javaclasspath.excludes />
-      <param.exported.on.package />
-      <param.required.addons />
-      <param.release.start />
-      <param.release.end />
-      <param.release.current.only />
-      <param.compatiblity.windows />
-      <param.compatiblity.macos />
-      <param.compatiblity.linux />
-      <param.compatiblity.matlabonline />
-      <param.installation.map />
-      <param.additional.sw.names />
-      <param.additional.sw.licenses />
-      <param.additional.sw.win.url />
-      <param.additional.sw.mac.url />
-      <param.additional.sw.linux.url />
     </unset>
     <fileset.rootdir>
-      <file>${PROJECT_ROOT}</file>
+      <file>C:\Files\SANDBOX\git\ED247\ed247_for_simulink</file>
     </fileset.rootdir>
     <fileset.rootfiles>
       <file>${PROJECT_ROOT}\.metadata</file>
-      <file>${PROJECT_ROOT}\archives</file>
       <file>${PROJECT_ROOT}\c_sources</file>
       <file>${PROJECT_ROOT}\CHANGELOG.md</file>
       <file>${PROJECT_ROOT}\doc</file>
@@ -100,39 +63,26 @@ Coverage*.xml
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
-      <file location="${PROJECT_ROOT}" name="ED247_for_Simulink.mltbx" optional="false">C:\Files\SANDBOX\git\ED247\ed247_for_simulink\ED247_for_Simulink.mltbx</file>
+      <file location="C:\Files\SANDBOX\git\ED247\ed247_for_simulink" name="ED247_for_Simulink.mltbx" optional="false">C:\Files\SANDBOX\git\ED247\ed247_for_simulink\ED247_for_Simulink.mltbx</file>
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>C:\Files\PROGRAMS\Mathworks\MATLAB\r2019b</root>
+      <root>C:\Files\PROGRAMS\Mathworks\MATLAB\R2016b</root>
       <toolboxes>
-        <toolbox name="matlabcoder" />
-        <toolbox name="embeddedcoder" />
-        <toolbox name="gpucoder" />
         <toolbox name="fixedpoint" />
+        <toolbox name="matlabcoder" />
         <toolbox name="matlabhdlcoder" />
-        <toolbox name="neuralnetwork" />
-        <toolbox name="polyspacebugfinder" />
+        <toolbox name="embeddedcoder" />
       </toolboxes>
-      <toolbox>
-        <matlabcoder>
-          <enabled>true</enabled>
-        </matlabcoder>
-      </toolbox>
-      <toolbox>
-        <embeddedcoder>
-          <enabled>true</enabled>
-        </embeddedcoder>
-      </toolbox>
-      <toolbox>
-        <gpucoder>
-          <enabled>true</enabled>
-        </gpucoder>
-      </toolbox>
       <toolbox>
         <fixedpoint>
           <enabled>true</enabled>
         </fixedpoint>
+      </toolbox>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
       </toolbox>
       <toolbox>
         <matlabhdlcoder>
@@ -140,14 +90,9 @@ Coverage*.xml
         </matlabhdlcoder>
       </toolbox>
       <toolbox>
-        <neuralnetwork>
+        <embeddedcoder>
           <enabled>true</enabled>
-        </neuralnetwork>
-      </toolbox>
-      <toolbox>
-        <polyspacebugfinder>
-          <enabled>true</enabled>
-        </polyspacebugfinder>
+        </embeddedcoder>
       </toolbox>
     </matlab>
     <platform>
@@ -159,7 +104,7 @@ Coverage*.xml
       <vista>false</vista>
       <linux>false</linux>
       <solaris>false</solaris>
-      <osver>10.0</osver>
+      <osver>6.2</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>win64</arch>

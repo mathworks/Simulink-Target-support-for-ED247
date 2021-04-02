@@ -101,73 +101,23 @@ def pipelineByRelease(release){
 	return { 
 
 		node("WIN"){
-		
-			stage("Prepare $release") {
 
-				checkout scm
-				
-				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+            stage("$release") {
+
+                checkout scm
+
+				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
 					bat """
-					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/prepare.log" -r "exit(ci.prepare())"
+					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/output.log" -r "exit(ci.Pipeline.forFolder())"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
 					bat """
-					type "C:%WORKSPACE:/=\\%\\prepare.log"
-					"""
-				}
-
-			}
-
-			stage("Test $release") {
-
-				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-					bat """
-					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/test.log" -r "exit(ci.test())"
-					"""
-				}
-				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
-					bat """
-					type "C:%WORKSPACE:/=\\%\\test.log"
+					type "C:%WORKSPACE:/=\\%\\output.log"
 					"""
 				}
 				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-					stash includes: "*.tap", name: "tap-$release"
-					stash includes: "*.pdf", name: "report-$release"
-					stash includes: "*.xml", name: "coverage-$release"
-				}
-
-			}
-			
-			stage("Package $release") {
-
-				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-					bat """
-					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/package.log" -r "exit(ci.package())"
-					"""
-				}
-				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
-					bat """
-					type "C:%WORKSPACE:/=\\%\\package.log"
-					"""
-				}
-				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-					stash includes: "*.mltbx", name: "toolbox-$release"
-				}
-
-			}
-			
-			stage("Cleanup $release") {
-
-				catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-					bat """
-					mw -using $release:perfect matlab -wait -logfile "C:%WORKSPACE%/cleanup.log" -r "exit(ci.cleanup())"
-					"""
-				}
-				catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') { 
-					bat """
-					type "C:%WORKSPACE:/=\\%\\cleanup.log"
-					"""
+					stash includes: "*.mltbx,*.tap,*.pdf,*.xml", name: "$release", allowEmpty: true
 				}
 
 			}
@@ -181,16 +131,7 @@ def pipelineByRelease(release){
 def publishResults(release) {
 
 	catchError(buildResult: 'SUCCESS', message: 'unstash') {
-		unstash name: "tap-$release"
-	}
-	catchError(buildResult: 'SUCCESS', message: 'unstash') {
-		unstash name: "report-$release"
-	}
-	catchError(buildResult: 'SUCCESS', message: 'unstash') {
-		unstash name: "coverage-$release"
-	}
-	catchError(buildResult: 'SUCCESS', message: 'unstash') {
-		unstash name: "toolbox-$release"
+		unstash name: "$release"
 	}
 
 }
