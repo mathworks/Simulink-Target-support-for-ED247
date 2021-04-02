@@ -172,9 +172,9 @@ classdef Pipeline < matlab.mixin.SetGet
         end
         
     end
-    
-    %% PROTECTED METHODS
-    methods (Access = protected)
+        
+    %% HIDDEN METHODS (Advanced usage)
+    methods (Hidden)
         
         function package(obj)
             
