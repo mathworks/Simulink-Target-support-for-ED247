@@ -184,12 +184,21 @@ classdef Pipeline < matlab.mixin.SetGet
             obj.print( '## Reset .metadata file ("%s")\n', obj.configuration_.Filename);
             configuration = ed247.Configuration.fromStruct(obj.configuration_);
             reset(configuration)
-            
+                                    
             %
             % Package toolbox
             %
             toolboxproject = fullfile(obj.project_.RootFolder,'ToolboxPackagingConfiguration.prj');
             toolboxfile = fullfile(obj.project_.RootFolder, sprintf('ED247_for_Simulink-r%s.mltbx', version('-release')));
+            
+            %
+            % Patch
+            %   Toolbox project was created in 2016b and the source path is
+            %   hard-code in .prj which make it failed in another location
+            %
+            txt = fileread(toolboxproject);
+            txt = regexprep(txt,'C:.*?\ed247_for_simulink',regexptranslate('escape',pwd));
+            fid = fopen(toolboxproject,'wt');fprintf(fid,'%s',txt);fclose(fid);
             
             obj.print( '## Package toolbox into "%s"\n', toolboxfile);
             matlab.addons.toolbox.packageToolbox(toolboxproject, toolboxfile)
