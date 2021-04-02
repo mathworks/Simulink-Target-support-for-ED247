@@ -300,6 +300,25 @@ classdef Configuration < matlab.mixin.SetGet
     %% SAVE / LOAD
     methods
         
+        function S = toStruct(obj)
+            
+            S = struct( ...
+                'Name',         obj.name_,          ...
+                'Date',         obj.date_,          ...
+                'Version',      obj.version_,       ...
+                'Developer',    obj.developer_,     ...
+                'Maintainer',   obj.maintainer_,    ...
+                'Adapter',      obj.Adapter,        ...
+                'ED247',        obj.ED247,          ...
+                'LibXML2',      obj.LibXML2,        ...
+                'MEX',          obj.MEX,            ...
+                'MinGW',        obj.MinGW,          ...
+                'Filename',     obj.filename_,      ...
+                'Platform',     obj.platform_       ...
+            );
+            
+        end
+                
         function reload(obj)
             
             [configuration,groups] = loadFile(obj);
@@ -501,7 +520,6 @@ classdef Configuration < matlab.mixin.SetGet
             
             if exist(p.Results.Filename, 'file') == 2
                 obj = ed247.Configuration( p.Results.Filename );
-                reload(obj)
             else
                 obj = ed247.Configuration( p.Results.Filename, ...
                     'ED247',        p.Results.ED247,    ...
@@ -512,6 +530,52 @@ classdef Configuration < matlab.mixin.SetGet
             obj.platform_ = platform;
             
             reload(obj)
+            
+        end
+        
+        function obj = forFolder(folder)
+            
+            filename = fullfile(folder,ed247.Configuration.FILE);
+            obj = ed247.Configuration( filename );
+            reload(obj)
+            
+        end
+        
+        function obj = fromStruct(S)
+            
+            obj = ed247.Configuration(S.Filename);
+            
+            if isfield(S,'Name')
+                obj.name_ = S.Name;
+            end
+            
+            if isfield(S,'Date')
+                obj.date_ = S.Date;
+            end
+            
+            if isfield(S,'Version')
+                obj.version_ = S.Version;
+            end
+            
+            if isfield(S,'Developer')
+                obj.developer_ = S.Developer;
+            end
+            
+            if isfield(S,'Maintainer')
+                obj.maintainer_ = S.Maintainer;
+            end
+                                    
+            if isfield(S,'ED247') && isdir(S.ED247) %#ok<ISDIR> Backward compatibility with r2016b
+                obj.ed247_ = S.ED247;
+            end
+            
+            if isfield(S,'LibXML2') && isdir(S.LibXML2) %#ok<ISDIR> Backward compatibility with r2016b
+                obj.libxml2_ = S.LibXML2;
+            end
+                        
+            if isfield(S,'MinGW') && isdir(S.MinGW) %#ok<ISDIR> Backward compatibility with r2016b
+                obj.mingw_ = S.MinGW;
+            end
             
         end
         

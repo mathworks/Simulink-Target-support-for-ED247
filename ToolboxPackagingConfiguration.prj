@@ -26,29 +26,12 @@ Coverage*.xml
 *.tap
 *.log
 archives/</param.exclude.filters>
-    <param.exclude.pcodedmfiles>true</param.exclude.pcodedmfiles>
     <param.examples />
     <param.demosxml />
     <param.apps />
-    <param.registered.apps />
     <param.docs>${PROJECT_ROOT}\doc\info.xml</param.docs>
-    <param.getting.started.guide />
     <param.matlabpath.excludes />
     <param.javaclasspath.excludes />
-    <param.exported.on.package>false</param.exported.on.package>
-    <param.release.start />
-    <param.release.end />
-    <param.release.current.only>false</param.release.current.only>
-    <param.compatiblity.windows>true</param.compatiblity.windows>
-    <param.compatiblity.macos>true</param.compatiblity.macos>
-    <param.compatiblity.linux>true</param.compatiblity.linux>
-    <param.compatiblity.matlabonline>true</param.compatiblity.matlabonline>
-    <param.installation.map />
-    <param.additional.sw.names />
-    <param.additional.sw.licenses />
-    <param.additional.sw.win.url />
-    <param.additional.sw.mac.url />
-    <param.additional.sw.linux.url />
     <unset>
       <param.summary />
       <param.description />
@@ -58,28 +41,11 @@ archives/</param.exclude.filters>
       <param.products.id />
       <param.products.version />
       <param.platforms />
-      <param.exclude.pcodedmfiles />
       <param.examples />
       <param.demosxml />
       <param.apps />
-      <param.registered.apps />
-      <param.getting.started.guide />
       <param.matlabpath.excludes />
       <param.javaclasspath.excludes />
-      <param.exported.on.package />
-      <param.release.start />
-      <param.release.end />
-      <param.release.current.only />
-      <param.compatiblity.windows />
-      <param.compatiblity.macos />
-      <param.compatiblity.linux />
-      <param.compatiblity.matlabonline />
-      <param.installation.map />
-      <param.additional.sw.names />
-      <param.additional.sw.licenses />
-      <param.additional.sw.win.url />
-      <param.additional.sw.mac.url />
-      <param.additional.sw.linux.url />
     </unset>
     <fileset.rootdir>
       <file>C:\Files\SANDBOX\git\ED247\ed247_for_simulink</file>
@@ -101,34 +67,22 @@ archives/</param.exclude.filters>
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>C:\Files\PROGRAMS\Mathworks\MATLAB\R2018b</root>
+      <root>C:\Files\PROGRAMS\Mathworks\MATLAB\R2016b</root>
       <toolboxes>
-        <toolbox name="matlabcoder" />
-        <toolbox name="embeddedcoder" />
-        <toolbox name="gpucoder" />
         <toolbox name="fixedpoint" />
+        <toolbox name="matlabcoder" />
         <toolbox name="matlabhdlcoder" />
-        <toolbox name="neuralnetwork" />
+        <toolbox name="embeddedcoder" />
       </toolboxes>
-      <toolbox>
-        <matlabcoder>
-          <enabled>true</enabled>
-        </matlabcoder>
-      </toolbox>
-      <toolbox>
-        <embeddedcoder>
-          <enabled>true</enabled>
-        </embeddedcoder>
-      </toolbox>
-      <toolbox>
-        <gpucoder>
-          <enabled>true</enabled>
-        </gpucoder>
-      </toolbox>
       <toolbox>
         <fixedpoint>
           <enabled>true</enabled>
         </fixedpoint>
+      </toolbox>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
       </toolbox>
       <toolbox>
         <matlabhdlcoder>
@@ -136,9 +90,9 @@ archives/</param.exclude.filters>
         </matlabhdlcoder>
       </toolbox>
       <toolbox>
-        <neuralnetwork>
+        <embeddedcoder>
           <enabled>true</enabled>
-        </neuralnetwork>
+        </embeddedcoder>
       </toolbox>
     </matlab>
     <platform>
@@ -150,7 +104,7 @@ archives/</param.exclude.filters>
       <vista>false</vista>
       <linux>false</linux>
       <solaris>false</solaris>
-      <osver>10.0</osver>
+      <osver>6.2</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>win64</arch>
