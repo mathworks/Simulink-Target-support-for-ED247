@@ -254,6 +254,12 @@ classdef Pipeline < matlab.mixin.SetGet
                         
         function installToolbox (obj)
             
+            userprofile = getenv('USERPROFILE');
+            if ~isempty(userprofile)
+                s = settings;
+                s.matlab.addons.InstallationFolder.PersonalValue = userprofile;
+            end
+            
             toolboxfile = fullfile(obj.project_.RootFolder, sprintf('ED247_for_Simulink-r%s.mltbx', version('-release')));
             obj.print( '## Install toolbox ("%s")\n', toolboxfile);
             matlab.addons.toolbox.installToolbox(toolboxfile);
