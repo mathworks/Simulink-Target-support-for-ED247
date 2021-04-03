@@ -8,7 +8,6 @@ classdef Pipeline < matlab.mixin.SetGet
         ReportFile
         Results
         RootFolder
-        Stages
         Status
         TAPFile
     end
@@ -19,7 +18,6 @@ classdef Pipeline < matlab.mixin.SetGet
         mode_
         reportfile_
         results_
-        stages_
         status_
         tapfile_
     end
@@ -34,9 +32,7 @@ classdef Pipeline < matlab.mixin.SetGet
     methods
         
         function obj = Pipeline(rootfolder,varargin)
-            
-            evalin('base','clear classes') % Force reloading classes
-            
+                        
             proj = slproject.getCurrentProjects();
             if isempty(proj)
                 obj.project_ = simulinkproject(rootfolder);
@@ -51,9 +47,7 @@ classdef Pipeline < matlab.mixin.SetGet
             obj.coveragefile_   = fullfile(obj.project_.RootFolder,sprintf('CoverageResults-r%s.xml',version('-release')));
             obj.reportfile_     = fullfile(obj.project_.RootFolder,sprintf('TestReport-r%s.pdf',version('-release')));
             obj.tapfile_        = fullfile(obj.project_.RootFolder,sprintf('TAPResults-r%s.tap',version('-release')));
-            
-            obj.stages_ = {'package';'install';'test';'cleanup'};
-            
+                        
             if ~isempty(varargin)
                 set(obj,varargin{:})
             end
@@ -88,11 +82,7 @@ classdef Pipeline < matlab.mixin.SetGet
         function rootfolder = get.RootFolder(obj)
             rootfolder = obj.project_.RootFolder;
         end
-        
-        function stages = get.Stages(obj)
-            stages = obj.stages_;
-        end
-        
+                
         function status = get.Status(obj)
             status = obj.status_;
         end
@@ -117,11 +107,7 @@ classdef Pipeline < matlab.mixin.SetGet
         function set.ReportFile(obj,reportfile)
             obj.reportfile_ = reportfile;
         end
-        
-        function set.Stages(obj,stages)
-            obj.stages_ = stages;
-        end
-        
+                
         function set.TAPFile(obj,tapfile)
             obj.tapfile_ = tapfile;
         end
@@ -138,33 +124,16 @@ classdef Pipeline < matlab.mixin.SetGet
         function varargout = run(obj)
             
             obj.status_ = 0;
+            obj.results_ = matlab.unittest.TestResult.empty;
             
             try
                 
-                if ismember('cleanup',obj.stages_)
-                    c = onCleanup(@() cleanup(obj));
-                end
+                installDependencies(obj)                
                 
-                if ismember('install',obj.stages_)
-                    installDependencies(obj)
-                end
+                obj.results_ = test(obj);
                 
-                if ismember('package',obj.stages_)
-                    package(obj)
-                end
-                
-                if ismember('install',obj.stages_)
-                    installToolbox(obj)
-                end
-                
-                if strcmp(obj.mode_,'prod') && ismember('test',obj.stages_)
-                    close(obj.project_)
-                    addpath(fullfile(obj.project_.RootFolder,'tests'))                    
-                end
-                
-                if ismember('test',obj.stages_)
-                    [obj.status_,obj.results_] = test(obj);
-                end
+                obj.status_ = nnz([obj.results_.Failed]);
+                obj.show(obj.results_)
                 
             catch me
                 obj.show(me.getReport())
@@ -213,65 +182,14 @@ classdef Pipeline < matlab.mixin.SetGet
             end
             
         end
-        
-        function package(obj)
-            
-            copyfile(obj.configuration_.Filename, [obj.configuration_.Filename,'.bckp'])
-            resetMetadata = onCleanup(@() movefile([obj.configuration_.Filename,'.bckp'],obj.configuration_.Filename));
-            
-            %
-            % Create default metadata file for packaging (remove
-            % user-specific information: MinGW location, ED247 and LibXML2
-            % folders)
-            %
-            obj.print('## Reset .metadata file ("%s")\n', obj.configuration_.Filename);
-            configuration = ed247.Configuration.fromStruct(obj.configuration_);
-            reset(configuration)
-            
-            %
-            % Compile MEX
-            %
-            obj.print('## Compile ED247 S-Function\n')
-            ed247.compile()
-            
-            %
-            % Package toolbox
-            %
-            toolboxproject = fullfile(obj.project_.RootFolder,'ToolboxPackagingConfiguration.prj');
-            toolboxfile = fullfile(obj.project_.RootFolder, sprintf('ED247_for_Simulink-r%s.mltbx', version('-release')));
-            
-            %
-            % Patch
-            %   Toolbox project was created in 2016b and the source path is
-            %   hard-code in .prj which make it failed in another location
-            %
-            txt = fileread(toolboxproject);
-            txt = regexprep(txt,'C:.*?\ed247_for_simulink',regexptranslate('escape',pwd));
-            fid = fopen(toolboxproject,'wt');fprintf(fid,'%s',txt);fclose(fid);
-            pause(1) % Pause to ensure that MATLAB path is updated
-            obj.print( '## Package toolbox into "%s"\n', toolboxfile);
-            matlab.addons.toolbox.packageToolbox(toolboxproject, toolboxfile)
-            
-        end
-        
-        function installToolbox (obj)
-            
-            userprofile = getenv('USERPROFILE');
-            if ~isempty(userprofile)
-                s = settings;
-                s.matlab.addons.InstallationFolder.PersonalValue = userprofile;
-            end
-            
-            toolboxfile = fullfile(obj.project_.RootFolder, sprintf('ED247_for_Simulink-r%s.mltbx', version('-release')));
-            obj.print( '## Install toolbox ("%s")\n', toolboxfile);
-            matlab.addons.toolbox.installToolbox(toolboxfile);
-            
-        end
-        
-        function [status,results] = test(obj,varargin)
+                
+        function results = test(obj,varargin)
             
             obj.print( '## Create test suite\n');
-            ts = matlab.unittest.TestSuite.fromPackage('ed247', 'IncludeSubpackages', true);
+            ts = [ ...
+                matlab.unittest.TestSuite.fromPackage('ed247', 'IncludeSubpackages', true), ...
+                matlab.unittest.TestSuite.fromPackage('toolbox', 'IncludeSubpackages', true), ...
+                ];
             
             obj.print( '## Create test runner\n');
             tr = matlab.unittest.TestRunner.withTextOutput();
@@ -317,42 +235,9 @@ classdef Pipeline < matlab.mixin.SetGet
             %
             results = tr.run(ts);
             obj.show(results)
-            status = nnz([results.Failed]);
             
         end
-        
-        function cleanup(obj)
-            
-            libxml2folder = obj.configuration_.LibXML2;
-            if ~isempty(libxml2folder) && ~isdir(libxml2folder) %#ok<ISDIR> Backward compatibility
-                obj.print( '## Delete folder "%s"\n', libxml2folder);
-                rmdir(libxml2folder,'s')
-            end
-            
-            ed247folder = obj.configuration_.ED247;
-            if ~isempty(ed247folder) && ~isdir(ed247folder) %#ok<ISDIR> Backward compatibility
-                obj.print( '## Delete folder "%s"\n', ed247folder);
-                rmdir(ed247folder,'s')
-            end
-            
-            toolboxes = matlab.addons.toolbox.installedToolboxes();
-            if ~isempty(toolboxes) && any(strcmp({toolboxes.Name},'ED247_for_Simulink'))
-                tlbx = toolboxes(strcmp({toolboxes.Name},'ED247_for_Simulink'));
-                obj.print( '## Uninstall toolbox ("%s")\n', tlbx.Name);
-                matlab.addons.toolbox.uninstallToolbox(tlbx);
-            end
-            
-			 if ~isLoaded(obj.project_)
-				 obj.print('## Re-Open project');
-				 testfolder = fullfile(obj.project_.RootFolder,'tests');
-				 if contains(path,testfolder)
-					 rmpath(testfolder)
-				 end
-				 simulinkproject(obj.project_.RootFolder);
-			 end
-            
-        end
-        
+                
     end
     
     %% PRIVATE METHODS
