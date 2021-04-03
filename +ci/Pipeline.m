@@ -143,12 +143,16 @@ classdef Pipeline < matlab.mixin.SetGet
                     c = onCleanup(@() cleanup(obj));
                 end
                 
+                if ismember('install',obj.stages_)
+                    installDependencies(obj)
+                end
+                
                 if ismember('package',obj.stages_)
                     package(obj)
                 end
                                                 
                 if ismember('install',obj.stages_)
-                    install(obj)
+                    installToolbox(obj)
                 end
                 
                 if strcmp(obj.mode_,'prod') && ismember('test',obj.stages_)
@@ -175,6 +179,38 @@ classdef Pipeline < matlab.mixin.SetGet
         
     %% HIDDEN METHODS (Advanced usage)
     methods (Hidden)
+        
+        function installDependencies(obj)
+            
+            libxml2folder = obj.configuration_.LibXML2;
+            if ~isempty(libxml2folder)
+                
+                if ~isdir(libxml2folder) %#ok<ISDIR> Backward compatibility
+                    obj.print( '## Create folder "%s"\n', libxml2folder);
+                    mkdir(libxml2folder)
+                end
+                
+                lixml2archive = fullfile(obj.project_.RootFolder,'tests','_files','libxml2.zip');
+                obj.print( '## Extract LibXML2 in folder "%s"\n', lixml2archive);
+                unzip(lixml2archive,libxml2folder)
+                
+            end
+            
+            ed247folder = obj.configuration_.ED247;
+            if ~isempty(ed247folder)
+                
+                if ~isdir(ed247folder) %#ok<ISDIR> Backward compatibility
+                    obj.print( '## Create folder "%s"\n', ed247folder);
+                    mkdir(ed247folder)
+                end
+                
+                ed247archive = fullfile(obj.project_.RootFolder,'tests','_files','ed247.zip');
+                obj.print( '## Extract ED247 in folder "%s"\n', ed247folder);
+                unzip(ed247archive,ed247folder)
+                
+            end
+            
+        end
         
         function package(obj)
             
@@ -215,36 +251,8 @@ classdef Pipeline < matlab.mixin.SetGet
             matlab.addons.toolbox.packageToolbox(toolboxproject, toolboxfile)
             
         end
-        
-        function install(obj)
-            
-            libxml2folder = obj.configuration_.LibXML2;
-            if ~isempty(libxml2folder)
-                
-                if ~isdir(libxml2folder) %#ok<ISDIR> Backward compatibility
-                    obj.print( '## Create folder "%s"\n', libxml2folder);
-                    mkdir(libxml2folder)
-                end
-                
-                lixml2archive = fullfile(obj.project_.RootFolder,'tests','_files','libxml2.zip');
-                obj.print( '## Extract LibXML2 in folder "%s"\n', lixml2archive);
-                unzip(lixml2archive,libxml2folder)
-                
-            end
-            
-            ed247folder = obj.configuration_.ED247;
-            if ~isempty(ed247folder)
-                
-                if ~isdir(ed247folder) %#ok<ISDIR> Backward compatibility
-                    obj.print( '## Create folder "%s"\n', ed247folder);
-                    mkdir(ed247folder)
-                end
-                
-                ed247archive = fullfile(obj.project_.RootFolder,'tests','_files','ed247.zip');
-                obj.print( '## Extract ED247 in folder "%s"\n', ed247folder);
-                unzip(ed247archive,ed247folder)
-                
-            end
+                        
+        function installToolbox (obj)
             
             toolboxfile = fullfile(obj.project_.RootFolder, sprintf('ED247_for_Simulink-r%s.mltbx', version('-release')));
             obj.print( '## Install toolbox ("%s")\n', toolboxfile);
