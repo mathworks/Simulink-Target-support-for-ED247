@@ -7,12 +7,9 @@ classdef (SharedTestFixtures={ ...
     %% CLASS SETUP
     methods (TestClassSetup)
         
-        function compileSFunction(testCase) %#ok<MANU>
-            
-            if exist('ed247_sfun','file') ~= 3
-                ed247.compile()
-            end
-            
+        function verifySFunction(testCase)            
+            testCase.assertEqual(exist('ed247_sfun','file'),3, ...
+                'MEX file for S-Function "ed247_sfun" does not exist')            
         end
         
         function startPool(testCase)
