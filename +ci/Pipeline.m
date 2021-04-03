@@ -35,6 +35,8 @@ classdef Pipeline < matlab.mixin.SetGet
         
         function obj = Pipeline(rootfolder,varargin)
             
+            evalin('base','clear classes') % Force reloading classes
+            
             proj = slproject.getCurrentProjects();
             if isempty(proj)
                 obj.project_ = simulinkproject(rootfolder);
@@ -150,7 +152,7 @@ classdef Pipeline < matlab.mixin.SetGet
                 if ismember('package',obj.stages_)
                     package(obj)
                 end
-                                                
+                
                 if ismember('install',obj.stages_)
                     installToolbox(obj)
                 end
@@ -163,7 +165,7 @@ classdef Pipeline < matlab.mixin.SetGet
                 if ismember('test',obj.stages_)
                     [obj.status_,obj.results_] = test(obj);
                 end
-                                                
+                
             catch me
                 obj.show(me.getReport())
                 obj.status_ = -1;
@@ -176,7 +178,7 @@ classdef Pipeline < matlab.mixin.SetGet
         end
         
     end
-        
+    
     %% HIDDEN METHODS (Advanced usage)
     methods (Hidden)
         
@@ -217,7 +219,7 @@ classdef Pipeline < matlab.mixin.SetGet
             copyfile(obj.configuration_.Filename, [obj.configuration_.Filename,'.bckp'])
             resetMetadata = onCleanup(@() movefile([obj.configuration_.Filename,'.bckp'],obj.configuration_.Filename));
             
-            % 
+            %
             % Create default metadata file for packaging (remove
             % user-specific information: MinGW location, ED247 and LibXML2
             % folders)
@@ -231,7 +233,7 @@ classdef Pipeline < matlab.mixin.SetGet
             %
             obj.print('## Compile ED247 S-Function\n')
             ed247.compile()
-                                    
+            
             %
             % Package toolbox
             %
@@ -246,12 +248,12 @@ classdef Pipeline < matlab.mixin.SetGet
             txt = fileread(toolboxproject);
             txt = regexprep(txt,'C:.*?\ed247_for_simulink',regexptranslate('escape',pwd));
             fid = fopen(toolboxproject,'wt');fprintf(fid,'%s',txt);fclose(fid);
-            
+            pause(1) % Pause to ensure that MATLAB path is updated
             obj.print( '## Package toolbox into "%s"\n', toolboxfile);
             matlab.addons.toolbox.packageToolbox(toolboxproject, toolboxfile)
             
         end
-                        
+        
         function installToolbox (obj)
             
             userprofile = getenv('USERPROFILE');
@@ -303,7 +305,7 @@ classdef Pipeline < matlab.mixin.SetGet
             %
             % Report
             %
-            if ismember(obj.mode_,{'ci','prod'})
+            if ismember(obj.mode_,{'ci','prod'}) && ~verLessThan('MATLAB','9.2')
                 pdfFile = obj.reportfile_;
                 plugin = matlab.unittest.plugins.TestReportPlugin.producingPDF(pdfFile);
                 obj.print( '## Enable Report plugin\n');
@@ -340,14 +342,14 @@ classdef Pipeline < matlab.mixin.SetGet
                 matlab.addons.toolbox.uninstallToolbox(tlbx);
             end
             
-            if ~isLoaded(obj.project_)
-                obj.print('## Re-Open project');
-                testfolder = fullfile(obj.project_.RootFolder,'tests');
-                if contains(path,testfolder)
-                    rmpath(testfolder)
-                end
-                simulinkproject(obj.project_.RootFolder);
-            end
+			 if ~isLoaded(obj.project_)
+				 obj.print('## Re-Open project');
+				 testfolder = fullfile(obj.project_.RootFolder,'tests');
+				 if contains(path,testfolder)
+					 rmpath(testfolder)
+				 end
+				 simulinkproject(obj.project_.RootFolder);
+			 end
             
         end
         

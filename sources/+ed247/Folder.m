@@ -1,4 +1,4 @@
-classdef Folder
+classdef (ConstructOnLoad) Folder
     % FOLDER
     %
     % Copyright 2020 The MathWorks, Inc.
@@ -13,15 +13,10 @@ classdef Folder
         WORK            ({'work'})
         
     end
-    
-    %% DEPENDENT PROPERTIES
-    properties (Dependent)
-        Path
-    end
-    
+        
     %% IMMUTABLE PROPERTIES
-    properties (SetAccess = immutable, GetAccess = private)
-        path_
+    properties (SetAccess = immutable, GetAccess = public)
+        Path
     end
     
     %% CONSTRUCTOR
@@ -31,20 +26,10 @@ classdef Folder
             
             %rootdir = fileparts(fileparts(fileparts(fileparts(mfilename('fullpath')))));
             rootdir = regexprep(which('lib_ed247'),'libraries.*','');
-            obj.path_ = fullfile(rootdir,subfolders{:});
+            obj.Path = fullfile(rootdir,subfolders{:});
             
         end
         
     end
-    
-    %% ACCESSORS
-    methods
         
-        function path = get.Path(obj)
-            path = obj.path_;
-        end
-        
-    end
-    
-    
 end
