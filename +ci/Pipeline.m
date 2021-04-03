@@ -181,9 +181,20 @@ classdef Pipeline < matlab.mixin.SetGet
             copyfile(obj.configuration_.Filename, [obj.configuration_.Filename,'.bckp'])
             resetMetadata = onCleanup(@() movefile([obj.configuration_.Filename,'.bckp'],obj.configuration_.Filename));
             
-            obj.print( '## Reset .metadata file ("%s")\n', obj.configuration_.Filename);
+            % 
+            % Create default metadata file for packaging (remove
+            % user-specific information: MinGW location, ED247 and LibXML2
+            % folders)
+            %
+            obj.print('## Reset .metadata file ("%s")\n', obj.configuration_.Filename);
             configuration = ed247.Configuration.fromStruct(obj.configuration_);
             reset(configuration)
+            
+            %
+            % Compile MEX
+            %
+            obj.print('## Compile ED247 S-Function\n')
+            ed247.compile()
                                     
             %
             % Package toolbox
