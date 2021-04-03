@@ -4,14 +4,17 @@ classdef ToolboxFixture < matlab.unittest.fixtures.Fixture
     properties (SetAccess=immutable,GetAccess=private)
         configuration_
         project_
+        testfolder_
     end
     
     %% CONSTRUCTOR
     methods
         
         function fixture = ToolboxFixture()
-            fixture.configuration_ = ed247.Configuration.default();
+            config = ed247.Configuration.default();
+            fixture.configuration_ = config.toStruct();
             fixture.project_ = simulinkproject();
+            fixture.testfolder_ = fullfile(fixture.project_.RootFolder,'tests');
         end
         
     end
@@ -32,10 +35,13 @@ classdef ToolboxFixture < matlab.unittest.fixtures.Fixture
             % user-specific information: MinGW location, ED247 and LibXML2
             % folders)
             %
-            copyfile(fixture.configuration_.Filename, [fixture.configuration_.Filename,'.bckp'])
-            resetMetadata = onCleanup(@() movefile([fixture.configuration_.Filename,'.bckp'],fixture.configuration_.Filename));
-            fixture.print('## Reset .metadata file ("%s")\n', fixture.configuration_.Filename);
-            reset(fixture.configuration_)
+            metadatafilename = fixture.configuration_.Filename;
+            copyfile(metadatafilename, [metadatafilename,'.bckp'])
+            resetMetadata = onCleanup(@() movefile([metadatafilename,'.bckp'],metadatafilename));
+            fixture.print('## Reset .metadata file ("%s")\n', metadatafilename);
+            config = ed247.Configuration.fromStruct(fixture.configuration_);
+            reset(config)
+            clear('config')
                                     
             %
             % Package toolbox
@@ -71,6 +77,12 @@ classdef ToolboxFixture < matlab.unittest.fixtures.Fixture
             fixture.print( '## Install toolbox ("%s")\n', toolboxfile);
             matlab.addons.toolbox.installToolbox(toolboxfile);
             
+            if isLoaded(fixture.project_)
+                fixture.print('## Close project');
+                simulinkproject(fixture.project_.RootFolder);
+                addpath(fixture.testfolder_)
+            end
+            
         end
         
         function teardown(fixture)
@@ -95,10 +107,9 @@ classdef ToolboxFixture < matlab.unittest.fixtures.Fixture
             end
             
             if ~isLoaded(fixture.project_)
-                fixture.print('## Re-Open project');
-                testfolder = fullfile(fixture.project_.RootFolder,'tests');
-                if contains(path,testfolder)
-                    rmpath(testfolder)
+                fixture.print('## Re-Open project');                
+                if contains(path,fixture.testfolder_)
+                    rmpath(fixture.testfolder_)
                 end
                 simulinkproject(fixture.project_.RootFolder);
             end
