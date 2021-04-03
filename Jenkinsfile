@@ -76,7 +76,7 @@ pipeline {
 
 	post {
 		always {
-			archiveArtifacts allowEmptyArchive: true, artifacts: '*.mltlbx'
+			archiveArtifacts allowEmptyArchive: true, artifacts: '*.mltbx'
 			emailext attachLog: true, attachmentsPattern: '*.pdf',
 				body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}",
 				recipientProviders: [developers(), requestor()],
