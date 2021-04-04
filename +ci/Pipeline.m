@@ -130,6 +130,7 @@ classdef Pipeline < matlab.mixin.SetGet
                 
                 installDependencies(obj)   
 				
+				compile(obj)
 				package(obj)				                
                 obj.results_ = test(obj);
 				restore(obj)
@@ -185,7 +186,7 @@ classdef Pipeline < matlab.mixin.SetGet
             
         end
 		
-		function package(obj)
+		function compile(obj)
 		
 			%
             % Compile MEX
@@ -193,6 +194,10 @@ classdef Pipeline < matlab.mixin.SetGet
             obj.print('## Compile ED247 S-Function\n')
             ed247.compile()
             
+		end
+		
+		function package(obj)
+		
             %
             % Create default metadata file for packaging (remove
             % user-specific information: MinGW location, ED247 and LibXML2
