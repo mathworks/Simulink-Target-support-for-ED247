@@ -23,44 +23,7 @@ classdef ToolboxFixture < matlab.unittest.fixtures.Fixture
     methods
         
         function setup(fixture)
-            
-            %
-            % Compile MEX
-            %
-            fixture.print('## Compile ED247 S-Function\n')
-            ed247.compile()
-            
-            %
-            % Create default metadata file for packaging (remove
-            % user-specific information: MinGW location, ED247 and LibXML2
-            % folders)
-            %
-            metadatafilename = fixture.configuration_.Filename;
-            copyfile(metadatafilename, [metadatafilename,'.bckp'])
-            resetMetadata = onCleanup(@() movefile([metadatafilename,'.bckp'],metadatafilename));
-            fixture.print('## Reset .metadata file ("%s")\n', metadatafilename);
-            config = ed247.Configuration.fromStruct(fixture.configuration_);
-            reset(config)
-            clear('config')
                                     
-            %
-            % Package toolbox
-            %
-            toolboxproject = fullfile(fixture.project_.RootFolder,'ToolboxPackagingConfiguration.prj');
-            toolboxfile = fullfile(fixture.project_.RootFolder, sprintf('ED247_for_Simulink-r%s.mltbx', version('-release')));
-            
-            %
-            % Patch
-            %   Toolbox project was created in 2016b and the source path is
-            %   hard-code in .prj which make it failed in another location
-            %
-            txt = fileread(toolboxproject);
-            txt = regexprep(txt,'C:.*?\ed247_for_simulink',regexptranslate('escape',pwd));
-            fid = fopen(toolboxproject,'wt');fprintf(fid,'%s',txt);fclose(fid);
-            pause(1) % Pause to ensure that MATLAB path is updated
-            fixture.print( '## Package toolbox into "%s"\n', toolboxfile);
-            matlab.addons.toolbox.packageToolbox(toolboxproject, toolboxfile)
-            
             %
             % Setup Add-Ons installation folder
             %

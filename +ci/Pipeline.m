@@ -128,9 +128,11 @@ classdef Pipeline < matlab.mixin.SetGet
             
             try
                 
-                installDependencies(obj)                
-                
+                installDependencies(obj)   
+				
+				package(obj)				                
                 obj.results_ = test(obj);
+				restore(obj)
                 
                 obj.status_ = nnz([obj.results_.Failed]);
                 obj.show(obj.results_)
@@ -182,6 +184,47 @@ classdef Pipeline < matlab.mixin.SetGet
             end
             
         end
+		
+		function package(obj)
+		
+			%
+            % Compile MEX
+            %
+            obj.print('## Compile ED247 S-Function\n')
+            ed247.compile()
+            
+            %
+            % Create default metadata file for packaging (remove
+            % user-specific information: MinGW location, ED247 and LibXML2
+            % folders)
+            %
+            metadatafilename = obj.configuration_.Filename;
+            copyfile(metadatafilename, [metadatafilename,'.bckp'])
+			resetMetadatafile = onCleanup(@() movefile([metadatafilename,'.bckp'],metadatafilename));
+            obj.print('## Reset .metadata file ("%s")\n', metadatafilename);
+            config = ed247.Configuration.fromStruct(obj.configuration_);
+            reset(config)
+            clear('config')
+			
+			%
+            % Package toolbox
+            %
+            toolboxproject = fullfile(obj.project_.RootFolder,'ToolboxPackagingConfiguration.prj');
+            toolboxfile = fullfile(obj.project_.RootFolder, sprintf('ED247_for_Simulink-r%s.mltbx', version('-release')));
+            
+            %
+            % Patch
+            %   Toolbox project was created in 2016b and the source path is
+            %   hard-code in .prj which make it failed in another location
+            %
+            txt = fileread(toolboxproject);
+            txt = regexprep(txt,'C:.*?\ed247_for_simulink',regexptranslate('escape',pwd));
+            fid = fopen(toolboxproject,'wt');fprintf(fid,'%s',txt);fclose(fid);
+            pause(1) % Pause to ensure that MATLAB path is updated
+            obj.print( '## Package toolbox into "%s"\n', toolboxfile);
+            matlab.addons.toolbox.packageToolbox(toolboxproject, toolboxfile)
+			
+		end
                 
         function results = test(obj,varargin)
             
@@ -237,7 +280,7 @@ classdef Pipeline < matlab.mixin.SetGet
             obj.show(results)
             
         end
-                
+		                
     end
     
     %% PRIVATE METHODS
