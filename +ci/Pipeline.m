@@ -133,7 +133,6 @@ classdef Pipeline < matlab.mixin.SetGet
 				compile(obj)
 				package(obj)				                
                 obj.results_ = test(obj);
-				restore(obj)
                 
                 obj.status_ = nnz([obj.results_.Failed]);
                 obj.show(obj.results_)
