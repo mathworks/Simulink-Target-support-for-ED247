@@ -1,0 +1,13 @@
+--- Common ---
+Name=ED247 for Simulink
+Date=2020/12/18
+Version=1.2.0
+Developer=MathWorks Consulting Services
+Maintainer=IYYSW
+--- Windows ---
+ED247=C:\Temp
+LibXML2=C:\Temp
+MinGW=C:\Temp
+--- Linux ---
+ED247=/home/user/ed247
+LibXML2=/usr/local/lib/libxml2

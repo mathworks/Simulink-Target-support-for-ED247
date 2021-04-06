@@ -1,0 +1,114 @@
+<deployment-project plugin="plugin.toolbox" plugin-version="1.0">
+  <configuration file="C:\Files\SANDBOX\git\ED247\ed247_for_simulink\ToolboxPackagingConfiguration.prj" location="C:\Files\SANDBOX\git\ED247\ed247_for_simulink" name="ToolboxPackagingConfiguration" target="target.toolbox" target-name="Package Toolbox">
+    <param.appname>ED247_for_Simulink</param.appname>
+    <param.authnamewatermark>MathWorks Consulting Services</param.authnamewatermark>
+    <param.email>odufour@mathworks.com</param.email>
+    <param.company>The MathWorks SAS</param.company>
+    <param.summary />
+    <param.description />
+    <param.screenshot />
+    <param.version>2.0.0</param.version>
+    <param.output>${PROJECT_ROOT}\ED247_for_Simulink.mltbx</param.output>
+    <param.products.name />
+    <param.products.id />
+    <param.products.version />
+    <param.platforms />
+    <param.guid>4116ee43-4665-4578-bb0f-420175ae02b3</param.guid>
+    <param.exclude.filters>+ci/
+.SimulinkProject
+.git/
+.git*
+tests/
+Jenkinsfile
+*.bckp
+*.pdf
+Coverage*.xml
+*.tap
+*.log
+archives/</param.exclude.filters>
+    <param.examples />
+    <param.demosxml />
+    <param.apps />
+    <param.docs>${PROJECT_ROOT}\doc\info.xml</param.docs>
+    <param.matlabpath.excludes />
+    <param.javaclasspath.excludes />
+    <unset>
+      <param.summary />
+      <param.description />
+      <param.screenshot />
+      <param.output />
+      <param.products.name />
+      <param.products.id />
+      <param.products.version />
+      <param.platforms />
+      <param.examples />
+      <param.demosxml />
+      <param.apps />
+      <param.matlabpath.excludes />
+      <param.javaclasspath.excludes />
+    </unset>
+    <fileset.rootdir>
+      <file>C:\Files\SANDBOX\git\ED247\ed247_for_simulink</file>
+    </fileset.rootdir>
+    <fileset.rootfiles>
+      <file>${PROJECT_ROOT}\.metadata</file>
+      <file>${PROJECT_ROOT}\c_sources</file>
+      <file>${PROJECT_ROOT}\CHANGELOG.md</file>
+      <file>${PROJECT_ROOT}\doc</file>
+      <file>${PROJECT_ROOT}\libraries</file>
+      <file>${PROJECT_ROOT}\README.md</file>
+      <file>${PROJECT_ROOT}\sources</file>
+    </fileset.rootfiles>
+    <fileset.depfun.included />
+    <fileset.depfun.excluded />
+    <fileset.package />
+    <build-deliverables>
+      <file location="C:\Files\SANDBOX\git\ED247\ed247_for_simulink" name="ED247_for_Simulink.mltbx" optional="false">C:\Files\SANDBOX\git\ED247\ed247_for_simulink\ED247_for_Simulink.mltbx</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Files\PROGRAMS\Mathworks\MATLAB\R2016b</root>
+      <toolboxes>
+        <toolbox name="fixedpoint" />
+        <toolbox name="matlabcoder" />
+        <toolbox name="matlabhdlcoder" />
+        <toolbox name="embeddedcoder" />
+      </toolboxes>
+      <toolbox>
+        <fixedpoint>
+          <enabled>true</enabled>
+        </fixedpoint>
+      </toolbox>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
+      </toolbox>
+      <toolbox>
+        <matlabhdlcoder>
+          <enabled>true</enabled>
+        </matlabhdlcoder>
+      </toolbox>
+      <toolbox>
+        <embeddedcoder>
+          <enabled>true</enabled>
+        </embeddedcoder>
+      </toolbox>
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>6.2</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>

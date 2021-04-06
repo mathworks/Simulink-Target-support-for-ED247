@@ -1,0 +1,10 @@
+--- Common ---
+Name=ED247 for Simulink
+Date=2020/12/18
+Version=1.2.0
+Developer=MathWorks Consulting Services
+Maintainer=IYYSW
+--- Windows ---
+ED247=C:\Files\SANDBOX\git\ED247\ED247_LIBRARY\_install
+LibXML2=C:\Files\SANDBOX\git\ED247\libxml2
+MinGW=C:\Files\PROGRAMS\ThirdParty\MinGW64\4.9.2-airbus

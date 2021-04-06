@@ -1,0 +1,3 @@
+In iD double 5
+In iU8 uint8 3
+Out iU16 uint16 2

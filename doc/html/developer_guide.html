@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="generator" content="MATLAB R2017b"><meta http-equiv="X-UA-Compatible" content="IE=edge,IE=9,chrome=1"><title>Developer guide</title><style type="text/css">
+* {margin: 0; padding: 0;}
+body {text-align: start; line-height: 17.2339992523193px; min-height: 0px; white-space: normal; color: rgb(0, 0, 0); font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; font-style: normal; font-size: 13.9999990463257px; font-weight: normal; text-decoration: none; white-space: normal; }
+h1, h2 {font-weight: normal;}
+.content { padding: 30px; }
+
+.S0 { margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+.S1 { text-align: left; line-height: 26.3999977111816px; min-height: 24px; white-space: pre-wrap; color: rgb(213, 80, 0); font-family: Helvetica, Arial, sans-serif; font-size: 22px; white-space: pre-wrap; margin-left: 4px; margin-top: 3px; margin-bottom: 15px; margin-right: 10px;  }
+.S2 { min-height: 0px; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+.S3 { text-align: left; line-height: 20.576000213623px; min-height: 20px; white-space: pre-wrap; color: rgb(60, 60, 60); font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; white-space: pre-wrap; margin-left: 4px; margin-top: 3px; margin-bottom: 9px; margin-right: 10px;  }
+.S4 { text-align: left; line-height: 21px; min-height: 17px; white-space: pre-wrap; font-family: Helvetica, Arial, sans-serif; white-space: pre-wrap; margin-left: 4px; margin-top: 2px; margin-bottom: 9px; margin-right: 10px;  }
+.S5 { min-height: 0px; color: rgb(0, 95, 206); margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+.S6 { font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+.S7 { margin-left: 3px; margin-top: 10px; margin-bottom: 10px; margin-right: 3px;  }
+.S8 { min-height: 18px; white-space: nowrap; white-space: nowrap; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+.S9 { min-height: 0px; white-space: pre; white-space: pre; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 45px;  }
+.S10 { text-align: left; line-height: 21px; min-height: 17px; white-space: pre-wrap; font-family: Helvetica, Arial, sans-serif; white-space: pre-wrap; margin-left: 4px; margin-top: 10px; margin-bottom: 9px; margin-right: 10px;  }
+.S11 { text-decoration: underline; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+.S12 { font-family: Helvetica, Arial, sans-serif; margin-left: 0px; margin-top: 10px; margin-bottom: 20px; margin-right: 0px;  }
+.S13 { text-align: left; line-height: 20.9999980926514px; white-space: pre-wrap; white-space: pre-wrap; margin-left: 55.9999961853027px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+.S14 { font-weight: bold; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+.S15 { margin-left: 3px; margin-top: 10px; margin-bottom: 4px; margin-right: 3px;  }
+.S16 { color: rgb(160, 32, 240); margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+
+.CodeBlock {margin: 10px 0 10px 0; background-color: #F7F7F7;}
+.CodeBlock+.paragraphNode {margin-top: 10px;}
+.lineNode {padding-left: 10px; border-left: 1px solid #E9E9E9; border-right: 1px solid #E9E9E9;}
+.inlineWrapper:first-child .lineNode,.inlineWrapper.outputs+.inlineWrapper .lineNode {padding-top: 5px; border-top: 1px solid #E9E9E9;}
+.inlineWrapper:last-child .lineNode,.inlineWrapper.outputs .lineNode {padding-bottom: 5px; border-bottom: 1px solid #E9E9E9;}
+.lineNode .textBox {white-space: pre;}
+</style></head><body><div class = "content"><div class = 'SectionBlock containment active'><h1 class = "S1"><span class = "S2"><span class="S0">Developer guide</span></span></h1></div><div class = "S0"></div><div class = 'SectionBlock containment'><h2 class = "S3"><span class = "S2"><span class="S0">Prequisites</span></span></h2><div class = "S4"><span class = "S2"><span class="S0">Same as </span></span><a href = "matlab:web('installation_guide.html#prerequisites')"><span class = "S0"><span class="S0">Installation guide - Prerequisites</span></span></a><span class = "S2"><span class="S0">.</span></span></div><div class = "S4"><span class = "S2"><span class="S0">Instead of installing the toolbox, open the Simulink project (double-click on </span></span><span class = "S2"><span class="S6">ED247_for_simulink.prj</span></span><span class = "S2"><span class="S0">)</span></span></div></div><div class = "S0"></div><div class = 'SectionBlock containment'><h2 class = "S3"><span class = "S2"><span class="S0">Compile C-MEX S-Functions</span></span></h2><div class = 'CodeBlock contiguous'><div class = 'inlineWrapper'><div class = "S8 lineNode"><span class = "S9"><span class="S0">ed247.compile()</span></span></div></div></div><div class = "S10"><span class = "S2"><span class="S11">Options</span></span><span class = "S2"><span class="S0">:</span></span></div><ul class = "S12"><li class = "S13"><span class = "S0"><span class="S0">Verbose (</span></span><span class = "S0"><span class="S6">false</span></span><span class = "S0"><span class="S0"> | </span></span><span class = "S0"><span class="S6">true</span></span><span class = "S0"><span class="S0">) : Display messages in Diagnostic viewer at block execution</span></span></li></ul></div><div class = "S0"></div><div class = 'SectionBlock containment'><h2 class = "S3"><span class = "S2"><span class="S0">Change configuration</span></span></h2><div class = "S4"><span class = "S2"><span class="S14">Configuration</span></span></div><div class = "S4"><span class = "S2"><span class="S0">Project dependencies (compiler, libraries) are configured with a variable </span></span><span class = "S2"><span class="S6">ed247.Configuration</span></span><span class = "S2"><span class="S0">.</span></span></div><div class = "S4"><span class = "S2"><span class="S0">Create the configuration variable</span></span></div><div class = 'CodeBlock contiguous'><div class = 'inlineWrapper'><div class = "S8 lineNode"><span class = "S9"><span class="S0">config = ed247.Configuration.default();</span></span></div></div></div></div><div class = "S0"></div><div class = 'SectionBlock containment'><h2 class = "S3"><span class = "S2"><span class="S0">Compiler</span></span></h2><div class = "S4"><span class = "S2"><span class="S0">Set the MinGW path (root folder)</span></span></div><div class = 'CodeBlock contiguous'><div class = 'inlineWrapper'><div class = "S8 lineNode"><span class = "S9"><span class="S0">config.MinGW = </span><span class="S16">'&lt;mingw_installation_folder&gt;'</span><span class="S0">;</span></span></div></div></div><div class = "S10"><span class = "S2"><span class="S11">Notes</span></span><span class = "S2"><span class="S0"> : MinGW folder should contain </span></span><span class = "S2"><span class="S6">bin</span></span><span class = "S2"><span class="S0"> subfolder</span></span></div></div><div class = "S0"></div><div class = 'SectionBlock containment'><h2 class = "S3"><span class = "S2"><span class="S0">Dependencies</span></span></h2><div class = "S4"><span class = "S2"><span class="S0">Adapter, ED247, LibXML2 are set automatically with relative path to current project. </span></span></div><div class = "S4"><span class = "S2"><span class="S0">Check that the folders are valid, change them if they are not correct</span></span></div><div class = "S4"><span class = "S2"><span class="S14">Adapter</span></span></div><div class = 'CodeBlock contiguous'><div class = 'inlineWrapper'><div class = "S8 lineNode"><span class = "S9"><span class="S0">config.Adapter = fullfile(ed247.Folder.DEPENDENCIES.Path,</span><span class="S16">'ed247_simulink_adapter'</span><span class="S0">);</span></span></div></div></div><div class = "S10"><span class = "S2"><span class="S14">ED247</span></span></div><div class = 'CodeBlock contiguous'><div class = 'inlineWrapper'><div class = "S8 lineNode"><span class = "S9"><span class="S0">config.ED247 = fullfile(ed247.Folder.DEPENDENCIES.Path,</span><span class="S16">'ed247'</span><span class="S0">,</span><span class="S16">'windows'</span><span class="S0">,</span><span class="S16">'mingw4.9.2'</span><span class="S0">,</span><span class="S16">'x64'</span><span class="S0">);</span></span></div></div></div><div class = "S10"><span class = "S2"><span class="S11">Notes</span></span><span class = "S2"><span class="S0"> : ED247 folder should contain </span></span><span class = "S2"><span class="S6">inc/ed247.h</span></span><span class = "S2"><span class="S0"> and </span></span><span class = "S2"><span class="S6">lib/libed247.dll.a</span></span></div><div class = "S4"><span class = "S2"><span class="S14">LibXML2</span></span></div><div class = 'CodeBlock contiguous'><div class = 'inlineWrapper'><div class = "S8 lineNode"><span class = "S9"><span class="S0">config.LibXML2 = fullfile(ed247.Folder.DEPENDENCIES.Path,</span><span class="S16">'libxml2'</span><span class="S0">);</span></span></div></div></div></div><div class = "S0"></div><div class = 'SectionBlock containment'><h2 class = "S3"><span class = "S2"><span class="S0">MEX generation folder</span></span></h2><div class = "S4"><span class = "S2"><span class="S0">MEX-files will be generated in a project folder, this folder is defined in configuration variable.</span></span></div><div class = 'CodeBlock contiguous'><div class = 'inlineWrapper'><div class = "S8 lineNode"><span class = "S9"><span class="S0">config.MEX = fullfile(ed247.Folder.LIBRARY.Path,</span><span class="S16">'ed247'</span><span class="S0">);</span></span></div></div></div><div class = "S10"><span class = "S2"><span class="S0">It is not recommended to change this parameter.</span></span></div></div><div class = "S0"></div><div class = 'SectionBlock containment'><h2 class = "S3"><span class = "S2"><span class="S0">Save configuration</span></span></h2><div class = 'CodeBlock contiguous'><div class = 'inlineWrapper'><div class = "S8 lineNode"><span class = "S9"><span class="S0">save(config)</span></span></div></div></div></div><div class = "S0"></div><div class = 'SectionBlock containment'><h2 class = "S3"><span class = "S2"><span class="S0">Package and Share toolbox</span></span></h2><div class = "S4"><span class = "S2"><span class="S0">See </span></span><a href = "matlab:web('package_and_share.html')"><span class = "S0"><span class="S0">Package and Share</span></span></a><span class = "S2"><span class="S0">.</span></span></div></div></div>
+<!-- 
+##### SOURCE BEGIN #####
+%% Developer guide
+%% Prequisites
+% Same as <matlab:web('installation_guide.html#prerequisites') Installation 
+% guide - Prerequisites>.
+% 
+% Instead of installing the toolbox, open the Simulink project (double-click 
+% on |ED247_for_simulink.prj|)
+%% Compile C-MEX S-Functions
+%%
+ed247.compile()
+%% 
+% Options:
+% 
+% * Verbose (|false| | |true|) : Display messages in Diagnostic viewer at block 
+% execution
+%% Change configuration
+% *Configuration*
+% 
+% Project dependencies (compiler, libraries) are configured with a variable 
+% |ed247.Configuration|.
+% 
+% Create the configuration variable
+%%
+config = ed247.Configuration.default();
+%% Compiler
+% Set the MinGW path (root folder)
+%%
+config.MinGW = '<mingw_installation_folder>';
+%% 
+% Notes : MinGW folder should contain |bin| subfolder
+%% Dependencies
+% Adapter, ED247, LibXML2 are set automatically with relative path to current 
+% project. 
+% 
+% Check that the folders are valid, change them if they are not correct
+% 
+% *Adapter*
+%%
+config.Adapter = fullfile(ed247.Folder.DEPENDENCIES.Path,'ed247_simulink_adapter');
+%% 
+% *ED247*
+
+config.ED247 = fullfile(ed247.Folder.DEPENDENCIES.Path,'ed247','windows','mingw4.9.2','x64');
+%% 
+% Notes : ED247 folder should contain |inc/ed247.h| and |lib/libed247.dll.a|
+% 
+% *LibXML2*
+
+config.LibXML2 = fullfile(ed247.Folder.DEPENDENCIES.Path,'libxml2');
+%% MEX generation folder
+% MEX-files will be generated in a project folder, this folder is defined in 
+% configuration variable.
+%%
+config.MEX = fullfile(ed247.Folder.LIBRARY.Path,'ed247');
+%% 
+% It is not recommended to change this parameter.
+%% Save configuration
+%%
+save(config)
+%% Package and Share toolbox
+% See <matlab:web('package_and_share.html') Package and Share>.
+##### SOURCE END #####
+--></body></html>
