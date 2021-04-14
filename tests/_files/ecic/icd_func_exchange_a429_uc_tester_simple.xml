@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ComponentMessagesDescription Name="SampleComponent" Comment="A useful comment">
+
+<A429_Bus Name="AnA429BusStream" Comment="A useful comment">
+    <SamplingMessage Name="AnA429SamplingMessage" Direction="In"
+                     Label="350" SDI="10"
+                     PeriodUs="1" ValidityDurationUs="1000000"
+                     Comment="A useful comment"/>
+    <QueuingMessage Name="AnA429QueuingMessage" Direction="In"
+                    Label="304"
+                    SampleMaxNumber="50"
+                    Comment="A useful comment"/>
+  </A429_Bus>
+
+</ComponentMessagesDescription>
