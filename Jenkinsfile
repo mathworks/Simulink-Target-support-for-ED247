@@ -1,4 +1,4 @@
-updateGitlabCommitStatus state: 'pending'
+// updateGitlabCommitStatus state: 'pending'
 
 releases = [
     'r2016b',
