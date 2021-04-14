@@ -34,7 +34,7 @@ DEALINGS IN THE SOFTWARE.
                 </UDP_Sockets>
             </ComInterface>
             <Stream>
-                <A429_Stream Name="Stream0" Direction="Out" SampleMaxNumber="3" ICD="File.xml:BUS45">
+                <A429_Stream Name="Stream0" Direction="Out" SampleMaxNumber="3" ICD="icd_func_exchange_a429_uc_main_simple.xml:AnA429BusStream">
                     <DataTimestamp Enable="No" SampleDataTimestampOffset="No"/>
                     <Errors Enable="No"/>
                 </A429_Stream>
