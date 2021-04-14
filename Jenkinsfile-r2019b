@@ -1,6 +1,6 @@
 release = 'r2019b'
 
-updateGitlabCommitStatus name: $release, state: 'pending'
+updateGitlabCommitStatus name: 'r2019b', state: 'pending'
 
 pipeline {
 
