@@ -1,6 +1,6 @@
 release = 'r2018b'
 
-updateGitlabCommitStatus name: $release, state: 'pending'
+updateGitlabCommitStatus name: 'r2018b', state: 'pending'
 
 pipeline {
 
@@ -90,13 +90,13 @@ pipeline {
 			cleanWs cleanWhenAborted: false, cleanWhenFailure: false, cleanWhenNotBuilt: false, cleanWhenUnstable: false, notFailBuild: true, deleteDirs:true
 		}
 		success {
-			updateGitlabCommitStatus name: $release, state: 'success'
+			updateGitlabCommitStatus name: 'r2018b', state: 'success'
 		}
 		failure {
-			updateGitlabCommitStatus name: $release, state: 'failed'
+			updateGitlabCommitStatus name: 'r2018b', state: 'failed'
 		}
 		aborted  {
-			updateGitlabCommitStatus name: $release, state: 'canceled'
+			updateGitlabCommitStatus name: 'r2018b', state: 'canceled'
 		}
 	}
 
