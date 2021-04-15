@@ -164,6 +164,61 @@ classdef (SharedTestFixtures={ ...
             
         end
         
+        function testA664(testCase)
+            
+            testCase.assumeFalse(verLessThan('MATLAB','9.2'), ...
+                'Simulink.SimulationInput is not defined for MATLAB releases lower than 9.2 (r2017a)')
+            
+            % [ SETUP ]
+            sendmodel       = ['send_a664_r',version('-release')];
+            receivemodel    = ['receive_a664_r',version('-release')];
+            
+            testCase.assumeEqual(exist(sendmodel,'file'),4, ...
+                sprintf('Model "%s" is not available', sendmodel))
+            testCase.assumeEqual(exist(receivemodel,'file'),4, ...
+                sprintf('Model "%s" is not available', receivemodel))
+            
+            in = [ ...
+                Simulink.SimulationInput(sendmodel); ...
+                Simulink.SimulationInput(receivemodel); ...
+                ];
+            
+            ds = Simulink.SimulationData.Dataset();
+            
+            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)), (0:0.1:10)', 'Name', 'T11MX_19492_WAIT_STEP_I'), 'Name', 'T11MX_19492_WAIT_STEP_I');
+            in(1) = in(1).setExternalInput(ds);
+            
+            % [ EXERCISE ]
+            parfor i = 1:numel(in)
+                out(i) = sim(in(i)); %#ok<SIM>
+            end
+            
+            % [ VERIFY ]
+            input  = out(1).logsout;
+            output = out(2).yout;
+            
+            %
+            % T11MX_19492_WAIT_STEP_I and T11MX_15430_TEST_STEP_O
+            %
+            inname  = 'T11MX_19492_WAIT_STEP_I';
+            outname = 'T11MX_15430_TEST_STEP_O';
+            in    = input.get(inname).Values.Data;
+            out   = output.get(outname).Values.Data;
+            
+            nodata = all(out == 0,2);
+            out(nodata,:) = [];
+            testCase.assertNotEmpty(out, 'No data received')
+            
+            compare = cumsum(all(in == out(1,:),2)) == 1;
+            sendmessage = in(compare,:);
+            recvmessage = out(1:min([end,size(sendmessage,1)]),:);
+            sendmessage(size(recvmessage,1)+1:end,:) = [];
+            
+            testCase.verifyEqual(recvmessage,sendmessage,'AbsTol',1, ...
+                sprintf('Received data for %s (in) and %s (out) does not match send data',inname,outname))
+            
+        end
+        
     end
     
     %% PRIVATE PROPERTIES
