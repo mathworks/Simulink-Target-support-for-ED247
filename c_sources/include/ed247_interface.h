@@ -120,6 +120,10 @@ typedef struct {
 	ed247_signal_t 				signal;
 	void 						*sample;
 	size_t 						sample_size;
+    int                         port_index;     // Placeholder for S-Function
+    int                         is_refresh;
+    int                         do_refresh;
+    int                         refresh_index;  // Placeholder for S-Function
 } signal_characteristics_t;
 
 typedef struct {
