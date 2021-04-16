@@ -1,28 +1,16 @@
 classdef (SharedTestFixtures={ ...
         matlab.unittest.fixtures.PathFixture(fullfile(regexprep(mfilename('fullpath'),'\+.*',''),'_files')), ...
         matlab.unittest.fixtures.PathFixture(fullfile(regexprep(mfilename('fullpath'),'\+.*',''),'_files','ecic')), ...
+        tools.ParallelPoolFixture('local',2), ...
         }) ...
         SimulationTest < matlab.unittest.TestCase
     
     %% CLASS SETUP
     methods (TestClassSetup)
         
-        function verifySFunction(testCase)            
+        function verifySFunction(testCase)
             testCase.assertEqual(exist('ed247_sfun','file'),3, ...
-                'MEX file for S-Function "ed247_sfun" does not exist')            
-        end
-        
-        function startPool(testCase)
-            testCase.pool_ = parpool('local',2);
-        end
-        
-    end
-    
-    %% CLASS TEARDOWN
-    methods (TestClassTeardown)
-       
-        function closePool(testCase)
-           delete(testCase.pool_) 
+                'MEX file for S-Function "ed247_sfun" does not exist')
         end
         
     end
@@ -113,7 +101,7 @@ classdef (SharedTestFixtures={ ...
             
             %
             % T11M4_A429_SIMU2SWIM_BUS_1_350_10
-            % 
+            %
             name = 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I';
             in    = input.get(name).Values.Data;
             out   = output.get(name).Values.Data;
@@ -122,7 +110,7 @@ classdef (SharedTestFixtures={ ...
             out(nodata,:) = [];
             compare = cumsum(all(in == out(1,:),2)) == 1;
             sendmessage = in(compare,:);
-            recvmessage = out(1:min([end,size(sendmessage,1)]),:);            
+            recvmessage = out(1:min([end,size(sendmessage,1)]),:);
             sendmessage(size(recvmessage,1)+1:end,:) = [];
             
             testCase.verifyEqual(recvmessage,sendmessage, ...
@@ -130,7 +118,7 @@ classdef (SharedTestFixtures={ ...
             
             %
             % T11M4_A429_SIMU2SWIM_BUS_1_200_10_I
-            % 
+            %
             name = 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I';
             in   = input.get(name).Values.Data;
             out  = output.get(name).Values.Data;
@@ -139,15 +127,15 @@ classdef (SharedTestFixtures={ ...
             out(nodata,:) = [];
             compare = cumsum(all(in == out(1,:),2)) == 1;
             sendmessage = in(compare,:);
-            recvmessage = out(1:min([end,size(sendmessage,1)]),:);            
+            recvmessage = out(1:min([end,size(sendmessage,1)]),:);
             sendmessage(size(recvmessage,1)+1:end,:) = [];
             
             testCase.verifyEqual(recvmessage,sendmessage, ...
                 sprintf('Received data for %s does not match send data',name))
-               
+            
             %
             % T11M4_A429_SIMU2SWIM_BUS_1_200_11_I
-            % 
+            %
             name = 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I';
             in   = input.get(name).Values.Data;
             out  = output.get(name).Values.Data;
@@ -156,7 +144,7 @@ classdef (SharedTestFixtures={ ...
             out(nodata,:) = [];
             compare = cumsum(all(in == out(1,:),2)) == 1;
             sendmessage = in(compare,:);
-            recvmessage = out(1:min([end,size(sendmessage,1)]),:);            
+            recvmessage = out(1:min([end,size(sendmessage,1)]),:);
             sendmessage(size(recvmessage,1)+1:end,:) = [];
             
             testCase.verifyEqual(recvmessage,sendmessage, ...
