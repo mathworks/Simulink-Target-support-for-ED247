@@ -58,11 +58,14 @@ classdef (SharedTestFixtures={ ...
             
             ds = Simulink.SimulationData.Dataset();
             
-            ds = ds.addElement(timeseries(true(101,1),                  (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I_refresh'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I_refresh');
+            enable = true(101,1);
+            enable(2:2:end) = false;
+            
+            ds = ds.addElement(timeseries(enable,                       (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I_refresh'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I_refresh');
             ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)),      (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I');
-            ds = ds.addElement(timeseries(true(101,1),                  (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I_refresh'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I_refresh');
+            ds = ds.addElement(timeseries(enable,                       (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I_refresh'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I_refresh');
             ds = ds.addElement(timeseries(uint8((255:-1:155)' + (1:4)), (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I');
-            ds = ds.addElement(timeseries(true(101,1),                  (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I_refresh'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I_refresh');
+            ds = ds.addElement(timeseries(enable,                       (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I_refresh'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I_refresh');
             ds = ds.addElement(timeseries(uint8((150:250)' + (1:4)),    (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I');
             
             in = Simulink.SimulationInput(modelname);
@@ -75,18 +78,21 @@ classdef (SharedTestFixtures={ ...
             out = sim(in);
             
             % [ VERIFY ]
-            dumpfilename = fullfile(testCase.workfolder_,dumpfilename);
-            fid = fopen(dumpfilename,'rt');
+            fid = fopen(fullfile(testCase.workfolder_,dumpfilename),'rt');
             headers = textscan(fid,repmat('%s',1,9),1,'Delimiter',';'); %#ok<NASGU>
             data = textscan(fid,'%d%d%d%d%s%d%d%d%d%s', 'Delimiter', ';');
             fclose(fid);
             %metadata = table(data{1:9},'VariableNames',[headers{:}]);
+            testCase.assertNotEmpty(data, 'No data registered in dump file')
             data = cellfun(@(x) textscan(x,'%x%x%x%x'),data{end},'UniformOutput',false);
             recv = uint8(cell2mat(vertcat(data{:})));
             
             send = out.logsout.get('T11M4_A429_SIMU2SWIM_BUS_1_350_10_I').Values.Data;
-            
-            send(cumsum(all(recv(1,:) == send,2))==0,:) = [];
+            send_refresh = out.logsout.get('T11M4_A429_SIMU2SWIM_BUS_1_350_10_I_refresh').Values.Data;            
+            mask = cumsum(all(recv(1,:) == send,2))==1;            
+            send(~mask,:) = [];
+            send_refresh(~mask,:) = [];
+            send(~send_refresh,:) = [];
             send(size(recv,1)+1:end,:) = [];
             
             testCase.verifyEqual(recv,send)

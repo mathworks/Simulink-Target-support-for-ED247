@@ -193,7 +193,6 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 static void mdlOutputs(SimStruct *S, int_T tid)
 {
 	int i,iport,irefresh,ndata,status;
-    int* refresh;
 	time_T t = ssGetT(S);
 
     /*
@@ -223,9 +222,10 @@ static void mdlOutputs(SimStruct *S, int_T tid)
             
             iport = io->inputs->signals[i].port_index;
             io->inputs->signals[i].valuePtr = (void*)ssGetInputPortSignal(S,iport);
-            /*
+            
             if (io->inputs->signals[i].is_refresh == 1){     
-                refresh = (int*)ssGetInputPortSignal(S,io->inputs->signals[i].refresh_index); 
+                int8_T* refresh = (int8_T*)ssGetInputPortSignal(S,io->inputs->signals[i].refresh_index); 
+                myprintf("Refresh port #%d = %d\n", io->inputs->signals[i].refresh_index, *refresh);
                 io->inputs->signals[i].do_refresh = *refresh;               
             } else {
                 io->inputs->signals[i].do_refresh = 1;
@@ -234,7 +234,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
             if (io->inputs->signals[i].do_refresh == 1){
                 myprintf("Send data from port %d to signal %d\n", iport, i);
             }
-            */
+            
             
         }
         

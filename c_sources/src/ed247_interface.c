@@ -113,9 +113,13 @@ send_status_t send_simulink_to_ed247(IO_t *io){
 
 				for (j=0;j < io->inputs->streams[i].nsignals; j++){
                     
-                    //if (io->inputs->streams[i].signals[j]->do_refresh == 1){
+                    myprintf("Refresh value for signal #%d = %d\n", j, io->inputs->streams[i].signals[j]->do_refresh);
+                    if (io->inputs->streams[i].signals[j]->do_refresh == 1){
+                        myprintf("Push sample for signal #%d\n", j);
                         status = ed247_stream_push_sample(io->inputs->streams[i].stream, io->inputs->streams[i].signals[j]->valuePtr,io->inputs->streams[i].signals[j]->sample_size, NULL, NULL);
-                    //}
+                    } else {
+                        status = ED247_STATUS_SUCCESS;
+                    }
 
 					if (io->inputs->streams[i].stream_type == ED247_STREAM_TYPE_A825 && checkStatus(status,"ed247_stream_push_sample",3)){
 						// Ignore failure on A825 (messages can be declared as input with no data to transmit)
