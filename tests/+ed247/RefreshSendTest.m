@@ -110,7 +110,7 @@ classdef (SharedTestFixtures={ ...
             setenv('DUMPFILE', fullfile(testCase.workfolder_, dump))
             setenv('TIMEOUT', '3000')
             
-            !runDumper.sh &
+            !runDumper.sh
             
         end
         
