@@ -80,15 +80,15 @@ classdef (SharedTestFixtures={ ...
             % [ VERIFY ]
             fid = fopen(fullfile(testCase.workfolder_,dumpfilename),'rt');
             headers = textscan(fid,repmat('%s',1,9),1,'Delimiter',';'); %#ok<NASGU>
-            data = textscan(fid,'%d%d%d%d%s%d%d%d%d%s', 'Delimiter', ';');
+            data = textscan(fid,'%*d%*d%*d%*d%*s%*d%*d%*d%*d%s', 'Delimiter', ';');
             fclose(fid);
             %metadata = table(data{1:9},'VariableNames',[headers{:}]);
             testCase.assertNotEmpty(data, 'No data registered in dump file')
-            data = cellfun(@(x) textscan(x,'%x%x%x%x'),data{end},'UniformOutput',false);
-            recv = uint8(cell2mat(vertcat(data{:})));
+            data = cellfun(@(x) hex2dec(strsplit(x,' '))',data{end},'UniformOutput',false);
+            recv = uint8(vertcat(data{:}));
             
             send = out.logsout.get('T11M4_A429_SIMU2SWIM_BUS_1_350_10_I').Values.Data;
-            send_refresh = out.logsout.get('T11M4_A429_SIMU2SWIM_BUS_1_350_10_I_refresh').Values.Data;            
+            send_refresh = out.logsout.get('T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh').Values.Data;            
             mask = cumsum(all(recv(1,:) == send,2))==1;            
             send(~mask,:) = [];
             send_refresh(~mask,:) = [];
