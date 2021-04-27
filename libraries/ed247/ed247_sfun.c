@@ -141,12 +141,12 @@ static void mdlInitializeSizes(SimStruct *S)
         
     } else {
         
-        myprintf("CONFIGURATION block (%d)\n", (int) *blockType);
+        myprintf("CONFIGURATION block (%d)\n", (int_T) *blockType);
         
         io_allocate_memory(&io);
         
-        char *configurationFile = (char *)( mxGetData(ssGetSFcnParam(S,1)) );
-        char *logFile = (char *)( mxGetData(ssGetSFcnParam(S,2)) );
+        char_T *configurationFile = (char_T *)( mxGetData(ssGetSFcnParam(S,1)) );
+        char_T *logFile = (char_T *)( mxGetData(ssGetSFcnParam(S,2)) );
         if (configurationFile != NULL){
             myprintf("Configuration file = '%s'\n", configurationFile);
             myprintf("Log file = '%s'\n", logFile);
@@ -234,8 +234,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
             if (io->inputs->signals[i].do_refresh == 1){
                 myprintf("Send data from port %d to signal %d\n", iport, i);
             }
-            
-            
+                        
         }
         
         status = (int)send_simulink_to_ed247(io);
@@ -264,10 +263,58 @@ static void mdlTerminate(SimStruct *S){
  */
 static void mdlRTW(SimStruct *S)
 {
-	char *configurationFile = (char *)( mxGetData(ssGetSFcnParam(S,0)) );
-	if (!ssWriteRTWParamSettings(S, 1,SSWRITE_VALUE_QSTR, "Filename", configurationFile)) {
+    int_T i;
+    char_T  *configurationFile;
+    real_T  blockTypeID;
+    BLOCK_TYPE_T *blockType;
+    
+    real_T* portIndex;
+    real_T* refreshIndex;
+    int_T nSignals;
+        
+    blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
+    if (*blockType == SEND){
+        
+        blockTypeID = 2.0;
+        
+        nSignals = io->inputs->nsignals;
+        portIndex = (real_T*) malloc(sizeof(real_T) * nSignals);
+        refreshIndex = (real_T*) malloc(sizeof(real_T) * nSignals);
+        
+        for (i = 0; i < io->inputs->nsignals; i++){
+            
+            portIndex[i] = (real_T) io->inputs->signals[i].port_index;
+            if (io->inputs->signals[i].is_refresh == 1){ 
+                refreshIndex[i] = (real_T) io->inputs->signals[i].refresh_index;
+            } else {
+                refreshIndex[i] = -1.0;
+            }
+                        
+        }
+        
+    } else if (*blockType == RECEIVE){
+        blockTypeID = 1.0;
+    } else {
+        blockTypeID = 0.0;
+    }
+    
+	configurationFile = (char_T *)( mxGetData(ssGetSFcnParam(S,1)) );
+	if (!ssWriteRTWParamSettings(S, 5, 
+            SSWRITE_VALUE_QSTR, "Filename",     configurationFile,
+            SSWRITE_VALUE_NUM,  "BlockType",    blockTypeID,
+            SSWRITE_VALUE_NUM,  "NumSignals",   (real_T) nSignals,
+            SSWRITE_VALUE_VECT, "PortIndex",    portIndex, nSignals, 
+            SSWRITE_VALUE_VECT, "RefreshIndex", refreshIndex, nSignals)) {
 		return; /* An error occurred. */
 	}
+    /*
+    if (portIndex != NULL){
+        free(portIndex);
+    }
+    if (refreshIndex != NULL){
+        free(refreshIndex);
+    }
+       */ 
 }
 #endif /* MDL_RTW */
 
