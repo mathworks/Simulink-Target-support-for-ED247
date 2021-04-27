@@ -56,7 +56,7 @@
     %assign modelname = LibGetModelName()
     %if ISEQUAL(SFcnParamSettings.BlockType,0.0)
     io_allocate_memory((IO_t **)&(%<modelname>_io));
-    read_ed247_configuration(configurationFile, (IO_t *)%<modelname>_io);
+    read_ed247_configuration(configurationFile, (IO_t *)%<modelname>_io, "");
     %endif
 
 %endfunction
@@ -81,7 +81,7 @@
                 %if ISEQUAL(refreshIdx,-1.0)
                     ((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].do_refresh = 1;
                 %else
-                    ((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].do_refresh = (char) %<LibBlockInputSignalAddr(refreshIdx, "", "", 0)>;
+                    ((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].do_refresh = (int) %<LibBlockInputSignal(refreshIdx, "", "", 0)>;
                 %endif
                 ((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].valuePtr = (void*)%<LibBlockInputSignalAddr(portIdx, "", "", 0)>;
 
@@ -94,30 +94,6 @@
     %elseif ISEQUAL(SFcnParamSettings.BlockType,1.0) %% RECEIVE
         /* Receive */
     %endif
-
-%%    %assign ptrName = LibBlockPWork("io", "", "", 0)
-
-%%    %if ISEQUAL(block.NumDataInputPorts, 0.0)
-%%    %else
-%%        %assign rollVars = ["U"]
-%%        %foreach port = block.NumDataInputPorts - 1
-%%            %roll sigIdx=RollRegions, lcv = RollThreshold, block, "Roller", rollVars
-%%                ((IO_t *)%<ptrName>)->inputs->signals[%<port>].valuePtr = (void*)%<LibBlockInputSignalAddr(port, "", lcv, sigIdx)>;
-%%            %endroll
-%%        %endforeach
-%%        send_simulink_to_ed247(((IO_t *)%<ptrName>));
-%%    %endif
-
-%%    %if ISEQUAL(block.NumDataOutputPorts, 0.0)
-%%    %else
-%%        %assign rollVars = ["Y"]
-%%        %foreach port = block.NumDataOutputPorts - 1
-%%            %roll sigIdx=RollRegions, lcv = RollThreshold, block, "Roller", rollVars
-%%                ((IO_t *)%<ptrName>)->outputs->signals[%<port>].valuePtr = (void*)%<LibBlockOutputSignalAddr(port, "", lcv, sigIdx)>;
-%%            %endroll
-%%        %endforeach
-%%        receive_ed247_to_simulink(((IO_t *)%<ptrName>),NULL);
-%%    %endif
 
 %endfunction
 
