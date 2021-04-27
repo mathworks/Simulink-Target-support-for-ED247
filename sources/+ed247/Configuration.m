@@ -35,6 +35,8 @@ classdef Configuration < matlab.mixin.SetGet
         MEX
         MinGW
         
+        SystemPath
+        
     end
     
     %% HIDDEN DEPENDENT PROPERTIES
@@ -180,6 +182,14 @@ classdef Configuration < matlab.mixin.SetGet
             isdirty = obj.isdirty_;
         end
         
+        function systempath = get.SystemPath(obj)
+            systempath = { ...
+                fullfile(obj.ED247,'lib'); ...
+                fullfile(obj.LibXML2,'bin'); ...
+                fullfile(obj.LibXML2,'lib'); ...
+                };
+        end
+        
     end
     
     %% MUTATORS
@@ -281,11 +291,7 @@ classdef Configuration < matlab.mixin.SetGet
         function addLibrariesToPath(obj)
                         
             % Define library folders (containing DLLs)
-            systempath = { ...
-                fullfile(obj.ED247,'lib'); ...
-                fullfile(obj.LibXML2,'bin'); ...
-                fullfile(obj.LibXML2,'lib'); ...
-                };
+            systempath = obj.SystemPath;
             
             % Update system PATH to add library folders
             p = strsplit(getenv('PATH'),pathsep)';

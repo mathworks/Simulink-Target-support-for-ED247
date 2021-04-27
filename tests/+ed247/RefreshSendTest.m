@@ -47,13 +47,9 @@ classdef (SharedTestFixtures={ ...
     %% TESTS
     methods (Test)
         
-        function testA429Send(testCase)
+        function testA429SendSimulation(testCase)
            
-            % [ SETUP ]
-            currentdir = pwd;
-            cd(fullfile(testCase.utilfolder_,'dumper'))
-            popd = onCleanup(@() cd(currentdir));
-            
+            % [ SETUP ]                        
             modelname = ['send_a429_r',version('-release')];
             
             ds = Simulink.SimulationData.Dataset();
@@ -78,14 +74,7 @@ classdef (SharedTestFixtures={ ...
             out = sim(in);
             
             % [ VERIFY ]
-            fid = fopen(fullfile(testCase.workfolder_,dumpfilename),'rt');
-            headers = textscan(fid,repmat('%s',1,9),1,'Delimiter',';'); %#ok<NASGU>
-            data = textscan(fid,'%*d%*d%*d%*d%*s%*d%*d%*d%*d%s', 'Delimiter', ';');
-            fclose(fid);
-            %metadata = table(data{1:9},'VariableNames',[headers{:}]);
-            testCase.assertNotEmpty(data, 'No data registered in dump file')
-            data = cellfun(@(x) hex2dec(strsplit(x,' '))',data{end},'UniformOutput',false);
-            recv = uint8(vertcat(data{:}));
+            recv = readDump(testCase, dumpfilename);
             
             send = out.logsout.get('T11M4_A429_SIMU2SWIM_BUS_1_350_10_I').Values.Data;
             send_refresh = out.logsout.get('T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh').Values.Data;            
@@ -99,6 +88,83 @@ classdef (SharedTestFixtures={ ...
             
         end
     
+        function testA429SendCodeGenerationERT(testCase)
+            
+            % [ SETUP ]
+            modelname = ['send_a429_r',version('-release')];
+            if ~bdIsLoaded(modelname)
+                load_system(modelname)
+                closeModel = onCleanup(@() bdclose(modelname));
+            end
+            
+            set_param(modelname, ...
+                'SolverType',       'Fixed-Step', ...
+                'SystemTargetFile', 'ert.tlc', ...
+                'GenCodeOnly',      'on', ...
+                'LaunchReport',     'off')
+            
+            % [ EXERCISE ]
+            f = @() slbuild(modelname);
+            
+            % [ VERIFY ]
+            testCase.verifyWarningFree(f, sprintf('Code generation failed for model "%s"', modelname))
+            
+            codegenfolder = fullfile(Simulink.fileGenControl('get','CodeGenFolder'), [modelname, '_ert_rtw']);
+            hfile = fullfile(codegenfolder,[modelname,'.h']);
+            cfile = fullfile(codegenfolder,[modelname,'.c']);
+            testCase.assertEqual(exist(hfile,'file'),2, sprintf('Header file does not exist ("%s")', hfile))
+            testCase.assertEqual(exist(cfile,'file'),2, sprintf('Source file does not exist ("%s")', cfile))
+            
+            hcontent = fileread(hfile);
+            pattern = regexptranslate('escape','extern char configurationFile[256];');
+            testCase.verifyMatches(hcontent, pattern, ...
+                sprintf('Header file ("%s") should contains configurationFile declaration', hfile))
+            
+            ccontent = fileread(cfile);
+            
+            pattern = regexptranslate('escape',sprintf('static IO_t *%s_io;',modelname));
+            testCase.verifyMatches(ccontent, pattern, ...
+                sprintf('Source file ("%s") should contains IO variable declaration', cfile))
+                                    
+        end
+        
+        function testA429SendExecutableERT(testCase)
+            
+            % [ SETUP ]
+            modelname = ['send_a429_r',version('-release')];
+            if ~bdIsLoaded(modelname)
+                load_system(modelname)
+                closeModel = onCleanup(@() bdclose(modelname));
+            end
+            
+            set_param(modelname, ...
+                'SolverType',               'Fixed-Step', ...
+                'SystemTargetFile',         'ert.tlc', ...
+                'GenCodeOnly',              'off', ...
+                'LaunchReport',             'off', ...
+                'GenerateSampleERTMain',    'off', ...
+                'ERTCustomFileTemplate',    'testA429SendExecutableERT_CFP.tlc')
+            
+            dumpfilename = [datestr(now,30), '_testA429SendExecutableERT.log'];
+            
+            % [ EXERCISE ]
+            f = @() slbuild(modelname);
+            
+            % [ VERIFY ]
+            testCase.verifyWarningFree(f, sprintf('Code generation failed for model "%s"', modelname))
+                 
+            exefile = fullfile(Simulink.fileGenControl('get','CodeGenFolder'), [modelname, '.exe']);
+            testCase.assertEqual(exist(exefile,'file'),2, ...
+                sprintf('EXE "%s" should have been generated', exefile))
+            
+            parfeval(@() runDumper(testCase,'ecic_func_exchange_a429_uc_tester_simple.xml',dumpfilename),0);
+            pause(0.5)
+            testCase.runExe([modelname, '.exe'])
+            
+            recv = readDump(testCase, dumpfilename);
+            
+        end
+        
     end
     
     %% PROTECTED METHODS
@@ -106,11 +172,66 @@ classdef (SharedTestFixtures={ ...
        
         function runDumper(testCase, ecic, dump)
             
+            currentdir = pwd;
+            cd(fullfile(testCase.utilfolder_,'dumper'))
+            popd = onCleanup(@() cd(currentdir));
+            
             setenv('ECICPATH', fullfile(testCase.filefolder_,'ecic',ecic))
             setenv('DUMPFILE', fullfile(testCase.workfolder_, dump))
             setenv('TIMEOUT', '3000')
             
             !runDumper.sh
+            
+        end
+        
+        function recv = readDump(testCase, dumpfilename)
+           
+            fid = fopen(fullfile(testCase.workfolder_,dumpfilename),'rt');
+            headers = textscan(fid,repmat('%s',1,9),1,'Delimiter',';'); %#ok<NASGU>
+            data = textscan(fid,'%*d%*d%*d%*d%*s%*d%*d%*d%*d%s', 'Delimiter', ';');
+            fclose(fid);
+            %metadata = table(data{1:9},'VariableNames',[headers{:}]);
+            testCase.assertNotEmpty(data, 'No data registered in dump file')
+            data = cellfun(@(x) hex2dec(strsplit(x,' '))',data{end},'UniformOutput',false);
+            recv = uint8(vertcat(data{:}));
+            
+        end
+        
+        function varargout = runExe(testCase, exename, varargin)
+           
+            currentdir = pwd;
+            codegenfolder = Simulink.fileGenControl('get','CodeGenFolder');
+            cd(codegenfolder)
+            c = onCleanup(@() cd(currentdir));
+            
+            if ~isempty(varargin)
+                logfile = varargin{1};
+                retainlog = true;
+            else
+                logfile = 'tmp.log';
+                retainlog = false;
+            end
+            
+            config = ed247.Configuration.default();
+            libpath = strjoin(config.SystemPath,':');
+            libpath = strrep(libpath,'\','/');
+            libpath = strrep(libpath,'C:','/c');
+            
+            setenv('LIBPATH', libpath)
+            setenv('EXENAME', exename)
+            setenv('LOGFILE', logfile)
+                                    
+            [status,log] = system(fullfile(testCase.utilfolder_,'runExe.sh'));
+            testCase.assertEqual(status,0, sprintf('Failed to execute simulation with message:\n%s',log))
+            
+            logtxt = fileread(logfile);
+            if nargout
+                varargout = {logtxt};
+            end
+            
+            if ~retainlog
+                delete(logfile)
+            end
             
         end
         
