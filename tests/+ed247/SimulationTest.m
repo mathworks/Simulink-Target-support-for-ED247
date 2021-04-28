@@ -211,6 +211,64 @@ classdef (SharedTestFixtures={ ...
             
         end
         
+        function testA825(testCase)
+            
+            testCase.assumeFalse(verLessThan('MATLAB','9.2'), ...
+                'Simulink.SimulationInput is not defined for MATLAB releases lower than 9.2 (r2017a)')
+            
+            % [ SETUP ]
+            sendmodel       = ['send_a825_r',version('-release')];
+            receivemodel    = ['receive_a825_r',version('-release')];
+            
+            testCase.assumeEqual(exist(sendmodel,'file'),4, ...
+                sprintf('Model "%s" is not available', sendmodel))
+            testCase.assumeEqual(exist(receivemodel,'file'),4, ...
+                sprintf('Model "%s" is not available', receivemodel))
+            
+            in = [ ...
+                Simulink.SimulationInput(sendmodel); ...
+                Simulink.SimulationInput(receivemodel); ...
+                ];
+            
+            ds = Simulink.SimulationData.Dataset();
+            
+            ds = ds.addElement(timeseries(true(2,1),                [0;10],      'Name', 'Stream0_refresh'),    'Name', 'Stream0_refresh');
+            ds = ds.addElement(timeseries(uint8((0:100)' + (1:3)),  (0:0.1:10)', 'Name', 'Stream0'),            'Name', 'Stream0');
+            ds = ds.addElement(timeseries(true(2,1),                [0;10],      'Name', 'Stream1_refresh'),    'Name', 'Stream1_refresh');
+            ds = ds.addElement(timeseries(uint8((0:100)' + (1:5)),  (0:0.1:10)', 'Name', 'Stream1'),            'Name', 'Stream1');
+            in(1) = in(1).setExternalInput(ds);
+            
+            % [ EXERCISE ]
+            parfor i = 1:numel(in)
+                out(i) = sim(in(i)); %#ok<SIM>
+            end
+            
+            % [ VERIFY ]
+            input  = out(1).logsout;
+            output = out(2).yout;
+            
+            %
+            % Stream0
+            %
+            inname  = 'Stream0';
+            outname = 'Stream0';
+            in    = input.get(inname).Values.Data;
+            out   = output.get(outname).Values.Data;
+            
+            nodata = all(out == 0,2);
+            out(nodata,:) = [];
+            testCase.assertNotEmpty(out, 'No data received')
+            
+            compare = cumsum(all(in == out(1,:),2)) == 1;
+            sendmessage = in(compare,:);
+            recvmessage = out(1:min([end,size(sendmessage,1)]),:);
+            sendmessage(size(recvmessage,1)+1:end,:) = [];
+            
+            testCase.verifyEqual(recvmessage,sendmessage,'AbsTol',1, ...
+                sprintf('Received data for %s (in) and %s (out) does not match send data',inname,outname))
+            
+        end
+        
     end
     
     %% PRIVATE PROPERTIES

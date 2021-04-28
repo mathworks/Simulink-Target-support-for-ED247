@@ -34,7 +34,7 @@ DEALINGS IN THE SOFTWARE.
                 </UDP_Sockets>
             </ComInterface>
 			<Streams>
-				<A664_Stream UID="0" Name="Stream0" Direction="In" SampleMaxNumber="3" ICD="icd_func_exchange_a664_uc_tester.xml:T11MX_15430_TEST_STEP_O">
+				<A664_Stream UID="0" Name="T11MX_15430_TEST_STEP_O" Direction="In" SampleMaxNumber="3" ICD="icd_func_exchange_a664_uc_tester.xml:T11MX_15430_TEST_STEP_O">
                     <DataTimestamp Enable="No" SampleDataTimestampOffset="No"/>
                     <Errors Enable="No"/>
 				</A664_Stream>
