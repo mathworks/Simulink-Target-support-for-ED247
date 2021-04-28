@@ -37,9 +37,15 @@ classdef (SharedTestFixtures={ ...
     methods (TestClassTeardown)
         
         function cleanWorkFolder(testCase)
+            
             if isdir(testCase.workfolder_) %#ok<ISDIR> Backward compatibility
-                rmdir(testCase.workfolder_,"s")
+                try
+                    rmdir(testCase.workfolder_,"s")
+                catch me
+                    warning(me.identifier, 'Error while cleanup work folder.\nDetails:\n%s', me.message)
+                end
             end
+            
         end
         
     end
@@ -75,7 +81,7 @@ classdef (SharedTestFixtures={ ...
             
             % [ VERIFY ]
             recv = readDump(testCase, dumpfilename);
-            
+                        
             send = out.logsout.get('T11M4_A429_SIMU2SWIM_BUS_1_350_10_I').Values.Data;
             send_refresh = out.logsout.get('T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh').Values.Data;            
             mask = cumsum(all(recv(1,:) == send,2))==1;            
@@ -194,6 +200,7 @@ classdef (SharedTestFixtures={ ...
             testCase.assertNotEmpty(data, 'No data registered in dump file')
             data = cellfun(@(x) hex2dec(strsplit(x,' '))',data{end},'UniformOutput',false);
             recv = uint8(vertcat(data{:}));
+            testCase.assertNotEmpty(recv, 'No received data')
             
         end
         

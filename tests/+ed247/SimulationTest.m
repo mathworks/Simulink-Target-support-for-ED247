@@ -85,9 +85,12 @@ classdef (SharedTestFixtures={ ...
             
             ds = Simulink.SimulationData.Dataset();
             
-            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)),      (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I');
-            ds = ds.addElement(timeseries(uint8((255:-1:155)' + (1:4)), (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I');
-            ds = ds.addElement(timeseries(uint8((150:250)' + (1:4)),    (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I');
+            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh');
+            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)),      (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I'),        'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I');
+            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_refresh');
+            ds = ds.addElement(timeseries(uint8((255:-1:155)' + (1:4)), (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I'),        'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I');
+            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_refresh');            
+            ds = ds.addElement(timeseries(uint8((150:250)' + (1:4)),    (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I'),        'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I');
             in(1) = in(1).setExternalInput(ds);
             
             % [ EXERCISE ]
@@ -173,7 +176,8 @@ classdef (SharedTestFixtures={ ...
             
             ds = Simulink.SimulationData.Dataset();
             
-            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)), (0:0.1:10)', 'Name', 'T11MX_19492_WAIT_STEP_I'), 'Name', 'T11MX_19492_WAIT_STEP_I');
+            ds = ds.addElement(timeseries(true(2,1),                [0;10],     'Name', 'T11MX_19492_WAIT_STEP_refresh'),   'Name', 'T11MX_19492_WAIT_STEP_refresh');
+            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)), (0:0.1:10)', 'Name', 'T11MX_19492_WAIT_STEP_I'),         'Name', 'T11MX_19492_WAIT_STEP_I');
             in(1) = in(1).setExternalInput(ds);
             
             % [ EXERCISE ]

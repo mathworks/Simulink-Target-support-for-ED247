@@ -30,11 +30,16 @@ classdef ParallelPoolFixture < matlab.unittest.fixtures.Fixture
     methods
         
         function setup(fixture)
-            fixture.pool_ = parpool('local',2);
+            p = gcp('nocreate');
+            if isempty(p)
+                fixture.pool_ = parpool('local',2);
+            else
+                fixture.pool_ = p;
+            end
         end
         
-        function teardown(fixture)
-            delete(fixture.pool_)
+        function teardown(fixture) %#ok<MANU>
+            %delete(fixture.pool_)
         end
         
     end
