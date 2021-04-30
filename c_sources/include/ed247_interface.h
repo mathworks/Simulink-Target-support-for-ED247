@@ -120,10 +120,10 @@ typedef struct {
 	ed247_signal_t 				signal;
 	void 						*sample;
 	size_t 						sample_size;
-    int                         port_index;     // Placeholder for S-Function
-    int                         is_refresh;
-    int                         do_refresh;
-    int                         refresh_index;  // Placeholder for S-Function
+	int							port_index;     // Placeholder for S-Function
+	int							is_refresh; // [Send|Receive] Signal is associated with a refresh flag
+	int							do_refresh; // [Send] Boolean value from inport associated with signal | [Receive] Boolean value if signal was written from ED247 read function
+	int							refresh_index;  // Placeholder for S-Function
 } signal_characteristics_t;
 
 typedef struct {

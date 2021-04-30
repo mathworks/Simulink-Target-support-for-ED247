@@ -183,9 +183,14 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 							status = ed247_stream_assistant_read_signal(io->outputs->streams[i].assistant,io->outputs->streams[i].signals[j]->signal,&sample_data,&sample_size);
 							if (checkStatus(status,"ed247_stream_assistant_read_signal",2)){return STREAM_ASSISTANT_READ_SIGNAL_FAILURE;}
 							if (io->outputs->streams[i].signals[j]->valuePtr != NULL && sample_data != NULL){
+
 								memcpy(io->outputs->streams[i].signals[j]->valuePtr,(void*)sample_data,io->outputs->streams[i].signals[j]->sample_size);
 								if (n != NULL){(*n)++;}/* polyspace DEFECT:USELESS_IF RTE:UNR [Justified:Low] Robustness */
 
+								io->outputs->streams[i].signals[j]->do_refresh = 1;
+
+							} else {
+								io->outputs->streams[i].signals[j]->do_refresh = 0;
 							}
 
 						}
@@ -202,9 +207,14 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 
 						status = ed247_stream_pop_sample(io->outputs->streams[i].stream,&sample_data,&sample_size, NULL, NULL, NULL, &empty);
 						if (status == ED247_STATUS_SUCCESS && io->outputs->streams[i].signals[j]->valuePtr != NULL && sample_data != NULL){
+
 							memcpy(io->outputs->streams[i].signals[j]->valuePtr,(void*)sample_data,io->outputs->streams[i].signals[j]->sample_size);
 							if (n != NULL){(*n)++;}/* polyspace DEFECT:USELESS_IF RTE:UNR [Justified:Low] Robustness */
 
+							io->outputs->streams[i].signals[j]->do_refresh = 1;
+
+						} else {
+							io->outputs->streams[i].signals[j]->do_refresh = 0;
 						}
 
 					}
