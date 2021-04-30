@@ -10,7 +10,7 @@ function makeInfo = rtwmakecfg()
 %
 
 % Verify the Simulink version
-verify_simulink_version();
+%verify_simulink_version();
 
 % Get the current directory
 currDir = pwd;

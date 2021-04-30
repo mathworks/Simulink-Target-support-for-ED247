@@ -1,0 +1,41 @@
+
+%assign modelName = LibGetModelName()
+ 
+%assign cFile = LibCreateSourceFile("Source", "Simulink", "rt_main")
+
+%openfile tmpBuf
+
+#include "%<modelName>.h"
+#include <stdio.h>
+
+%closefile tmpBuf
+
+%<LibSetSourceFileSection(cFile,"Includes",tmpBuf)>
+
+%openfile tmpBuf
+
+void main(){
+
+    int i,n;
+
+    printf("## Initialize simulation\n");
+
+    %<LibCallModelInitialize()>
+
+    n = 50;
+    for (i = 0; i < n; i++){
+
+        printf("## Step %d / %d\n", i+1, n);
+
+        %<LibCallModelStep(0)>
+    }
+
+    printf("## Terminate simulation\n");
+
+    %<LibCallModelTerminate()>
+
+}
+
+%closefile tmpBuf
+
+%<LibSetSourceFileSection(cFile,"Functions",tmpBuf)>

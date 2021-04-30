@@ -15,7 +15,34 @@
     %<SLibAddToStaticSources("ed247_interface.c")>
     %<SLibAddToStaticSources("ed247_cmd_xml.c")>
     %<SLibAddToStaticSources("tools.c")>
+    
+    %assign modelname = LibGetModelName()
 
+    %assign headerfilename = LibGetMdlPubHdrBaseName()
+    %assign hFile = LibCreateSourceFile("Header","Simulink",headerfilename)
+
+    %openfile tmpBuf
+    extern char configurationFile[256];
+    %closefile tmpBuf
+    %<LibSetSourceFileSection(hFile,"Declarations",tmpBuf)>
+
+    %assign sourcefilename = LibGetMdlSrcBaseName()
+    %assign cFile = LibCreateSourceFile("Source","Simulink",sourcefilename)
+
+    %openfile tmpBuf
+    static IO_t *%<modelname>_io;
+    %closefile tmpBuf
+    %<LibSetSourceFileSection(cFile,"Declarations",tmpBuf)>
+
+    %assign datafilename = LibGetMdlDataSrcBaseName()
+    %assign cFile = LibCreateSourceFile("Source","Simulink",datafilename)
+    %assign filename  = STRING(SFcnParamSettings.Filename)
+
+    %openfile tmpBuf
+    char configurationFile[] = "%<filename>";
+    %closefile tmpBuf
+    %<LibSetSourceFileSection(cFile,"Definitions",tmpBuf)>
+    
 %endfunction
 
 %% Function: BlockInstanceSetup ===========================================
@@ -25,51 +52,59 @@
 
 %% Function: Start ======================================================
 %function Start (block, system) Output
-
-    %assign filename = STRING(SFcnParamSettings.Filename)
-
-    %assign ptrName = LibBlockPWork("io", "", "", 0)
-    io_allocate_memory((IO_t **)&(%<ptrName>));
-
-    read_ed247_configuration("%<filename>", (IO_t *)%<ptrName>);
+    
+    %assign modelname = LibGetModelName()
+    %if ISEQUAL(SFcnParamSettings.BlockType,0.0)
+    io_allocate_memory((IO_t **)&(%<modelname>_io));
+    read_ed247_configuration(configurationFile, (IO_t *)%<modelname>_io, "");
+    %endif
 
 %endfunction
 
 %% Function: Outputs ======================================================
 %function Outputs (block, system) Output
     %% 
+        
+    %assign modelname = LibGetModelName()
 
-    %assign ptrName = LibBlockPWork("io", "", "", 0)
+    %if ISEQUAL(SFcnParamSettings.BlockType,2.0) %% SEND
 
-    %if ISEQUAL(block.NumDataInputPorts, 0.0)
-    %else
-        %assign rollVars = ["U"]
-        %foreach port = block.NumDataInputPorts - 1
-            %roll sigIdx=RollRegions, lcv = RollThreshold, block, "Roller", rollVars
-                ((IO_t *)%<ptrName>)->inputs->signals[%<port>].valuePtr = (void*)%<LibBlockInputSignalAddr(port, "", lcv, sigIdx)>;
-            %endroll
-        %endforeach
-        send_simulink_to_ed247(((IO_t *)%<ptrName>));
-    %endif
+        %if ISEQUAL(block.NumDataInputPorts, 0.0)
+        %else
 
-    %if ISEQUAL(block.NumDataOutputPorts, 0.0)
-    %else
-        %assign rollVars = ["Y"]
-        %foreach port = block.NumDataOutputPorts - 1
-            %roll sigIdx=RollRegions, lcv = RollThreshold, block, "Roller", rollVars
-                ((IO_t *)%<ptrName>)->outputs->signals[%<port>].valuePtr = (void*)%<LibBlockOutputSignalAddr(port, "", lcv, sigIdx)>;
-            %endroll
-        %endforeach
-        receive_ed247_to_simulink(((IO_t *)%<ptrName>),NULL);
+            %assign rollVars = ["U"]
+            %foreach sigIdx = SFcnParamSettings.NumSignals
+
+                %assign portIdx = SFcnParamSettings.PortIndex[sigIdx]
+                %assign refreshIdx = SFcnParamSettings.RefreshIndex[sigIdx]
+                
+                %if ISEQUAL(refreshIdx,-1.0)
+                    ((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].do_refresh = 1;
+                %else
+                    ((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].do_refresh = (int) %<LibBlockInputSignal(refreshIdx, "", "", 0)>;
+                %endif
+                ((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].valuePtr = (void*)%<LibBlockInputSignalAddr(portIdx, "", "", 0)>;
+
+            %endforeach
+
+            send_simulink_to_ed247(((IO_t *)%<modelname>_io));
+
+        %endif
+
+    %elseif ISEQUAL(SFcnParamSettings.BlockType,1.0) %% RECEIVE
+        /* Receive */
     %endif
 
 %endfunction
 
 %% Function: Terminate ====================================================
 %function Terminate (block, system) Output
-    %%     
-    %assign ptrName = LibBlockPWork("io", "", "", 0)
-    io_free_memory((IO_t *)%<ptrName>);
+
+    %assign modelname = LibGetModelName()
+    %if ISEQUAL(SFcnParamSettings.BlockType,0.0)
+    io_free_memory((IO_t *)%<modelname>_io);
+    %endif
+
 %endfunction
 
 %% [EOF]

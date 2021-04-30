@@ -34,10 +34,14 @@ DEALINGS IN THE SOFTWARE.
                 </UDP_Sockets>
             </ComInterface>
 			<Streams>
-				<A664_Stream UID="0" Name="T11MX_19492_WAIT_STEP_I" Direction="Out" SampleMaxNumber="3" ICD="icd_func_exchange_a664_uc_main.xml:T11MX_19492_WAIT_STEP_I">
+				<A825_Stream UID="0" Name="Stream0" SampleMaxNumber="3" ICD="icd_func_exchange_a825_uc_main.xml:Stream0">
                     <DataTimestamp Enable="No" SampleDataTimestampOffset="No"/>
                     <Errors Enable="No"/>
-				</A664_Stream>
+				</A825_Stream>
+				<A825_Stream UID="1" Name="Stream1" SampleMaxNumber="5" ICD="icd_func_exchange_a825_uc_main.xml:Stream1">
+                    <DataTimestamp Enable="No" SampleDataTimestampOffset="No"/>
+                    <Errors Enable="No"/>
+				</A825_Stream>
             </Streams>
         </MultiChannel>
 	</Channels>

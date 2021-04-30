@@ -23,7 +23,7 @@ static IO_t *io;
 
 static void mdlInitializeSizes(SimStruct *S)
 {
-	int i,j;
+	int i,isig,idim,nports;
 	int32_T* d;
 	
     ssAllowSignalsWithMoreThan2D(S);
@@ -52,25 +52,60 @@ static void mdlInitializeSizes(SimStruct *S)
         /*
          * INPUTS
          */
-        myprintf("%d inputs\n", io->inputs->nsignals);
-        if (!ssSetNumInputPorts(S, io->inputs->nsignals)) return;
+        nports = io->inputs->nsignals;
+        for (isig = 0; isig < io->inputs->nsignals; isig++){
+            if (io->inputs->signals[isig].is_refresh == 1){
+                nports++;
+            }
+        }
+        myprintf("%d streams\n",io->inputs->nstreams);
+        myprintf("%d input messages\n", io->inputs->nsignals);
+        myprintf("%d input ports\n",  nports);
+        
+        if (!ssSetNumInputPorts(S, nports)) return;        
+        
+        isig = 0;
         for (i = 0; i < io->inputs->nsignals; i++){
+            
+            if (io->inputs->signals[i].is_refresh == 1){
+                
+                myprintf("Port %d : Refresh\n", isig);
+                
+                ssSetInputPortVectorDimension(S, isig, 1);
+                ssSetInputPortDirectFeedThrough(S, isig, 1);
+                ssSetInputPortDataType(S, isig, SS_BOOLEAN);
+                ssSetInputPortRequiredContiguous(S, isig, 1);
+                
+                io->inputs->signals[i].refresh_index = isig;
+                isig++;
+                
+            }
+            
+            myprintf("Port %d : Signal\n", isig);
+            myprintf("\t-Width = %d\n", io->inputs->signals[i].width);
+            myprintf("\t-Dimensions = %d\n", io->inputs->signals[i].dimensions);
             
             di.width	= io->inputs->signals[i].width;
             di.numDims	= io->inputs->signals[i].dimensions;
+            
             d = (int32_T*) malloc(di.numDims*sizeof(int32_T));
-            for (j = 0; j < di.numDims; j++){
-                d[j] = (int32_T)(io->inputs->signals[i].size[j]);
+            for (idim = 0; idim < di.numDims; idim++){
+                myprintf("\t\t-Dimension #%d = %d\n", idim, io->inputs->signals[i].size[idim]);
+                d[idim] = (int32_T)(io->inputs->signals[i].size[idim]);
             }
             di.dims = &(d[0]);
-            if(!ssSetInputPortDimensionInfo(S, i, &di)) return;
+            if(!ssSetInputPortDimensionInfo(S, isig, &di)) return;
             
-            //ssSetInputPortWidth(S, i, io->inputs->signals[i].width);
-            ssSetInputPortDirectFeedThrough(S, i, 1);
-            ssSetInputPortDataType(S, i, io->inputs->signals[i].type);
-            ssSetInputPortRequiredContiguous(S, i, 1);
-            
+            ssSetInputPortWidth(S, isig, io->inputs->signals[i].width);
+            ssSetInputPortDirectFeedThrough(S, isig, 1);
+            ssSetInputPortDataType(S, isig, io->inputs->signals[i].type);
+            ssSetInputPortRequiredContiguous(S, isig, 1);
+                                                            
             free(d);
+            
+            io->inputs->signals[i].port_index = isig;            
+            isig++;
+            
         }
         
     } else if (*blockType == RECEIVE){
@@ -84,33 +119,34 @@ static void mdlInitializeSizes(SimStruct *S)
         /*
          * OUTPUTS
          */
+        myprintf("%d streams\n", io->outputs->nstreams);
         myprintf("%d outputs\n", io->outputs->nsignals);
         if (!ssSetNumOutputPorts(S, io->outputs->nsignals)) return;
-        for (i = 0; i < io->outputs->nsignals; i++){
+        for (isig = 0; isig < io->outputs->nsignals; isig++){
             
-            di.width	= io->outputs->signals[i].width;
-            di.numDims	= io->outputs->signals[i].dimensions;
+            di.width	= io->outputs->signals[isig].width;
+            di.numDims	= io->outputs->signals[isig].dimensions;
             d = (int32_T*) malloc(di.numDims*sizeof(int32_T));
-            for (j = 0; j < di.numDims; j++){
-                d[j] = (int32_T)(io->outputs->signals[i].size[j]);
+            for (idim = 0; idim < di.numDims; idim++){
+                d[idim] = (int32_T)(io->outputs->signals[isig].size[idim]);
             }
             di.dims = &(d[0]);
-            if(!ssSetOutputPortDimensionInfo(S, i, &di)) return;
+            if(!ssSetOutputPortDimensionInfo(S, isig, &di)) return;
             
-            //ssSetOutputPortWidth(S, i, io->outputs->signals[i].width);
-            ssSetOutputPortDataType(S, i, io->outputs->signals[i].type);
+            //ssSetOutputPortWidth(S, isig, io->outputs->signals[isig].width);
+            ssSetOutputPortDataType(S, isig, io->outputs->signals[isig].type);
             
             free(d);
         }
         
     } else {
         
-        myprintf("CONFIGURATION block (%d)\n", (int) *blockType);
+        myprintf("CONFIGURATION block (%d)\n", (int_T) *blockType);
         
         io_allocate_memory(&io);
         
-        char *configurationFile = (char *)( mxGetData(ssGetSFcnParam(S,1)) );
-        char *logFile = (char *)( mxGetData(ssGetSFcnParam(S,2)) );
+        char_T *configurationFile = (char_T *)( mxGetData(ssGetSFcnParam(S,1)) );
+        char_T *logFile = (char_T *)( mxGetData(ssGetSFcnParam(S,2)) );
         if (configurationFile != NULL){
             myprintf("Configuration file = '%s'\n", configurationFile);
             myprintf("Log file = '%s'\n", logFile);
@@ -156,7 +192,7 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 
 static void mdlOutputs(SimStruct *S, int_T tid)
 {
-	int i,ndata,status;
+	int i,iport,irefresh,ndata,status;
 	time_T t = ssGetT(S);
 
     /*
@@ -183,11 +219,27 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     } else if (*blockType == SEND){
         
         for (i = 0; i < io->inputs->nsignals; i++){
-            myprintf("Send data #%d\n", i);
-            io->inputs->signals[i].valuePtr = (void*)ssGetInputPortSignal(S,i);
+            
+            iport = io->inputs->signals[i].port_index;
+            io->inputs->signals[i].valuePtr = (void*)ssGetInputPortSignal(S,iport);
+            
+            if (io->inputs->signals[i].is_refresh == 1){     
+                int8_T* refresh = (int8_T*)ssGetInputPortSignal(S,io->inputs->signals[i].refresh_index); 
+                myprintf("Refresh port #%d = %d\n", io->inputs->signals[i].refresh_index, *refresh);
+                io->inputs->signals[i].do_refresh = *refresh;               
+            } else {
+                io->inputs->signals[i].do_refresh = 1;
+            }
+            
+            if (io->inputs->signals[i].do_refresh == 1){
+                myprintf("Send data from port %d to signal %d\n", iport, i);
+            }
+                        
         }
+        
         status = (int)send_simulink_to_ed247(io);
         myprintf("Send status = %d\n", status);
+        
     }
 
 }
@@ -211,10 +263,58 @@ static void mdlTerminate(SimStruct *S){
  */
 static void mdlRTW(SimStruct *S)
 {
-	char *configurationFile = (char *)( mxGetData(ssGetSFcnParam(S,0)) );
-	if (!ssWriteRTWParamSettings(S, 1,SSWRITE_VALUE_QSTR, "Filename", configurationFile)) {
+    int_T i;
+    char_T  *configurationFile;
+    real_T  blockTypeID;
+    BLOCK_TYPE_T *blockType;
+    
+    real_T* portIndex;
+    real_T* refreshIndex;
+    int_T nSignals;
+        
+    blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
+    if (*blockType == SEND){
+        
+        blockTypeID = 2.0;
+        
+        nSignals = io->inputs->nsignals;
+        portIndex = (real_T*) malloc(sizeof(real_T) * nSignals);
+        refreshIndex = (real_T*) malloc(sizeof(real_T) * nSignals);
+        
+        for (i = 0; i < io->inputs->nsignals; i++){
+            
+            portIndex[i] = (real_T) io->inputs->signals[i].port_index;
+            if (io->inputs->signals[i].is_refresh == 1){ 
+                refreshIndex[i] = (real_T) io->inputs->signals[i].refresh_index;
+            } else {
+                refreshIndex[i] = -1.0;
+            }
+                        
+        }
+        
+    } else if (*blockType == RECEIVE){
+        blockTypeID = 1.0;
+    } else {
+        blockTypeID = 0.0;
+    }
+    
+	configurationFile = (char_T *)( mxGetData(ssGetSFcnParam(S,1)) );
+	if (!ssWriteRTWParamSettings(S, 5, 
+            SSWRITE_VALUE_QSTR, "Filename",     configurationFile,
+            SSWRITE_VALUE_NUM,  "BlockType",    blockTypeID,
+            SSWRITE_VALUE_NUM,  "NumSignals",   (real_T) nSignals,
+            SSWRITE_VALUE_VECT, "PortIndex",    portIndex, nSignals, 
+            SSWRITE_VALUE_VECT, "RefreshIndex", refreshIndex, nSignals)) {
 		return; /* An error occurred. */
 	}
+    /*
+    if (portIndex != NULL){
+        free(portIndex);
+    }
+    if (refreshIndex != NULL){
+        free(refreshIndex);
+    }
+       */ 
 }
 #endif /* MDL_RTW */
 
