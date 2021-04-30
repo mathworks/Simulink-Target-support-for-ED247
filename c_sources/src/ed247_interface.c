@@ -85,7 +85,7 @@ send_status_t send_simulink_to_ed247(IO_t *io){
 	for (i=0;i < io->inputs->nstreams; i++){
 
 		// ANA, DIS, NAD and VNAD use assistant
-		// A429 and A664 use push sample
+		// A429, A664 and A825 use push sample
 		switch (io->inputs->streams[i].stream_type){
 
 			case ED247_STREAM_TYPE_ANALOG:
@@ -94,8 +94,12 @@ send_status_t send_simulink_to_ed247(IO_t *io){
 			case ED247_STREAM_TYPE_VNAD:
 
 				for (j=0;j < io->inputs->streams[i].nsignals; j++){
-					status = ed247_stream_assistant_write_signal(io->inputs->streams[i].assistant,io->inputs->streams[i].signals[j]->signal,io->inputs->streams[i].signals[j]->valuePtr,io->inputs->streams[i].signals[j]->sample_size);
-					if (checkStatus(status,"ed247_stream_assistant_write_signal",3)){return STREAM_ASSISTANT_WRITE_SIGNAL_FAILURE;}
+                    
+                    if (io->inputs->streams[i].signals[j]->do_refresh == 1){
+                        status = ed247_stream_assistant_write_signal(io->inputs->streams[i].assistant,io->inputs->streams[i].signals[j]->signal,io->inputs->streams[i].signals[j]->valuePtr,io->inputs->streams[i].signals[j]->sample_size);
+                        if (checkStatus(status,"ed247_stream_assistant_write_signal",3)){return STREAM_ASSISTANT_WRITE_SIGNAL_FAILURE;}
+                    }
+                    
 				}
 
 				status = ed247_stream_assistant_push_sample(io->inputs->streams[i].assistant, NULL, NULL);
@@ -108,7 +112,14 @@ send_status_t send_simulink_to_ed247(IO_t *io){
 			case ED247_STREAM_TYPE_A825:
 
 				for (j=0;j < io->inputs->streams[i].nsignals; j++){
-					status = ed247_stream_push_sample(io->inputs->streams[i].stream, io->inputs->streams[i].signals[j]->valuePtr,io->inputs->streams[i].signals[j]->sample_size, NULL, NULL);
+                    
+                    myprintf("Refresh value for signal #%d = %d\n", j, io->inputs->streams[i].signals[j]->do_refresh);
+                    if (io->inputs->streams[i].signals[j]->do_refresh == 1){
+                        myprintf("Push sample for signal #%d\n", j);
+                        status = ed247_stream_push_sample(io->inputs->streams[i].stream, io->inputs->streams[i].signals[j]->valuePtr,io->inputs->streams[i].signals[j]->sample_size, NULL, NULL);
+                    } else {
+                        status = ED247_STATUS_SUCCESS;
+                    }
 
 					if (io->inputs->streams[i].stream_type == ED247_STREAM_TYPE_A825 && checkStatus(status,"ed247_stream_push_sample",3)){
 						// Ignore failure on A825 (messages can be declared as input with no data to transmit)
@@ -332,6 +343,7 @@ io_free_status_t io_free_memory(IO_t *io){
 				strcpy(signal_data.name,signal_info->name);
 				signal_data.direction   = stream_info->direction;
 				signal_data.type 		= SS_UINT8;
+				signal_data.is_refresh  = 0;
 				signal_data.signal_type = signal_info->type;
 				signal_data.dimensions	= 1;
 				signal_data.width		= 1;
@@ -345,6 +357,7 @@ io_free_status_t io_free_memory(IO_t *io){
 				strcpy(signal_data.name,signal_info->name);
 				signal_data.direction   = stream_info->direction;
 				signal_data.type 		= SS_SINGLE;
+				signal_data.is_refresh  = 0;
 				signal_data.signal_type = signal_info->type;
 				signal_data.dimensions	= 1;
 				signal_data.width		= 1;
@@ -358,6 +371,7 @@ io_free_status_t io_free_memory(IO_t *io){
 				strcpy(signal_data.name,signal_info->name);
 				signal_data.direction	= stream_info->direction;
 				signal_data.type 		= NAD2SimulinkDataType(signal_info->info.nad.nad_type);
+				signal_data.is_refresh  = 0;
 				signal_data.signal_type	= signal_info->type;
 				signal_data.dimensions	= signal_info->info.nad.dimensions_count;
 				signal_data.width		= 1;
@@ -375,6 +389,7 @@ io_free_status_t io_free_memory(IO_t *io){
 				strcpy(signal_data.name,signal_info->name);
 				signal_data.direction	= stream_info->direction;
 				signal_data.type 		= NAD2SimulinkDataType(signal_info->info.vnad.nad_type);
+				signal_data.is_refresh  = 0;
 				signal_data.signal_type	= signal_info->type;
 				signal_data.dimensions	= 1;
 				signal_data.width		= signal_info->info.vnad.max_length;
@@ -495,6 +510,7 @@ io_free_status_t io_free_memory(IO_t *io){
 
 						strcpy(current_signal->name,data->a429[i].messages[j].name);
 						current_signal->direction		= data->a429[i].messages[j].direction;
+                        current_signal->is_refresh      = 1;
 						current_signal->signal_type 	= data->a429[i].messages[j].type;
 						current_signal->type 			= A429_DATA_TYPE;
 						current_signal->dimensions		= 1;
@@ -551,6 +567,7 @@ io_free_status_t io_free_memory(IO_t *io){
 
 					strcpy(current_signal->name,data->a664[i].name);
 					current_signal->direction		= data->a664[i].direction;
+                    current_signal->is_refresh      = 1;
 					current_signal->type 			= A664_DATA_TYPE;
 					current_signal->dimensions		= 1;
 					current_signal->width			= data->a664[i].sample_max_size_bytes;
@@ -608,6 +625,7 @@ io_free_status_t io_free_memory(IO_t *io){
 					strcpy(current_signal->name,data->a825[i].name);
 					current_signal->direction		= ED247_DIRECTION_IN;
 					current_signal->type 			= A825_DATA_TYPE;
+                    current_signal->is_refresh      = 1;
 					current_signal->dimensions		= 1;
 					current_signal->width			= data->a825[i].sample_max_number;
 					current_signal->size[0]			= data->a825[i].sample_max_number;
@@ -623,6 +641,7 @@ io_free_status_t io_free_memory(IO_t *io){
 					strcpy(current_signal->name,data->a825[i].name);
 					current_signal->direction		= ED247_DIRECTION_OUT;
 					current_signal->type 			= A825_DATA_TYPE;
+                    current_signal->is_refresh      = 1;
 					current_signal->dimensions		= 1;
 					current_signal->width			= data->a825[i].sample_max_number;
 					current_signal->size[0]			= data->a825[i].sample_max_number;

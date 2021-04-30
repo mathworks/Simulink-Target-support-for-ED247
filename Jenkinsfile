@@ -1,4 +1,4 @@
-updateGitlabCommitStatus state: 'pending'
+// updateGitlabCommitStatus state: 'pending'
 
 releases = [
     'r2016b',
@@ -19,7 +19,7 @@ pipeline {
     environment {
 
         USERPROFILE = 'C:\\Temp'
-        MW_MINGW64_LOC = '\\\\gnb-csg-win01\\c$\\MinGW\\4.9.2-posix'
+        MW_MINGW64_LOC = 'C:\\Temp\\MinGW64'
         ED247_LOC = 'C:\\Temp\\ed247'
         LIBXML_LOC = 'C:\\Temp\\libxml2'
 
