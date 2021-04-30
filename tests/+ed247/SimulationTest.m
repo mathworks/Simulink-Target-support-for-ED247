@@ -26,6 +26,8 @@ classdef (SharedTestFixtures={ ...
             % [ SETUP ]
             sendmodel       = ['send_nad_r',version('-release')];
             receivemodel    = ['receive_nad_r',version('-release')];
+            closeModelSend  = onCleanup(@() bdclose(sendmodel));
+            closeModelRecv  = onCleanup(@() bdclose(receivemodel));
             
             testCase.assumeEqual(exist(sendmodel,'file'),4, ...
                 sprintf('Model "%s" is not available', sendmodel))
@@ -72,6 +74,8 @@ classdef (SharedTestFixtures={ ...
             % [ SETUP ]
             sendmodel       = ['send_a429_r',version('-release')];
             receivemodel    = ['receive_a429_r',version('-release')];
+            closeModelSend  = onCleanup(@() bdclose(sendmodel));
+            closeModelRecv  = onCleanup(@() bdclose(receivemodel));
             
             testCase.assumeEqual(exist(sendmodel,'file'),4, ...
                 sprintf('Model "%s" is not available', sendmodel))
@@ -163,6 +167,8 @@ classdef (SharedTestFixtures={ ...
             % [ SETUP ]
             sendmodel       = ['send_a664_r',version('-release')];
             receivemodel    = ['receive_a664_r',version('-release')];
+            closeModelSend  = onCleanup(@() bdclose(sendmodel));
+            closeModelRecv  = onCleanup(@() bdclose(receivemodel));
             
             testCase.assumeEqual(exist(sendmodel,'file'),4, ...
                 sprintf('Model "%s" is not available', sendmodel))
@@ -219,6 +225,8 @@ classdef (SharedTestFixtures={ ...
             % [ SETUP ]
             sendmodel       = ['send_a825_r',version('-release')];
             receivemodel    = ['receive_a825_r',version('-release')];
+            closeModelSend  = onCleanup(@() bdclose(sendmodel));
+            closeModelRecv  = onCleanup(@() bdclose(receivemodel));
             
             testCase.assumeEqual(exist(sendmodel,'file'),4, ...
                 sprintf('Model "%s" is not available', sendmodel))
