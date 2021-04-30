@@ -102,6 +102,7 @@
 	 char 						label[STRING_MAX_LENGTH];
 	 char 						sdi[STRING_MAX_LENGTH];
 	 uint32_t 					period_us;
+	 uint32_t 					validity_duration_us;
 	 char 						comment[STRING_MAX_LENGTH];
  } cmd_data_a429_message_t;
 
@@ -116,6 +117,7 @@
 	 char 						name[STRING_MAX_LENGTH];
 	 size_t 					sample_max_size_bytes;
 	 uint32_t 					period_us;
+	 uint32_t 					validity_duration_us;
 	 char 						comment[STRING_MAX_LENGTH];
  } cmd_data_a664_t;
 
@@ -123,6 +125,7 @@
 	 char 						name[STRING_MAX_LENGTH];
 	 size_t 					sample_max_number;
 	 uint32_t 					period_us;
+	 uint32_t 					validity_duration_us;
 	 char 						comment[STRING_MAX_LENGTH];
  } cmd_data_a825_t;
 

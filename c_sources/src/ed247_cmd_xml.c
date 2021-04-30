@@ -40,7 +40,7 @@
 	// Get root node
 	xmlRootNode = xmlDocGetRootElement(_p_xml_doc);
 
-	memset(&(data->counter),0,sizeof(data->counter));	
+	memset(&(data->counter),0,sizeof(data->counter));
 	for (xml_node_iter = xmlRootNode->children; xml_node_iter != NULL; xml_node_iter = xml_node_iter->next){
 
 		if (strcmp(xml_node_iter->name, "A429_Bus") == 0){
@@ -190,6 +190,8 @@
 			strcpy(data->sdi,attr_value);
 		} else if (strcmp(attr_name, "PeriodUs") == 0){	
 			data->period_us = atoi(attr_value);
+		} else if (strcmp(attr_name, "ValidityDurationUs") == 0){
+			data->validity_duration_us = atoi(attr_value);
 		} else if (strcmp(attr_name, "Comment") == 0){
 			strcpy(data->comment,attr_value);
 		}
@@ -213,8 +215,10 @@
 			strcpy(data->name,attr_value);
 		} else if (strcmp(attr_name, "SampleMaxSizeBytes") == 0){
 			data->sample_max_size_bytes = atoi(attr_value);
-		} else if (strcmp(attr_name, "PeriodUs") == 0){	
+		} else if (strcmp(attr_name, "PeriodUs") == 0){
 			data->period_us = atoi(attr_value);
+		} else if (strcmp(attr_name, "ValidityDurationUs") == 0){
+			data->validity_duration_us = atoi(attr_value);
 		} else if (strcmp(attr_name, "Comment") == 0){
 			strcpy(data->comment,attr_value);
 		}
@@ -238,6 +242,8 @@
 			data->sample_max_number = atoi(attr_value);
 		} else if (strcmp(attr_name, "PeriodUs") == 0){	
 			data->period_us = atoi(attr_value);
+		} else if (strcmp(attr_name, "ValidityDurationUs") == 0){
+			data->validity_duration_us = atoi(attr_value);
 		} else if (strcmp(attr_name, "Comment") == 0){
 			strcpy(data->comment,attr_value);
 		}

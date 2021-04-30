@@ -115,6 +115,7 @@ typedef struct {
 	int 						width;
 	size_t 						size[MAX_DIMENSIONS];
 	float 						sample_time;
+	float 						validity_duration;
 	void 						*valuePtr;
 	ed247_signal_type_t			signal_type;
 	ed247_signal_t 				signal;

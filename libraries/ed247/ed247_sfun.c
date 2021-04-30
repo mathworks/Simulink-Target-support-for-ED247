@@ -302,6 +302,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 				int_T irefresh = io->outputs->signals[isig].refresh_index;
 				int8_T* refresh = (int8_T*)ssGetOutputPortSignal(S,irefresh);
 
+				myprintf("Validity duration = %f sec\n", io->outputs->signals[isig].validity_duration);
 				*refresh = 1;
 
 			}
