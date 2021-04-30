@@ -117,8 +117,9 @@ classdef Pipeline < matlab.mixin.SetGet
     %% PUBLIC METHODS
     methods
         
-        function exit(obj)
-            exit(obj.run())
+        function exit(obj)    
+            status = obj.run();
+            quit(status, 'force')
         end
         
         function varargout = run(obj)
@@ -282,7 +283,7 @@ classdef Pipeline < matlab.mixin.SetGet
             %
             results = tr.run(ts);
             obj.show(results)
-            
+                                    
         end
 		                
     end
