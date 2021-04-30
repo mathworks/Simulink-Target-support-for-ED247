@@ -26,13 +26,20 @@ classdef Pipeline < matlab.mixin.SetGet
     %% IMMUTABLE PROPERTIES
     properties (SetAccess = immutable, GetAccess = private)
         configuration_
+        rootfolder_
     end
     
     %% CONSTRUCTOR
     methods
         
         function obj = Pipeline(rootfolder,varargin)
-                                    
+                  
+            obj.rootfolder_ = rootfolder;
+            
+            warning('off','ED247:invalidPath')
+            openProject(obj)
+            warning('on','ED247:invalidPath')
+            
             configuration = ed247.Configuration.forFolder(rootfolder);
             obj.configuration_  = configuration.toStruct();
             
@@ -124,7 +131,7 @@ classdef Pipeline < matlab.mixin.SetGet
                 
                 installDependencies(obj)   
 				
-                openProject(obj)
+                openProject(obj,'force')
                 
 				compile(obj)
 				package(obj)				                
@@ -151,7 +158,7 @@ classdef Pipeline < matlab.mixin.SetGet
         
         function installDependencies(obj)
             
-            mingwfolder = obj.configuration_.MinGW;
+            mingwfolder = getenv(ed247.Configuration.MINGW_ENVIRONMENT_VARIABLE);
             if ~isempty(mingwfolder)
                 
                 if ~isdir(mingwfolder) %#ok<ISDIR> Backward compatibility
@@ -199,11 +206,11 @@ classdef Pipeline < matlab.mixin.SetGet
             
         end
 		
-        function openProject(obj)
+        function openProject(obj,varargin)
            
             proj = slproject.getCurrentProjects();
-            if isempty(proj)
-                obj.project_ = simulinkproject(rootfolder);
+            if isempty(proj) || (~isempty(varargin) && strcmp(varargin{1},'force'))
+                obj.project_ = simulinkproject(obj.rootfolder_);
             else
                 obj.project_ = proj;
             end
