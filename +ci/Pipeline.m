@@ -33,7 +33,7 @@ classdef Pipeline < matlab.mixin.SetGet
     methods
         
         function obj = Pipeline(rootfolder,varargin)
-                  
+            
             obj.rootfolder_ = rootfolder;
             
             warning('off','ED247:invalidPath')
@@ -47,7 +47,7 @@ classdef Pipeline < matlab.mixin.SetGet
             obj.coveragefile_   = fullfile(rootfolder,sprintf('CoverageResults-r%s.xml',version('-release')));
             obj.reportfile_     = fullfile(rootfolder,sprintf('TestReport-r%s.pdf',version('-release')));
             obj.tapfile_        = fullfile(rootfolder,sprintf('TAPResults-r%s.tap',version('-release')));
-                        
+            
             if ~isempty(varargin)
                 set(obj,varargin{:})
             end
@@ -82,7 +82,7 @@ classdef Pipeline < matlab.mixin.SetGet
         function rootfolder = get.RootFolder(obj)
             rootfolder = obj.project_.RootFolder;
         end
-                
+        
         function status = get.Status(obj)
             status = obj.status_;
         end
@@ -107,7 +107,7 @@ classdef Pipeline < matlab.mixin.SetGet
         function set.ReportFile(obj,reportfile)
             obj.reportfile_ = reportfile;
         end
-                
+        
         function set.TAPFile(obj,tapfile)
             obj.tapfile_ = tapfile;
         end
@@ -117,7 +117,7 @@ classdef Pipeline < matlab.mixin.SetGet
     %% PUBLIC METHODS
     methods
         
-        function exit(obj)    
+        function exit(obj)
             status = obj.run();
             quit(status, 'force')
         end
@@ -129,12 +129,12 @@ classdef Pipeline < matlab.mixin.SetGet
             
             try
                 
-                installDependencies(obj)   
-				
+                installDependencies(obj)
+                
                 openProject(obj,'force')
                 
-				compile(obj)
-				package(obj)				                
+                compile(obj)
+                package(obj)
                 obj.results_ = test(obj);
                 
                 obj.status_ = nnz([obj.results_.Failed]);
@@ -184,9 +184,13 @@ classdef Pipeline < matlab.mixin.SetGet
                     mkdir(libxml2folder)
                 end
                 
-                lixml2archive = fullfile(obj.project_.RootFolder,'tests','_files','libxml2.zip');
-                obj.print( '## Extract LibXML2 in folder "%s"\n', lixml2archive);
-                unzip(lixml2archive,libxml2folder)
+                if ~isdir(fullfile(libxml2folder,'lib'))  %#ok<ISDIR> Backward compatibility
+                    lixml2archive = fullfile(obj.project_.RootFolder,'tests','_files','libxml2.zip');
+                    obj.print( '## Extract LibXML2 in folder "%s"\n', lixml2archive);
+                    unzip(lixml2archive,libxml2folder)
+                else
+                    obj.print( '## LibXML2 is already installed\n');
+                end
                 
             end
             
@@ -198,16 +202,20 @@ classdef Pipeline < matlab.mixin.SetGet
                     mkdir(ed247folder)
                 end
                 
-                ed247archive = fullfile(obj.project_.RootFolder,'tests','_files','ed247.zip');
-                obj.print( '## Extract ED247 in folder "%s"\n', ed247folder);
-                unzip(ed247archive,ed247folder)
+                if ~isdir(fullfile(ed247folder,'lib'))  %#ok<ISDIR> Backward compatibility
+                    ed247archive = fullfile(obj.project_.RootFolder,'tests','_files','ed247.zip');
+                    obj.print( '## Extract ED247 in folder "%s"\n', ed247folder);
+                    unzip(ed247archive,ed247folder)
+                else
+                    obj.print( '## ED247 is already installed\n');
+                end
                 
             end
             
         end
-		
+        
         function openProject(obj,varargin)
-           
+            
             proj = slproject.getCurrentProjects();
             if isempty(proj) || (~isempty(varargin) && strcmp(varargin{1},'force'))
                 obj.project_ = simulinkproject(obj.rootfolder_);
@@ -217,18 +225,18 @@ classdef Pipeline < matlab.mixin.SetGet
             
         end
         
-		function compile(obj)
-		
-			%
+        function compile(obj)
+            
+            %
             % Compile MEX
             %
             obj.print('## Compile ED247 S-Function\n')
             ed247.compile()
             
-		end
-		
-		function package(obj)
-		
+        end
+        
+        function package(obj)
+            
             %
             % Create default metadata file for packaging (remove
             % user-specific information: MinGW location, ED247 and LibXML2
@@ -236,13 +244,13 @@ classdef Pipeline < matlab.mixin.SetGet
             %
             metadatafilename = obj.configuration_.Filename;
             copyfile(metadatafilename, [metadatafilename,'.bckp'])
-			resetMetadatafile = onCleanup(@() movefile([metadatafilename,'.bckp'],metadatafilename));
+            resetMetadatafile = onCleanup(@() movefile([metadatafilename,'.bckp'],metadatafilename));
             obj.print('## Reset .metadata file ("%s")\n', metadatafilename);
             config = ed247.Configuration.fromStruct(obj.configuration_);
             reset(config)
             clear('config')
-			
-			%
+            
+            %
             % Package toolbox
             %
             toolboxproject = fullfile(obj.project_.RootFolder,'ToolboxPackagingConfiguration.prj');
@@ -259,9 +267,9 @@ classdef Pipeline < matlab.mixin.SetGet
             pause(1) % Pause to ensure that MATLAB path is updated
             obj.print( '## Package toolbox into "%s"\n', toolboxfile);
             matlab.addons.toolbox.packageToolbox(toolboxproject, toolboxfile)
-			
-		end
-                
+            
+        end
+        
         function results = test(obj,varargin)
             
             obj.print( '## Create test suite\n');
@@ -314,9 +322,9 @@ classdef Pipeline < matlab.mixin.SetGet
             %
             results = tr.run(ts);
             obj.show(results)
-                                    
+            
         end
-		                
+        
     end
     
     %% PRIVATE METHODS
