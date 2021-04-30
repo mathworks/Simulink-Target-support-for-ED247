@@ -34,14 +34,15 @@ static void mdlInitializeSizes(SimStruct *S)
 	/*
 	 * PARAMETERS
 	 */
-	ssSetNumSFcnParams(S, 4);
+	ssSetNumSFcnParams(S, 5);
 	if (ssGetNumSFcnParams(S) != ssGetSFcnParamsCount(S)) {
 		return; /* Parameter mismatch reported by the Simulink engine*/
 	}
 	ssSetSFcnParamTunable(S, 0, SS_PRM_NOT_TUNABLE); // Block type (configuration, send, receive)
-	ssSetSFcnParamTunable(S, 1, SS_PRM_NOT_TUNABLE); // Configuration file (only used by Configuration block)
-	ssSetSFcnParamTunable(S, 2, SS_PRM_NOT_TUNABLE); // Log file (only used by Configuration block)
-	ssSetSFcnParamTunable(S, 3, SS_PRM_NOT_TUNABLE); // Refresh factor (only used by Receive block)
+	ssSetSFcnParamTunable(S, 1, SS_PRM_NOT_TUNABLE); // Configuration file (used by Configuration block)
+	ssSetSFcnParamTunable(S, 2, SS_PRM_NOT_TUNABLE); // Log file (used by Configuration block)
+	ssSetSFcnParamTunable(S, 3, SS_PRM_NOT_TUNABLE); // Refresh factor (used by Receive block)
+	ssSetSFcnParamTunable(S, 4, SS_PRM_NOT_TUNABLE); // Sample time (used by Receive block)
 
 	BLOCK_TYPE_T * blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
 	if (*blockType == SEND){
@@ -242,8 +243,17 @@ static void mdlInitializeSizes(SimStruct *S)
 }
 static void mdlInitializeSampleTimes(SimStruct *S)
 {
-	ssSetSampleTime(S, 0, INHERITED_SAMPLE_TIME);
-	ssSetOffsetTime(S, 0, 0.0);
+	BLOCK_TYPE_T * blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
+	real_T * sampleTime = (real_T *)( mxGetData(ssGetSFcnParam(S,4)) );
+
+	if (*blockType == RECEIVE && *sampleTime > 0){
+		ssSetSampleTime(S, 0, *sampleTime);
+		ssSetOffsetTime(S, 0, 0.0);
+	} else {
+		ssSetSampleTime(S, 0, INHERITED_SAMPLE_TIME);
+		ssSetOffsetTime(S, 0, 0.0);
+	}
+
 }
 
 #define MDL_START
