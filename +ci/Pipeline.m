@@ -20,33 +20,26 @@ classdef Pipeline < matlab.mixin.SetGet
         results_
         status_
         tapfile_
+        project_
     end
     
     %% IMMUTABLE PROPERTIES
     properties (SetAccess = immutable, GetAccess = private)
         configuration_
-        project_
     end
     
     %% CONSTRUCTOR
     methods
         
         function obj = Pipeline(rootfolder,varargin)
-                        
-            proj = slproject.getCurrentProjects();
-            if isempty(proj)
-                obj.project_ = simulinkproject(rootfolder);
-            else
-                obj.project_ = proj;
-            end
-            
-            configuration = ed247.Configuration.forFolder(obj.project_.RootFolder);
+                                    
+            configuration = ed247.Configuration.forFolder(rootfolder);
             obj.configuration_  = configuration.toStruct();
             
             obj.mode_           = 'prod';
-            obj.coveragefile_   = fullfile(obj.project_.RootFolder,sprintf('CoverageResults-r%s.xml',version('-release')));
-            obj.reportfile_     = fullfile(obj.project_.RootFolder,sprintf('TestReport-r%s.pdf',version('-release')));
-            obj.tapfile_        = fullfile(obj.project_.RootFolder,sprintf('TAPResults-r%s.tap',version('-release')));
+            obj.coveragefile_   = fullfile(rootfolder,sprintf('CoverageResults-r%s.xml',version('-release')));
+            obj.reportfile_     = fullfile(rootfolder,sprintf('TestReport-r%s.pdf',version('-release')));
+            obj.tapfile_        = fullfile(rootfolder,sprintf('TAPResults-r%s.tap',version('-release')));
                         
             if ~isempty(varargin)
                 set(obj,varargin{:})
@@ -131,6 +124,8 @@ classdef Pipeline < matlab.mixin.SetGet
                 
                 installDependencies(obj)   
 				
+                openProject(obj)
+                
 				compile(obj)
 				package(obj)				                
                 obj.results_ = test(obj);
@@ -155,6 +150,24 @@ classdef Pipeline < matlab.mixin.SetGet
     methods (Hidden)
         
         function installDependencies(obj)
+            
+            mingwfolder = obj.configuration_.MinGW;
+            if ~isempty(mingwfolder)
+                
+                if ~isdir(mingwfolder) %#ok<ISDIR> Backward compatibility
+                    obj.print( '## Create folder "%s"\n', mingwfolder);
+                    mkdir(mingwfolder)
+                end
+                
+                if ~isdir(fullfile(mingwfolder,'bin')) %#ok<ISDIR> Backward compatibility
+                    mingwarchive = fullfile(obj.project_.RootFolder,'tests','_files','MINGW64_4.9.2-airbus.zip');
+                    obj.print( '## Extract MinGW64 in folder "%s"\n', mingwarchive);
+                    unzip(mingwarchive,mingwfolder)
+                else
+                    obj.print( '## MinGW64 is already installed\n');
+                end
+                
+            end
             
             libxml2folder = obj.configuration_.LibXML2;
             if ~isempty(libxml2folder)
@@ -186,6 +199,17 @@ classdef Pipeline < matlab.mixin.SetGet
             
         end
 		
+        function openProject(obj)
+           
+            proj = slproject.getCurrentProjects();
+            if isempty(proj)
+                obj.project_ = simulinkproject(rootfolder);
+            else
+                obj.project_ = proj;
+            end
+            
+        end
+        
 		function compile(obj)
 		
 			%
