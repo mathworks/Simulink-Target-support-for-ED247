@@ -7,6 +7,8 @@
 
 #include "simstruc.h"
 #include "ed247_interface.h"
+
+#define MAX_COUNTER 10000000
 /*
 typedef struct {
 	void*	io;
@@ -43,6 +45,8 @@ static void mdlInitializeSizes(SimStruct *S)
 
 	BLOCK_TYPE_T * blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
 	if (*blockType == SEND){
+
+		ssSetNumDWork(S, 0);
 
 		myprintf("SEND block (%d)\n", (int) *blockType);
 		if (io == NULL) {
@@ -137,13 +141,15 @@ static void mdlInitializeSizes(SimStruct *S)
 
 		if (!ssSetNumOutputPorts(S, nports)) return;
 
+		ssSetNumDWork(S, io->outputs->nsignals);
+
 		iport = 0;
 		for (isig = 0; isig < io->outputs->nsignals; isig++){
 
 			//
 			// Refresh ports
 			//
-			if (*refreshFactor > 0){
+			if (*refreshFactor > 0 && io->outputs->signals[isig].is_refresh == 1){
 
 				myprintf("Port %d : Refresh\n", iport);
 
@@ -179,9 +185,17 @@ static void mdlInitializeSizes(SimStruct *S)
 			io->outputs->signals[isig].port_index = iport;
 			iport++;
 
+			//
+			// COUNTER
+			//
+			ssSetDWorkWidth(S, isig, 1);
+			ssSetDWorkDataType(S, isig, SS_UINT32);
+
 		}
 
 	} else {
+
+		ssSetNumDWork(S, 0);
 
 		myprintf("CONFIGURATION block (%d)\n", (int_T) *blockType);
 
@@ -232,9 +246,33 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 	ssSetOffsetTime(S, 0, 0.0);
 }
 
+#define MDL_START
+#ifdef MDL_START
+static void mdlStart(SimStruct *S)
+{
+	BLOCK_TYPE_T * blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
+
+	if (*blockType == RECEIVE){
+
+		uint32_T *last_update;
+		int_T iCounter,nCounter;
+
+		myprintf("Counter initialization:\n");
+
+		nCounter = ssGetNumDWork(S);
+		for (iCounter = 0; iCounter < nCounter; iCounter++){
+			last_update = (uint32_T*) ssGetDWork(S,iCounter);
+			*last_update = iCounter; // MAX_COUNTER;
+			myprintf("\t- #%d = %d\n", iCounter, *last_update);
+		}
+
+	}
+}
+#endif
+
 static void mdlOutputs(SimStruct *S, int_T tid)
 {
-	int i,iport,irefresh,ndata,status;
+	int isig,iport,irefresh,ndata,status;
 	time_T t = ssGetT(S);
 
 	/*
@@ -251,30 +289,44 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 
 	if (*blockType == RECEIVE){
 
-		for (i = 0; i < io->outputs->nsignals; i++){
-			myprintf("Receive data #%d\n", i);
-			io->outputs->signals[i].valuePtr = (void*)ssGetOutputPortSignal(S,i);
+		int_T *refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(S,3)) );
+
+		for (isig = 0; isig < io->outputs->nsignals; isig++){
+
+			myprintf("Receive data #%d\n", isig);
+			iport = io->inputs->signals[isig].port_index;
+			io->outputs->signals[isig].valuePtr = (void*)ssGetOutputPortSignal(S,iport);
+
+			if (*refreshFactor > 0 && io->outputs->signals[isig].is_refresh == 1) {
+
+				int_T irefresh = io->outputs->signals[isig].refresh_index;
+				int8_T* refresh = (int8_T*)ssGetOutputPortSignal(S,irefresh);
+
+				*refresh = 1;
+
+			}
+
 		}
 		status = (int)receive_ed247_to_simulink(io,&ndata);
 		myprintf("Receive status = %d\n", status);
 
 	} else if (*blockType == SEND){
 
-		for (i = 0; i < io->inputs->nsignals; i++){
+		for (isig = 0; isig < io->inputs->nsignals; isig++){
 
-			iport = io->inputs->signals[i].port_index;
-			io->inputs->signals[i].valuePtr = (void*)ssGetInputPortSignal(S,iport);
+			iport = io->inputs->signals[isig].port_index;
+			io->inputs->signals[isig].valuePtr = (void*)ssGetInputPortSignal(S,iport);
 
-			if (io->inputs->signals[i].is_refresh == 1){
-				int8_T* refresh = (int8_T*)ssGetInputPortSignal(S,io->inputs->signals[i].refresh_index); 
-				myprintf("Refresh port #%d = %d\n", io->inputs->signals[i].refresh_index, *refresh);
-				io->inputs->signals[i].do_refresh = *refresh;
+			if (io->inputs->signals[isig].is_refresh == 1){
+				int8_T* refresh = (int8_T*)ssGetInputPortSignal(S,io->inputs->signals[isig].refresh_index); 
+				myprintf("Refresh port #%d = %d\n", io->inputs->signals[isig].refresh_index, *refresh);
+				io->inputs->signals[isig].do_refresh = *refresh;
 			} else {
-				io->inputs->signals[i].do_refresh = 1;
+				io->inputs->signals[isig].do_refresh = 1;
 			}
 
-			if (io->inputs->signals[i].do_refresh == 1){
-				myprintf("Send data from port %d to signal %d\n", iport, i);
+			if (io->inputs->signals[isig].do_refresh == 1){
+				myprintf("Send data from port %d to signal %d\n", iport, isig);
 			}
 
 		}
@@ -285,6 +337,44 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 	}
 
 }
+
+#define MDL_UPDATE
+#ifdef MDL_UPDATE
+static void mdlUpdate(SimStruct *S, int_T tid){
+
+	int_T isig;
+
+	BLOCK_TYPE_T * blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
+	if (*blockType == RECEIVE){
+
+		uint32_T *last_update;
+
+		myprintf("Update receive block:\n");
+		for (isig = 0; isig < io->outputs->nsignals; isig++){
+
+			myprintf("\tSignal #%d", isig);
+
+			last_update = (uint32_T*) ssGetDWork(S,isig);
+			myprintf(" : last update = %d | Action = ", *last_update);
+
+			if (io->outputs->signals[isig].do_refresh == 1){
+				myprintf("Reset");
+				last_update[0] = 0;
+			} else if (*last_update < MAX_COUNTER){
+				myprintf("Increment");
+				last_update[0] = last_update[0]+1;
+			} else {
+				myprintf("No");
+			}
+			myprintf("\n");
+
+		}
+
+	}
+
+}
+#endif
+
 static void mdlTerminate(SimStruct *S){
 
 	/*
