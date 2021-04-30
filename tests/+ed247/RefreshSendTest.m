@@ -57,6 +57,7 @@ classdef (SharedTestFixtures={ ...
            
             % [ SETUP ]                        
             modelname = ['send_a429_r',version('-release')];
+            closeModel = onCleanup(@() bdclose(modelname));
             
             ds = Simulink.SimulationData.Dataset();
             
