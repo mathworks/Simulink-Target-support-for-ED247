@@ -1,6 +1,6 @@
-updateGitlabCommitStatus state: 'pending'
-
 release = 'r2020b'
+
+updateGitlabCommitStatus name: 'r2020b', state: 'pending'
 
 pipeline {
 
@@ -90,13 +90,13 @@ pipeline {
 			cleanWs cleanWhenAborted: false, cleanWhenFailure: false, cleanWhenNotBuilt: false, cleanWhenUnstable: false, notFailBuild: true, deleteDirs:true
 		}
 		success {
-			updateGitlabCommitStatus name: 'build', state: 'success'
+			updateGitlabCommitStatus name: 'r2020b', state: 'success'
 		}
 		failure {
-			updateGitlabCommitStatus name: 'build', state: 'failed'
+			updateGitlabCommitStatus name: 'r2020b', state: 'failed'
 		}
 		aborted  {
-			updateGitlabCommitStatus name: 'build', state: 'canceled'
+			updateGitlabCommitStatus name: 'r2020b', state: 'canceled'
 		}
 	}
 

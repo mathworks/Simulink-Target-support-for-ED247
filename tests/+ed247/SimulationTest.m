@@ -31,25 +31,33 @@ classdef (SharedTestFixtures={ ...
     methods (Test)
         
         function testNAD(testCase)
-           
+            
             testCase.assumeFalse(verLessThan('MATLAB','9.2'), ...
                 'Simulink.SimulationInput is not defined for MATLAB releases lower than 9.2 (r2017a)')
             
-            % [ SETUP ]            
+            % [ SETUP ]
+            sendmodel       = ['send_nad_r',version('-release')];
+            receivemodel    = ['receive_nad_r',version('-release')];
+            
+            testCase.assumeEqual(exist(sendmodel,'file'),4, ...
+                sprintf('Model "%s" is not available', sendmodel))
+            testCase.assumeEqual(exist(receivemodel,'file'),4, ...
+                sprintf('Model "%s" is not available', receivemodel))
+            
             in = [ ...
-                Simulink.SimulationInput(['send_nad_r',version('-release')]); ...
-                Simulink.SimulationInput(['receive_nad_r',version('-release')]); ...
+                Simulink.SimulationInput(sendmodel); ...
+                Simulink.SimulationInput(receivemodel); ...
                 ];
             
             ds = Simulink.SimulationData.Dataset();
             
             ds = ds.addElement(timeseries(uint8([0;255]), [0;10], 'Name', 'input01'), 'Name', 'input01');
             ds = ds.addElement(timeseries(uint8([255;0]), [0;10], 'Name', 'input02'), 'Name', 'input02');
-            ds = ds.addElement(timeseries(uint8(abs([-255;255])), [0;10], 'Name', 'input03'), 'Name', 'input03');            
+            ds = ds.addElement(timeseries(uint8(abs([-255;255])), [0;10], 'Name', 'input03'), 'Name', 'input03');
             ds = ds.addElement(timeseries(single(reshape(0:10,1,1,[]) .* [1,2;3,4]), (0:10)', 'Name', 'input04'), 'Name', 'input04');
             in(1) = in(1).setExternalInput(ds);
             
-            % [ EXERCISE ]            
+            % [ EXERCISE ]
             parfor i = 1:numel(in)
                 out(i) = sim(in(i)); %#ok<SIM>
             end
@@ -65,7 +73,150 @@ classdef (SharedTestFixtures={ ...
             
             testCase.verifyTrue(all(ismember(output01,input01)))
             testCase.verifyTrue(all(ismember(output02,input02)))
-                        
+            
+        end
+        
+        function testA429(testCase)
+            
+            testCase.assumeFalse(verLessThan('MATLAB','9.2'), ...
+                'Simulink.SimulationInput is not defined for MATLAB releases lower than 9.2 (r2017a)')
+            
+            % [ SETUP ]
+            sendmodel       = ['send_a429_r',version('-release')];
+            receivemodel    = ['receive_a429_r',version('-release')];
+            
+            testCase.assumeEqual(exist(sendmodel,'file'),4, ...
+                sprintf('Model "%s" is not available', sendmodel))
+            testCase.assumeEqual(exist(receivemodel,'file'),4, ...
+                sprintf('Model "%s" is not available', receivemodel))
+            
+            in = [ ...
+                Simulink.SimulationInput(sendmodel); ...
+                Simulink.SimulationInput(receivemodel); ...
+                ];
+            
+            ds = Simulink.SimulationData.Dataset();
+            
+            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)),      (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I');
+            ds = ds.addElement(timeseries(uint8((255:-1:155)' + (1:4)), (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I');
+            ds = ds.addElement(timeseries(uint8((150:250)' + (1:4)),    (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I');
+            in(1) = in(1).setExternalInput(ds);
+            
+            % [ EXERCISE ]
+            parfor i = 1:numel(in)
+                out(i) = sim(in(i)); %#ok<SIM>
+            end
+            
+            % [ VERIFY ]
+            input  = out(1).logsout;
+            output = out(2).yout;
+            
+            %
+            % T11M4_A429_SIMU2SWIM_BUS_1_350_10
+            % 
+            name = 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I';
+            in    = input.get(name).Values.Data;
+            out   = output.get(name).Values.Data;
+            
+            nodata = all(out == 0,2);
+            out(nodata,:) = [];
+            compare = cumsum(all(in == out(1,:),2)) == 1;
+            sendmessage = in(compare,:);
+            recvmessage = out(1:min([end,size(sendmessage,1)]),:);            
+            sendmessage(size(recvmessage,1)+1:end,:) = [];
+            
+            testCase.verifyEqual(recvmessage,sendmessage, ...
+                sprintf('Received data for %s does not match send data',name))
+            
+            %
+            % T11M4_A429_SIMU2SWIM_BUS_1_200_10_I
+            % 
+            name = 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I';
+            in   = input.get(name).Values.Data;
+            out  = output.get(name).Values.Data;
+            
+            nodata = all(out == 0,2);
+            out(nodata,:) = [];
+            compare = cumsum(all(in == out(1,:),2)) == 1;
+            sendmessage = in(compare,:);
+            recvmessage = out(1:min([end,size(sendmessage,1)]),:);            
+            sendmessage(size(recvmessage,1)+1:end,:) = [];
+            
+            testCase.verifyEqual(recvmessage,sendmessage, ...
+                sprintf('Received data for %s does not match send data',name))
+               
+            %
+            % T11M4_A429_SIMU2SWIM_BUS_1_200_11_I
+            % 
+            name = 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I';
+            in   = input.get(name).Values.Data;
+            out  = output.get(name).Values.Data;
+            
+            nodata = all(out == 0,2);
+            out(nodata,:) = [];
+            compare = cumsum(all(in == out(1,:),2)) == 1;
+            sendmessage = in(compare,:);
+            recvmessage = out(1:min([end,size(sendmessage,1)]),:);            
+            sendmessage(size(recvmessage,1)+1:end,:) = [];
+            
+            testCase.verifyEqual(recvmessage,sendmessage, ...
+                sprintf('Received data for %s does not match send data',name))
+            
+        end
+        
+        function testA664(testCase)
+            
+            testCase.assumeFalse(verLessThan('MATLAB','9.2'), ...
+                'Simulink.SimulationInput is not defined for MATLAB releases lower than 9.2 (r2017a)')
+            
+            % [ SETUP ]
+            sendmodel       = ['send_a664_r',version('-release')];
+            receivemodel    = ['receive_a664_r',version('-release')];
+            
+            testCase.assumeEqual(exist(sendmodel,'file'),4, ...
+                sprintf('Model "%s" is not available', sendmodel))
+            testCase.assumeEqual(exist(receivemodel,'file'),4, ...
+                sprintf('Model "%s" is not available', receivemodel))
+            
+            in = [ ...
+                Simulink.SimulationInput(sendmodel); ...
+                Simulink.SimulationInput(receivemodel); ...
+                ];
+            
+            ds = Simulink.SimulationData.Dataset();
+            
+            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)), (0:0.1:10)', 'Name', 'T11MX_19492_WAIT_STEP_I'), 'Name', 'T11MX_19492_WAIT_STEP_I');
+            in(1) = in(1).setExternalInput(ds);
+            
+            % [ EXERCISE ]
+            parfor i = 1:numel(in)
+                out(i) = sim(in(i)); %#ok<SIM>
+            end
+            
+            % [ VERIFY ]
+            input  = out(1).logsout;
+            output = out(2).yout;
+            
+            %
+            % T11MX_19492_WAIT_STEP_I and T11MX_15430_TEST_STEP_O
+            %
+            inname  = 'T11MX_19492_WAIT_STEP_I';
+            outname = 'T11MX_15430_TEST_STEP_O';
+            in    = input.get(inname).Values.Data;
+            out   = output.get(outname).Values.Data;
+            
+            nodata = all(out == 0,2);
+            out(nodata,:) = [];
+            testCase.assertNotEmpty(out, 'No data received')
+            
+            compare = cumsum(all(in == out(1,:),2)) == 1;
+            sendmessage = in(compare,:);
+            recvmessage = out(1:min([end,size(sendmessage,1)]),:);
+            sendmessage(size(recvmessage,1)+1:end,:) = [];
+            
+            testCase.verifyEqual(recvmessage,sendmessage,'AbsTol',1, ...
+                sprintf('Received data for %s (in) and %s (out) does not match send data',inname,outname))
+            
         end
         
     end
