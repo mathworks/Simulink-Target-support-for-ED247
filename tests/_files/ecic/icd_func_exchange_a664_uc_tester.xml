@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ComponentMessagesDescription Name="T1">
-  <A664_SamplingMessage Direction="In" Name="T11MX_15430_TEST_STEP_O" SampleMaxSizeBytes="4" PeriodUs="1000000" Comment="T11_T11_PART1"/>
+  <A664_SamplingMessage Direction="In" Name="T11MX_15430_TEST_STEP_O" SampleMaxSizeBytes="4" PeriodUs="1000000" ValidityDurationUs="1000000" Comment="T11_T11_PART1"/>
 </ComponentMessagesDescription>
