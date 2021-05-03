@@ -304,9 +304,12 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 
 		for (isig = 0; isig < io->outputs->nsignals; isig++){
 
-			myprintf("Receive data #%d\n", isig);
+			myprintf("Receive data #%d", isig);
 			iport = io->inputs->signals[isig].port_index;
 			io->outputs->signals[isig].valuePtr = (void*)ssGetOutputPortSignal(S,iport);
+
+			status = (int)receive_ed247_to_simulink(io,&ndata);
+			myprintf("\tstatus = %d", status);
 
 			if (*refreshFactor > 0 && io->outputs->signals[isig].is_refresh == 1) {
 
@@ -323,13 +326,14 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 				} else {
 					*refresh = 0;
 				}
-				myprintf("Refresh = %d (Validity duration = %f sec, Time from last update = %f sec)\n", *refresh, io->outputs->signals[isig].validity_duration, timeFromLastUpdate);
+				myprintf("\tRefresh = %d (Validity duration = %f sec, Time from last update = %f sec)", *refresh, io->outputs->signals[isig].validity_duration, timeFromLastUpdate);
+			} else {
+				myprintf("\tNo refresh");
 			}
 
+			myprintf("\n");
 
 		}
-		status = (int)receive_ed247_to_simulink(io,&ndata);
-		myprintf("Receive status = %d\n", status);
 
 	} else if (*blockType == SEND){
 
