@@ -209,7 +209,7 @@ static void mdlInitializeSizes(SimStruct *S)
 			myprintf("Log file = '%s'\n", logFile);
 			read_ed247_configuration(configurationFile, io, logFile);
 
-			myprintf("%d inputs\n", io->outputs->nsignals);
+			myprintf("%d inputs\n", io->inputs->nsignals);
 			myprintf("%d outputs\n", io->outputs->nsignals);
 		}
 
