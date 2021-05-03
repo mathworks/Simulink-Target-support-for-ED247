@@ -18,8 +18,8 @@ classdef (Abstract) aBlock < matlab.mixin.SetGet
         
         function obj = aBlock(block,varargin)
             
-            if isnumeric(block)
-                block = strjoin({get(block,'Path'),get(block,'Name')},'/');
+            if ischar(block) || isstring(block)
+                block = get_param(block,'Handle');
             end
             obj.block_ = block;
             
