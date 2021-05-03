@@ -1,4 +1,4 @@
-classdef SFunctionBlock < matlab.mixin.SetGet
+classdef Configure < matlab.mixin.SetGet
     %
     % Copyright 2020 The MathWorks, Inc.
     %
@@ -18,7 +18,7 @@ classdef SFunctionBlock < matlab.mixin.SetGet
     %% CONSTRUCTOR
     methods
         
-        function obj = SFunctionBlock(block,varargin)
+        function obj = Configure(block,varargin)
             
             if isnumeric(block)
                 block = strjoin({get(block,'Path'),get(block,'Name')},'/');
@@ -122,6 +122,11 @@ classdef SFunctionBlock < matlab.mixin.SetGet
             
         end
         
+        function save(obj)
+            % Save data to Model workspace
+            
+        end
+        
     end
     
     %% BLOCK CALLBACKS
@@ -144,9 +149,9 @@ classdef SFunctionBlock < matlab.mixin.SetGet
         function browseConfigurationFile(obj)
             
             filename = get_param(obj.block_,'configurationFilename');
-            if ~isempty(strfind(filename,''''))
+            if contains(filename,'''')
                 filename = strrep(filename,'''','');
-            elseif ~isempty(strfind(filename,'"'))
+            elseif contains(filename,'"')
                 filename = strrep(filename,'"','');
             end
             [filename,pathname] = uigetfile({'*.xml','ECIC configuration file'}, 'Select configuration file', filename);
@@ -163,9 +168,9 @@ classdef SFunctionBlock < matlab.mixin.SetGet
         function browseLogFile(obj)
             
             filename = get_param(obj.block_,'logFilename');
-            if ~isempty(strfind(filename,''''))
+            if contains(filename,'''')
                 filename = strrep(filename,'''','');
-            elseif ~isempty(strfind(filename,'"'))
+            elseif contains(filename,'"')
                 filename = strrep(filename,'"','');
             end
             [filename,pathname] = uiputfile({'*.log','LOG file';'*.txt','TXT file';'*.*','All files'}, 'Define log file', filename);
@@ -185,6 +190,15 @@ classdef SFunctionBlock < matlab.mixin.SetGet
         
         function enableLogFile(obj)
             update(obj)
+        end
+        
+    end
+    
+    %% STATIC METHODS
+    methods (Static)
+        
+        function obj = fromCurrent(varargin)
+            obj = ed247.blocks.Configure(gcbh);
         end
         
     end

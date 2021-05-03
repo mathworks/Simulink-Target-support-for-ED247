@@ -1,23 +1,10 @@
 classdef (SharedTestFixtures={ ...
         matlab.unittest.fixtures.PathFixture(fullfile(regexprep(mfilename('fullpath'),'\+.*',''),'_files'))}) ...
-        SFunctionBlockTest < matlab.unittest.TestCase
+        ConfigureTest < matlab.unittest.TestCase
            
     %% TESTS
     methods (Test)
-       
-        function testConstructor(testCase)
-            
-            % [ SETUP ]
-            blockname = '';
-            
-            % [ EXERCISE ]
-            f = @() ed247.SFunctionBlock(blockname);
-            
-            % [ VERIFY ]
-            testCase.verifyWarningFree(f)
-            
-        end
-        
+               
         function testGetConfigurationFileinPath(testCase)
             
             % [ SETUP ]
@@ -27,13 +14,13 @@ classdef (SharedTestFixtures={ ...
             
             new_system(modelname)
             c = onCleanup(@() bdclose(modelname));
-            add_block('simulink/Ports & Subsystems/Subsystem',blockname)
+            blockhandle = add_block('simulink/Ports & Subsystems/Subsystem',blockname);
             p = Simulink.Mask.create(blockname);
             p.addParameter('Name','configurationFilename','Evaluate','off');
             
             set_param(blockname,'configurationFilename',sprintf('''%s''',configurationfile))
             
-            ivn = ed247.SFunctionBlock(blockname);
+            ivn = ed247.blocks.Configure(blockhandle);
             
             % [ EXERCISE ]
             actual = ivn.ConfigurationFileInt8;
@@ -58,13 +45,13 @@ classdef (SharedTestFixtures={ ...
                 onCleanup(@() bdclose(modelname)); ...
                 onCleanup(@() delete(configurationfile)); ...
                 }; %#ok<NASGU>
-            add_block('simulink/Ports & Subsystems/Subsystem',blockname)
+            blockhandle = add_block('simulink/Ports & Subsystems/Subsystem',blockname);
             p = Simulink.Mask.create(blockname);
             p.addParameter('Name','configurationFilename','Evaluate','off');
             
             set_param(blockname,'configurationFilename',sprintf('''%s''',configurationfile))
             
-            ivn = ed247.SFunctionBlock(blockname);
+            ivn = ed247.blocks.Configure(blockhandle);
             
             % [ EXERCISE ]
             actual = ivn.ConfigurationFileInt8;
@@ -89,14 +76,14 @@ classdef (SharedTestFixtures={ ...
                 onCleanup(@() delete(configurationfile)); ...
                 onCleanup(@() evalin('base','clear(''configurationfile'')')); ...
                 }; %#ok<NASGU>
-            add_block('simulink/Ports & Subsystems/Subsystem',blockname)
+            blockhandle = add_block('simulink/Ports & Subsystems/Subsystem',blockname);
             p = Simulink.Mask.create(blockname);
             p.addParameter('Name','configurationFilename','Evaluate','off');
             
             assignin('base','configurationfile',configurationfile)
             set_param(blockname,'configurationFilename','configurationfile')
             
-            ivn = ed247.SFunctionBlock(blockname);
+            ivn = ed247.blocks.Configure(blockhandle);
             
             % [ EXERCISE ]
             actual = ivn.ConfigurationFileInt8;
@@ -118,14 +105,14 @@ classdef (SharedTestFixtures={ ...
             c = { ...
                 onCleanup(@() bdclose(modelname)); ...
                 }; %#ok<NASGU>
-            add_block('simulink/Ports & Subsystems/Subsystem',blockname)
+            blockhandle = add_block('simulink/Ports & Subsystems/Subsystem',blockname);
             p = Simulink.Mask.create(blockname);
             p.addParameter('Name','logFilename','Evaluate','off');
             p.addParameter('Name','enableLog','Evaluate','off');
             
             set_param(blockname,'enableLog','on','logFilename',sprintf('''%s''',logfile))
             
-            ivn = ed247.SFunctionBlock(blockname);
+            ivn = ed247.blocks.Configure(blockhandle);
             
             % [ EXERCISE ]
             actual = ivn.LogFileInt8;
@@ -147,14 +134,14 @@ classdef (SharedTestFixtures={ ...
             c = { ...
                 onCleanup(@() bdclose(modelname)); ...
                 }; %#ok<NASGU>
-            add_block('simulink/Ports & Subsystems/Subsystem',blockname)
+            blockhandle = add_block('simulink/Ports & Subsystems/Subsystem',blockname);
             p = Simulink.Mask.create(blockname);
             p.addParameter('Name','logFilename','Evaluate','off');
             p.addParameter('Name','enableLog','Evaluate','off');
             
             set_param(blockname,'enableLog','off','logFilename',sprintf('''%s''',logfile))
             
-            ivn = ed247.SFunctionBlock(blockname);
+            ivn = ed247.blocks.Configure(blockhandle);
             
             % [ EXERCISE ]
             actual = ivn.LogFileInt8;
