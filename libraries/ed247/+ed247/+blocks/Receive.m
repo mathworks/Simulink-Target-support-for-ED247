@@ -1,33 +1,26 @@
-classdef Receive < matlab.mixin.SetGet
-   
+classdef Receive < ed247.blocks.aBlock
+    %
+    % Copyright 2021 The MathWorks, Inc.
+    %
+    
     %% DEPENDENT PROPERTIES
     properties (Dependent)
         PortLabel
         DisplayText
     end
     
-    %% IMMUTABLE PROPERTIES
-    properties (SetAccess = immutable, GetAccess = private)
-        block_
-    end
-    
     %% CONSTRUCTOR
     methods
-       
+        
         function obj = Receive(block,varargin)
-           
-            obj.block_ = block;
-            if ~isempty(varargin)
-                set(obj,varargin{:})
-            end
-            
+            obj@ed247.blocks.aBlock(block,varargin{:})
         end
         
     end
     
     %% ACCESSORS
     methods
-       
+        
         function portlabel = get.PortLabel(obj) %#ok<MANU>
             Type    = {}; % 'output'
             Number  = [];
@@ -43,13 +36,13 @@ classdef Receive < matlab.mixin.SetGet
     
     %% PUBLIC METHODS
     methods
-       
+        
         function initialize(obj)
             
             obj
             
         end
-                
+        
     end
     
     %% STATIC METHODS

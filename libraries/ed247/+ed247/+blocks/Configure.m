@@ -1,4 +1,4 @@
-classdef Configure < matlab.mixin.SetGet
+classdef Configure < ed247.blocks.aBlock
     %
     % Copyright 2020 The MathWorks, Inc.
     %
@@ -9,26 +9,12 @@ classdef Configure < matlab.mixin.SetGet
         DisplayText
         LogFileInt8
     end
-    
-    %% IMMUTABLE PROPERTIES
-    properties (SetAccess = immutable, GetAccess = private)
-        block_
-    end
-    
+        
     %% CONSTRUCTOR
     methods
         
         function obj = Configure(block,varargin)
-            
-            if isnumeric(block)
-                block = strjoin({get(block,'Path'),get(block,'Name')},'/');
-            end
-            obj.block_ = block;
-            
-            if ~isempty(varargin)
-                set(obj,varargin{:})
-            end
-            
+            obj@ed247.blocks.aBlock(block,varargin{:})
         end
         
     end
