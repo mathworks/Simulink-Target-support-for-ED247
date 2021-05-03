@@ -117,6 +117,7 @@ typedef struct {
 	float 						sample_time;
 	float 						validity_duration;
 	void 						*valuePtr;
+	ed247_stream_type_t 		stream_type;
 	ed247_signal_type_t			signal_type;
 	ed247_signal_t 				signal;
 	void 						*sample;

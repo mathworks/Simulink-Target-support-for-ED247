@@ -355,6 +355,7 @@ io_free_status_t io_free_memory(IO_t *io){
 				signal_data.type 		= SS_UINT8;
 				signal_data.is_refresh  = 0;
 				signal_data.signal_type = signal_info->type;
+				signal_data.stream_type = stream_info->type;
 				signal_data.dimensions	= 1;
 				signal_data.width		= 1;
 				signal_data.size[0]		= 1;
@@ -369,6 +370,7 @@ io_free_status_t io_free_memory(IO_t *io){
 				signal_data.type 		= SS_SINGLE;
 				signal_data.is_refresh  = 0;
 				signal_data.signal_type = signal_info->type;
+				signal_data.stream_type = stream_info->type;
 				signal_data.dimensions	= 1;
 				signal_data.width		= 1;
 				signal_data.size[0]		= 1;
@@ -383,6 +385,7 @@ io_free_status_t io_free_memory(IO_t *io){
 				signal_data.type 		= NAD2SimulinkDataType(signal_info->info.nad.nad_type);
 				signal_data.is_refresh  = 0;
 				signal_data.signal_type	= signal_info->type;
+				signal_data.stream_type = stream_info->type;
 				signal_data.dimensions	= signal_info->info.nad.dimensions_count;
 				signal_data.width		= 1;
 				for (i = 0; i < signal_info->info.nad.dimensions_count; i++){
@@ -401,6 +404,7 @@ io_free_status_t io_free_memory(IO_t *io){
 				signal_data.type 		= NAD2SimulinkDataType(signal_info->info.vnad.nad_type);
 				signal_data.is_refresh  = 0;
 				signal_data.signal_type	= signal_info->type;
+				signal_data.stream_type = stream_info->type;
 				signal_data.dimensions	= 1;
 				signal_data.width		= signal_info->info.vnad.max_length;
 				signal_data.size[0]		= signal_info->info.vnad.max_length;
@@ -520,8 +524,9 @@ io_free_status_t io_free_memory(IO_t *io){
 
 						strcpy(current_signal->name,data->a429[i].messages[j].name);
 						current_signal->direction			= data->a429[i].messages[j].direction;
-                        current_signal->is_refresh			= 1;
+						current_signal->is_refresh			= 1;
 						current_signal->signal_type 		= data->a429[i].messages[j].type;
+						current_signal->stream_type			= stream_info->type;
 						current_signal->type 				= A429_DATA_TYPE;
 						current_signal->dimensions			= 1;
 						current_signal->width				= A429_DATA_SIZE;
@@ -579,6 +584,7 @@ io_free_status_t io_free_memory(IO_t *io){
 					strcpy(current_signal->name,data->a664[i].name);
 					current_signal->direction			= data->a664[i].direction;
 					current_signal->is_refresh			= 1;
+					current_signal->stream_type			= stream_info->type;
 					current_signal->type 				= A664_DATA_TYPE;
 					current_signal->dimensions			= 1;
 					current_signal->width				= data->a664[i].sample_max_size_bytes;
@@ -638,6 +644,7 @@ io_free_status_t io_free_memory(IO_t *io){
 					current_signal->direction			= ED247_DIRECTION_IN;
 					current_signal->type 				= A825_DATA_TYPE;
 					current_signal->is_refresh			= 1;
+					current_signal->stream_type			= stream_info->type;
 					current_signal->dimensions			= 1;
 					current_signal->width				= data->a825[i].sample_max_number;
 					current_signal->size[0]				= data->a825[i].sample_max_number;
@@ -655,6 +662,7 @@ io_free_status_t io_free_memory(IO_t *io){
 					current_signal->direction			= ED247_DIRECTION_OUT;
 					current_signal->type 				= A825_DATA_TYPE;
 					current_signal->is_refresh			= 1;
+					current_signal->stream_type			= stream_info->type;
 					current_signal->dimensions			= 1;
 					current_signal->width				= data->a825[i].sample_max_number;
 					current_signal->size[0]				= data->a825[i].sample_max_number;
