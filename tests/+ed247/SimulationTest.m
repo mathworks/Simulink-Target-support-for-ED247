@@ -90,11 +90,11 @@ classdef (SharedTestFixtures={ ...
             ds = Simulink.SimulationData.Dataset();
             
             ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh');
-            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)),      (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I'),        'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I');
+            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)),      (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10'),          'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10');
             ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_refresh');
-            ds = ds.addElement(timeseries(uint8((255:-1:155)' + (1:4)), (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I'),        'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I');
+            ds = ds.addElement(timeseries(uint8((255:-1:155)' + (1:4)), (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10'),          'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10');
             ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_refresh');            
-            ds = ds.addElement(timeseries(uint8((150:250)' + (1:4)),    (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I'),        'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I');
+            ds = ds.addElement(timeseries(uint8((150:250)' + (1:4)),    (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11'),          'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11');
             in(1) = in(1).setExternalInput(ds);
             
             % [ EXERCISE ]
@@ -109,7 +109,7 @@ classdef (SharedTestFixtures={ ...
             %
             % T11M4_A429_SIMU2SWIM_BUS_1_350_10
             %
-            name = 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I';
+            name = 'T11M4_A429_SIMU2SWIM_BUS_1_350_10';
             in    = input.get(name).Values.Data;
             out   = output.get(name).Values.Data;
             
@@ -124,9 +124,9 @@ classdef (SharedTestFixtures={ ...
                 sprintf('Received data for %s does not match send data',name))
             
             %
-            % T11M4_A429_SIMU2SWIM_BUS_1_200_10_I
+            % T11M4_A429_SIMU2SWIM_BUS_1_200_10
             %
-            name = 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I';
+            name = 'T11M4_A429_SIMU2SWIM_BUS_1_200_10';
             in   = input.get(name).Values.Data;
             out  = output.get(name).Values.Data;
             
@@ -141,9 +141,9 @@ classdef (SharedTestFixtures={ ...
                 sprintf('Received data for %s does not match send data',name))
             
             %
-            % T11M4_A429_SIMU2SWIM_BUS_1_200_11_I
+            % T11M4_A429_SIMU2SWIM_BUS_1_200_11
             %
-            name = 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I';
+            name = 'T11M4_A429_SIMU2SWIM_BUS_1_200_11';
             in   = input.get(name).Values.Data;
             out  = output.get(name).Values.Data;
             
