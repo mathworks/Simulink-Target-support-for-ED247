@@ -1,5 +1,15 @@
 classdef ECIC < matlab.mixin.SetGet
    
+    %% DEPENDENT PROPERTIES
+    properties (Dependent)
+        Configuration
+    end
+    
+    %% PRIVATE PROPERTIES
+    properties (Access = private)
+        configuration_
+    end
+    
     %% IMMUTABLE PROPERTIES
     properties (SetAccess = immutable, GetAccess = private)
         filename_
@@ -17,19 +27,21 @@ classdef ECIC < matlab.mixin.SetGet
         
     end
     
-    %% PUBLIC METHODS
+    %% ACCESSORS
     methods
        
+        function configuration = get.Configuration(obj)
+            configuration = obj.configuration_;
+        end
+        
+    end
+    
+    %% PUBLIC METHODS
+    methods
+        
         function read(obj)
-            
             obj.assert(exist(obj.filename_,'file') == 2, 'File "%s" does not exist', obj.filename_)
-            
-            txt = fileread(obj.filename_);
-            streams = regexp(txt,'\<Streams?>(.*?)\</Streams?>','tokens');
-            if ~isempty(streams)
-                streams = char(streams{1});
-            end
-            
+            obj.configuration_ = ed247_mex(obj.filename_);
         end
         
     end
