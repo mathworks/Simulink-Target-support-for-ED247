@@ -4,6 +4,8 @@
 #define N_FIELDNAMES 10
 #define MAX_STRING_SIZE 20
 
+void fillStructure(mxArray *S, int index, signal_characteristics_t signal);
+
 /* The gateway function */
 void mexFunction( int nlhs, mxArray *plhs[],
                   int nrhs, const mxArray *prhs[])
@@ -12,8 +14,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
     size_t buflen;
     int status;
     IO_t *io;
+    int nIn, nOut;
     
-    int i;
+    int i,j;
     char *fieldnames[N_FIELDNAMES];
     fieldnames[0] = (char*)mxMalloc(MAX_STRING_SIZE);
     memcpy(fieldnames[0],"name",sizeof("name"));
@@ -66,10 +69,21 @@ void mexFunction( int nlhs, mxArray *plhs[],
     io_allocate_memory(&io);
     read_ed247_configuration(filename, io, "");
     
-    mexPrintf("%d inputs\n", io->inputs->nsignals);
-    mexPrintf("%d outputs\n", io->outputs->nsignals);
+    nIn = io->inputs->nsignals;
+    nOut = io->outputs->nsignals;
     
-    plhs[0] = mxCreateStructMatrix(io->inputs->nsignals + io->outputs->nsignals,1,N_FIELDNAMES,(const char**)fieldnames);
+    mexPrintf("%d inputs, %d outputs\n", nIn, nOut);
+    
+    plhs[0] = mxCreateStructMatrix(nIn + nOut,1,N_FIELDNAMES,(const char**)fieldnames);
+    
+    for (i = 0; i < nIn; i++){
+        mexPrintf("Fill elements %d/%d\n", i+1, nIn + nOut);
+        fillStructure(plhs[0], i, io->inputs->signals[i]);        
+    }
+    for (j = 0; j < nOut; j++){
+        mexPrintf("Fill elements %d/%d\n", i+j+1, nIn + nOut);
+        fillStructure(plhs[0], i+j, io->outputs->signals[j]);  
+    }
     
     //Deallocate memory for the fieldnames
     for (i = 0; i < N_FIELDNAMES; i++){
@@ -78,5 +92,90 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     mxFree(filename);
     io_free_memory(io);
+    
+}
+
+void fillStructure(mxArray *S, int index, signal_characteristics_t signal){
+    
+    int i;
+    mxArray *size;
+    double  *sizeptr;
+            
+    // NAME
+    mxSetFieldByNumber(S,index,0, mxCreateString(signal.name));
+    
+    // DIRECTION
+    if (signal.direction == ED247_DIRECTION_IN){
+        mxSetFieldByNumber(S,index,1, mxCreateString("IN"));
+    } else if (signal.direction == ED247_DIRECTION_OUT){
+        mxSetFieldByNumber(S,index,1, mxCreateString("OUT"));
+    } else if (signal.direction == ED247_DIRECTION_INOUT){
+        mxSetFieldByNumber(S,index,1, mxCreateString("INOUT"));
+    } else {
+        mxSetFieldByNumber(S,index,1, mxCreateString("UNKNOWN"));
+    }
+    
+    // TYPE
+    if (signal.type == SS_SINGLE){
+        mxSetFieldByNumber(S,index,2, mxCreateString("single"));
+    } else if (signal.type == SS_INT8){
+        mxSetFieldByNumber(S,index,2, mxCreateString("int8"));
+    } else if (signal.type == SS_UINT8){
+        mxSetFieldByNumber(S,index,2, mxCreateString("uint8"));
+    } else if (signal.type == SS_INT16){
+        mxSetFieldByNumber(S,index,2, mxCreateString("int16"));
+    } else if (signal.type == SS_UINT16){
+        mxSetFieldByNumber(S,index,2, mxCreateString("uint16"));
+    } else if (signal.type == SS_INT32){
+        mxSetFieldByNumber(S,index,2, mxCreateString("int32"));
+    } else if (signal.type == SS_UINT32){
+        mxSetFieldByNumber(S,index,2, mxCreateString("uint32"));
+    } else if (signal.type == SS_BOOLEAN){
+        mxSetFieldByNumber(S,index,2, mxCreateString("logical"));
+    } else {
+        mxSetFieldByNumber(S,index,2, mxCreateString("double"));
+    }
+    
+    // DIMENSIONS
+    mxSetFieldByNumber(S,index,3, mxCreateDoubleScalar((real_T) signal.dimensions));
+    
+    // WIDTH
+    mxSetFieldByNumber(S,index,4, mxCreateDoubleScalar((real_T) signal.width));
+    
+    // SIZE
+    size = mxCreateDoubleMatrix(1,signal.dimensions, mxREAL);
+    sizeptr    = mxGetPr(size);
+    for(i = 0; i < signal.dimensions; i++){
+        sizeptr[i] = (double)signal.size[i];
+    }
+    mxSetFieldByNumber(S,index,5, size);
+    
+    // SAMPLE TIME
+    mxSetFieldByNumber(S,index,6, mxCreateDoubleScalar((real_T) signal.sample_time));
+    
+    // VALIDITY DURATION
+    mxSetFieldByNumber(S,index,7, mxCreateDoubleScalar((real_T) signal.validity_duration));
+    
+    // SIGNAL TYPE
+    if (signal.stream_type == ED247_STREAM_TYPE_ANALOG){
+        mxSetFieldByNumber(S,index,8, mxCreateString("Analog"));
+    } else if (signal.stream_type == ED247_STREAM_TYPE_DISCRETE){
+        mxSetFieldByNumber(S,index,8, mxCreateString("Discrete"));
+    } else if (signal.stream_type == ED247_STREAM_TYPE_NAD){
+        mxSetFieldByNumber(S,index,8, mxCreateString("NAD"));
+    } else if (signal.stream_type == ED247_STREAM_TYPE_VNAD){
+        mxSetFieldByNumber(S,index,8, mxCreateString("VNAD"));
+    } else if (signal.stream_type == ED247_STREAM_TYPE_A664){
+        mxSetFieldByNumber(S,index,8, mxCreateString("A664"));
+    } else if (signal.stream_type == ED247_STREAM_TYPE_A429){
+        mxSetFieldByNumber(S,index,8, mxCreateString("A429"));
+    } else if (signal.stream_type == ED247_STREAM_TYPE_A825){
+        mxSetFieldByNumber(S,index,8, mxCreateString("A825"));
+    } else {
+        mxSetFieldByNumber(S,index,8, mxCreateString("Undefined"));
+    }
+    
+    // SAMPLE SIZE
+    mxSetFieldByNumber(S,index,9, mxCreateDoubleScalar((real_T) signal.sample_size));
     
 }
