@@ -272,7 +272,7 @@ static void mdlStart(SimStruct *S)
 		nCounter = ssGetNumDWork(S);
 		for (iCounter = 0; iCounter < nCounter; iCounter++){
 			last_update = (uint32_T*) ssGetDWork(S,iCounter);
-			*last_update = iCounter; // MAX_COUNTER;
+			*last_update = MAX_COUNTER;
 			myprintf("\t- #%d = %d\n", iCounter, *last_update);
 		}
 
@@ -300,6 +300,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 	if (*blockType == RECEIVE){
 
 		int_T *refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(S,3)) );
+		time_T sampleTime = ssGetSampleTime(S, 0);
 
 		for (isig = 0; isig < io->outputs->nsignals; isig++){
 
@@ -312,10 +313,19 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 				int_T irefresh = io->outputs->signals[isig].refresh_index;
 				int8_T* refresh = (int8_T*)ssGetOutputPortSignal(S,irefresh);
 
-				myprintf("Validity duration = %f sec\n", io->outputs->signals[isig].validity_duration);
-				*refresh = 1;
+				real_T timeFromLastUpdate;
+				uint32_T *last_update;
+				last_update = (uint32_T*) ssGetDWork(S,isig);
+				timeFromLastUpdate = ((real_T) *last_update) * ((real_T) sampleTime);
 
+				if (timeFromLastUpdate < io->outputs->signals[isig].validity_duration){
+					*refresh = 1;
+				} else {
+					*refresh = 0;
+				}
+				myprintf("Refresh = %d (Validity duration = %f sec, Time from last update = %f sec)\n", *refresh, io->outputs->signals[isig].validity_duration, timeFromLastUpdate);
 			}
+
 
 		}
 		status = (int)receive_ed247_to_simulink(io,&ndata);
