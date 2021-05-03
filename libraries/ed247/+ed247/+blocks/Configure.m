@@ -5,9 +5,15 @@ classdef Configure < ed247.blocks.aBlock
     
     %% DEPENDENT PROPERTIES
     properties (Dependent)
+        ConfigurationFile
         ConfigurationFileInt8
         DisplayText
         LogFileInt8
+    end
+    
+    %% PRIVATE PROPERTIES
+    properties (Access = private)
+        configuration_
     end
         
     %% CONSTRUCTOR
@@ -22,12 +28,11 @@ classdef Configure < ed247.blocks.aBlock
     %% ACCESSORS
     methods
         
-        function configurationfileint8 = get.ConfigurationFileInt8(obj)
-            
+        function configurationfile = get.ConfigurationFile(obj)
             
             filename = get_param(obj.block_,'configurationFilename');
             if isempty(filename)
-                configurationfileint8 = int8(0);
+                configurationfile = '';
                 return
             end
             
@@ -39,12 +44,21 @@ classdef Configure < ed247.blocks.aBlock
             end
             
             if ~isempty(which(configurationfile))
-                configurationfileint8 = int8([which(configurationfile),0]);
-            elseif exist(configurationfile,'file') == 2
-                configurationfileint8 = int8([configurationfile,0]);
-            else
+                configurationfile = which(configurationfile);
+            elseif exist(configurationfile,'file') ~= 2
                 error('ED247:IOVariableNumber:invalidFile', ...
                     'Cannot find file %s', configurationfile)
+            end
+            
+        end
+        
+        function configurationfileint8 = get.ConfigurationFileInt8(obj)            
+            
+            configurationfile = obj.ConfigurationFile;
+            if isempty(configurationfile)
+                configurationfileint8 = int8(0);
+            else
+                configurationfileint8 = int8([configurationfile,0]);
             end
             
         end
@@ -111,12 +125,24 @@ classdef Configure < ed247.blocks.aBlock
         function save(obj)
             % Save data to Model workspace
             
+%             filename = obj.ConfigurationFile;
+%             if ~isempty(filename)
+%                 ecic = ed247.ECIC(filename);
+%                 read(ecic)
+%             else
+%                 obj.configuration_ = struct();
+%             end
+            
         end
         
     end
     
     %% BLOCK CALLBACKS
     methods
+        
+        function LoadFcn(obj)            
+            save(obj)
+        end
        
         function InitFcn(obj)
             
@@ -179,7 +205,7 @@ classdef Configure < ed247.blocks.aBlock
         end
         
     end
-    
+        
     %% STATIC METHODS
     methods (Static)
         
