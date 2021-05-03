@@ -28,27 +28,37 @@ classdef Receive < ed247.blocks.aBlock
     methods
         
         function displaytext = get.DisplayText(obj)
-            if strcmp(get(obj.block_,'show_port_labels'),'on')
-                displaytext = '';
-            else
+            
+            if bdIsLibrary(bdroot(obj.block_)) || strcmp(get(obj.block_,'show_port_labels'),'off')
                 displaytext = 'ED247 Receive';
+            else
+                displaytext = '';
             end
+            
         end
         
         function isrefresh = get.IsRefresh(obj)
-            isrefresh = any(ismember({obj.Configuration.signal_type},obj.TYPES_FOR_REFRESH));
+            configuration = obj.Configuration;
+            if ~isempty(configuration)
+                isrefresh = any(ismember({configuration.signal_type},obj.TYPES_FOR_REFRESH));
+            else
+                isrefresh = true;
+            end
         end
         
         function portlabel = get.PortLabel(obj)
             
-            outputsignals   = obj.Configuration(ismember({obj.Configuration.direction},{'IN','INOUT'}));
             outputports     = get(obj.block_,'PortHandles');
             outputports     = outputports.Outport;
             
             portlabel = table(repmat({'output'},numel(outputports),1), (1:numel(outputports))', repmat({''},numel(outputports),1), ...
                 'VariableNames', {'Type','Number','Label'});
             
-            if strcmp(get(obj.block_,'show_port_labels'),'on')
+            configuration   = obj.Configuration;
+            
+            if ~isempty(configuration) && strcmp(get(obj.block_,'show_port_labels'),'on')
+                
+                outputsignals   = configuration(ismember({configuration.direction},{'IN','INOUT'}));
                 
                 refresh_factor = str2double(get(obj.block_,'refresh_factor'));
                 isrefresh = refresh_factor > 0;

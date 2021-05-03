@@ -44,10 +44,10 @@ classdef (Abstract) aBlock < matlab.mixin.SetGet
             modelname   = bdroot(obj.block_);
             mdlwrksp    = get_param(modelname,'ModelWorkspace');
             
-            if mdlwrksp.hasVariable('ED247Configuration')
+            if ~isempty(mdlwrksp) && mdlwrksp.hasVariable('ED247Configuration')
                 configuration = mdlwrksp.getVariable('ED247Configuration');
             else
-                configuration = struct();
+                configuration = struct.empty;
             end
             
         end
