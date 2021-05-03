@@ -3,6 +3,11 @@ classdef Receive < ed247.blocks.aBlock
     % Copyright 2021 The MathWorks, Inc.
     %
     
+    %% CONSTANT
+    properties (Constant)
+        TYPES_FOR_REFRESH = {'A429','A664','A825'};
+    end
+    
     %% DEPENDENT PROPERTIES
     properties (Dependent)
         DisplayText
@@ -21,44 +26,80 @@ classdef Receive < ed247.blocks.aBlock
     
     %% ACCESSORS
     methods
-                
-        function displaytext = get.DisplayText(obj) %#ok<MANU>
-            displaytext = 'ED247 Receive';
+        
+        function displaytext = get.DisplayText(obj)
+            if strcmp(get(obj.block_,'show_port_labels'),'on')
+                displaytext = '';
+            else
+                displaytext = 'ED247 Receive';
+            end
         end
         
-        function isrefresh = get.IsRefresh(obj) %#ok<MANU>
-            isrefresh = true; % TODO
+        function isrefresh = get.IsRefresh(obj)
+            isrefresh = any(ismember({obj.Configuration.signal_type},obj.TYPES_FOR_REFRESH));
         end
         
-        function portlabel = get.PortLabel(obj) %#ok<MANU>
-            Type    = {}; % 'output'
-            Number  = [];
-            Label   = {};
-            portlabel = table(Type, Number, Label);
-        end
+        function portlabel = get.PortLabel(obj)
+            
+            outputsignals   = obj.Configuration(ismember({obj.Configuration.direction},{'IN','INOUT'}));
+            outputports     = get(obj.block_,'PortHandles');
+            outputports     = outputports.Outport;
+            
+            portlabel = table(repmat({'output'},numel(outputports),1), (1:numel(outputports))', repmat({''},numel(outputports),1), ...
+                'VariableNames', {'Type','Number','Label'});
+            
+            if strcmp(get(obj.block_,'show_port_labels'),'on')
                 
+                refresh_factor = str2double(get(obj.block_,'refresh_factor'));
+                isrefresh = refresh_factor > 0;
+                
+                iport = 1;
+                for isig = 1:numel(outputsignals)
+                    
+                    basename = outputsignals(isig).name;
+                    if isrefresh
+                        portlabel.Label{iport} = sprintf('%s_refresh',basename);
+                        iport = iport + 1;
+                    end
+                    
+                    portlabel.Label{iport} = basename;
+                    iport = iport + 1;
+                    
+                end
+                
+            end
+            
+        end
+        
     end
     
     %% PUBLIC METHODS
     methods
         
         function initialize(obj)
-                    
+            
             m = Simulink.Mask.get(obj.block_);
             refreshgroup = m.getDialogControl('refresh_group');
             
             if obj.IsRefresh
                 refreshgroup.Visible = 'on';
-                set(obj.block_,'refresh_factor','1')
             else
                 refreshgroup.Visible = 'off';
                 set(obj.block_,'refresh_factor','0')
             end
             
+            portlabels = obj.PortLabel;
+            
+            outputports     = get(obj.block_,'PortHandles');
+            outputports     = outputports.Outport;
+            for iout = 1:numel(outputports)
+                set(outputports(iout), 'Name', portlabels.Label{iout})
+            end
+            
         end
         
         function enableRefresh(obj)
-                        
+            
             m = Simulink.Mask.get(obj.block_);
             refreshfactor = m.Parameters(strcmp({m.Parameters.Name},'refresh_factor'));
             
@@ -81,6 +122,15 @@ classdef Receive < ed247.blocks.aBlock
             
         end
         
+        function changeRefreshFactor(obj)
+            refresh_factor = str2double(get(obj.block_,'refresh_factor'));
+            if refresh_factor > 0
+                set(obj.block_,'enable_refresh','on')
+            else
+                set(obj.block_,'enable_refresh','off')
+            end
+        end
+                
     end
     
     %% STATIC METHODS

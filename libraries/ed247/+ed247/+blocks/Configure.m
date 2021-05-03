@@ -10,12 +10,7 @@ classdef Configure < ed247.blocks.aBlock
         DisplayText
         LogFileInt8
     end
-    
-    %% PRIVATE PROPERTIES
-    properties (Access = private)
-        configuration_
-    end
-        
+            
     %% CONSTRUCTOR
     methods
         
@@ -125,13 +120,7 @@ classdef Configure < ed247.blocks.aBlock
         function save(obj)
             % Save data to Model workspace
             
-%             filename = obj.ConfigurationFile;
-%             if ~isempty(filename)
-%                 ecic = ed247.ECIC(filename);
-%                 read(ecic)
-%             else
-%                 obj.configuration_ = struct();
-%             end
+            
             
         end
         
@@ -140,8 +129,11 @@ classdef Configure < ed247.blocks.aBlock
     %% BLOCK CALLBACKS
     methods
         
-        function LoadFcn(obj)            
-            save(obj)
+        function LoadFcn(obj)
+            islibrary = bdIsLibrary(bdroot(obj.block_));
+            if ~islibrary
+                saveConfigurationInModelWorkspace(obj)
+            end
         end
        
         function InitFcn(obj)
@@ -175,6 +167,8 @@ classdef Configure < ed247.blocks.aBlock
             end
             set_param(obj.block_, 'configurationFilename', sprintf('''%s''', filename))
             
+            saveConfigurationInModelWorkspace(obj)
+            
         end
         
         function browseLogFile(obj)
@@ -202,6 +196,25 @@ classdef Configure < ed247.blocks.aBlock
         
         function enableLogFile(obj)
             update(obj)
+        end
+        
+    end
+    
+    %% PROTECTED METHODS
+    methods (Access = protected)
+       
+        function saveConfigurationInModelWorkspace(obj)
+            
+            modelname   = bdroot(obj.block_);
+            mdlwrksp    = get_param(modelname,'ModelWorkspace');
+            
+            filename = obj.ConfigurationFile;
+            if ~isempty(filename)
+                ecic = ed247.ECIC(filename);
+                read(ecic)
+                assignin(mdlwrksp, 'ED247Configuration', ecic.Configuration)
+            end
+            
         end
         
     end

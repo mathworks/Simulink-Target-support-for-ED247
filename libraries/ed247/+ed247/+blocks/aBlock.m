@@ -8,6 +8,11 @@ classdef (Abstract) aBlock < matlab.mixin.SetGet
         DisplayText
     end
     
+    %% DEPENDENT PROPERTIES
+    properties (Dependent)        
+        Configuration
+    end
+    
     %% IMMUTABLE PROPERTIES
     properties (SetAccess = immutable, GetAccess = protected)
         block_
@@ -25,6 +30,24 @@ classdef (Abstract) aBlock < matlab.mixin.SetGet
             
             if ~isempty(varargin)
                 set(obj,varargin{:})
+            end
+            
+        end
+        
+    end
+    
+    %% ACCESSORS
+    methods
+       
+        function configuration = get.Configuration(obj)
+           
+            modelname   = bdroot(obj.block_);
+            mdlwrksp    = get_param(modelname,'ModelWorkspace');
+            
+            if mdlwrksp.hasVariable('ED247Configuration')
+                configuration = mdlwrksp.getVariable('ED247Configuration');
+            else
+                configuration = struct();
             end
             
         end
