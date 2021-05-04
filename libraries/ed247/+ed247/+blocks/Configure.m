@@ -41,7 +41,7 @@ classdef Configure < ed247.blocks.aBlock
             if ~isempty(which(configurationfile))
                 configurationfile = which(configurationfile);
             elseif exist(configurationfile,'file') ~= 2
-                error('ED247:IOVariableNumber:invalidFile', ...
+                obj.error('ED247:IOVariableNumber:invalidFile', ...
                     'Cannot find file %s', configurationfile)
             end
             
@@ -119,9 +119,7 @@ classdef Configure < ed247.blocks.aBlock
         
         function save(obj)
             % Save data to Model workspace
-            
-            
-            
+            obj.print("No action (deprecated)")
         end
         
     end
@@ -130,10 +128,20 @@ classdef Configure < ed247.blocks.aBlock
     methods
         
         function LoadFcn(obj)
-            islibrary = bdIsLibrary(bdroot(obj.block_));
-            if ~islibrary
-                saveConfigurationInModelWorkspace(obj)
+            
+            try
+                
+                islibrary = bdIsLibrary(bdroot(obj.block_));
+                if ~islibrary
+                    saveConfigurationInModelWorkspace(obj)
+                end
+                
+            catch me
+                if ~strcmp(me.identifier,'ED247:IOVariableNumber:invalidFile')
+                    rethrow(me)
+                end
             end
+            
         end
        
         function InitFcn(obj)
