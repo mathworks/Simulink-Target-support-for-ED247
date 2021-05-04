@@ -115,11 +115,13 @@ classdef (SharedTestFixtures={ ...
             
             nodata = all(out == 0,2);
             out(nodata,:) = [];
+            testCase.assertNotEmpty(out, sprintf('No data received for signal "%s"', name))
             compare = cumsum(all(in == out(1,:),2)) == 1;
             sendmessage = in(compare,:);
             recvmessage = out(1:min([end,size(sendmessage,1)]),:);
             sendmessage(size(recvmessage,1)+1:end,:) = [];
             
+            testCase.verifyNotEmpty(recvmessage, 'No data received')
             testCase.verifyEqual(recvmessage,sendmessage,'AbsTol',1, ...
                 sprintf('Received data for %s does not match send data',name))
             
@@ -132,11 +134,13 @@ classdef (SharedTestFixtures={ ...
             
             nodata = all(out == 0,2);
             out(nodata,:) = [];
+            testCase.assertNotEmpty(out, sprintf('No data received for signal "%s"', name))
             compare = cumsum(all(in == out(1,:),2)) == 1;
             sendmessage = in(compare,:);
             recvmessage = out(1:min([end,size(sendmessage,1)]),:);
             sendmessage(size(recvmessage,1)+1:end,:) = [];
             
+            testCase.verifyNotEmpty(recvmessage, 'No data received')
             testCase.verifyEqual(recvmessage,sendmessage,'AbsTol',1, ...
                 sprintf('Received data for %s does not match send data',name))
             
@@ -149,11 +153,13 @@ classdef (SharedTestFixtures={ ...
             
             nodata = all(out == 0,2);
             out(nodata,:) = [];
+            testCase.assertNotEmpty(out, sprintf('No data received for signal "%s"', name))
             compare = cumsum(all(in == out(1,:),2)) == 1;
             sendmessage = in(compare,:);
             recvmessage = out(1:min([end,size(sendmessage,1)]),:);
             sendmessage(size(recvmessage,1)+1:end,:) = [];
             
+            testCase.verifyNotEmpty(recvmessage, 'No data received')
             testCase.verifyEqual(recvmessage,sendmessage,'AbsTol',1, ...
                 sprintf('Received data for %s does not match send data',name))
             

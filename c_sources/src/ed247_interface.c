@@ -178,6 +178,8 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 					status = ed247_stream_assistant_pop_sample(io->outputs->streams[i].assistant, NULL, NULL, NULL, &empty);
 					if (status == ED247_STATUS_SUCCESS){
 
+						myprintf("\t> %s OK\n", "ed247_stream_assistant_pop_sample");
+
 						for (j=0;j < io->outputs->streams[i].nsignals; j++){
 
 							status = ed247_stream_assistant_read_signal(io->outputs->streams[i].assistant,io->outputs->streams[i].signals[j]->signal,&sample_data,&sample_size);
@@ -205,8 +207,12 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 
 					for (j=0;j < io->outputs->streams[i].nsignals; j++){
 
+						myprintf("\t> signal #%d/#%d", j+1, io->outputs->streams[i].nsignals);
+
 						status = ed247_stream_pop_sample(io->outputs->streams[i].stream,&sample_data,&sample_size, NULL, NULL, NULL, &empty);
 						if (status == ED247_STATUS_SUCCESS && io->outputs->streams[i].signals[j]->valuePtr != NULL && sample_data != NULL){
+
+							myprintf("\t> %s OK\n", "ed247_stream_pop_sample");
 
 							memcpy(io->outputs->streams[i].signals[j]->valuePtr,(void*)sample_data,io->outputs->streams[i].signals[j]->sample_size);
 							if (n != NULL){(*n)++;}/* polyspace DEFECT:USELESS_IF RTE:UNR [Justified:Low] Robustness */
@@ -214,6 +220,7 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 							io->outputs->streams[i].signals[j]->do_refresh = 1;
 
 						} else {
+							myprintf("\t> %s NOK\n", "ed247_stream_pop_sample");
 							io->outputs->streams[i].signals[j]->do_refresh = 0;
 						}
 
@@ -232,14 +239,34 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 	else if (io->outputs->streams[0].stream_type == ED247_STREAM_TYPE_A825) { 
 	// Do not generate an error if no A825 message is received 
 	// All A825 are registered as input AND output messages but depending on the configuration it could be only In or only Out)
+
+		for (i=0;i < io->outputs->nstreams; i++){
+			for (j=0;j < io->outputs->streams[i].nsignals; j++){
+				io->outputs->streams[i].signals[j]->do_refresh = 0;
+			}
+		}
+
 		return RECEIVE_A825_SKIP;
 	}
 	else if (status == ED247_STATUS_TIMEOUT) {
-		
+
+		for (i=0;i < io->outputs->nstreams; i++){
+			for (j=0;j < io->outputs->streams[i].nsignals; j++){
+				io->outputs->streams[i].signals[j]->do_refresh = 0;
+			}
+		}
+
 		myprintf("\t\t - No data received before timeout\n");
 		return NO_DATA_BEFORE_TIMEOUT;
 	}
 	else {
+
+		for (i=0;i < io->outputs->nstreams; i++){
+			for (j=0;j < io->outputs->streams[i].nsignals; j++){
+				io->outputs->streams[i].signals[j]->do_refresh = 0;
+			}
+		}
+
 		myprintf("\t\t!! %s returns invalid status\n", "ed247_wait_frame");
 		return WAIT_FRAME_FAILURE;
 	}

@@ -302,37 +302,46 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 		int_T *refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(S,3)) );
 		time_T sampleTime = ssGetSampleTime(S, 0);
 
+		//
+		// Prepare output (assign pointer to block output)
+		//
 		for (isig = 0; isig < io->outputs->nsignals; isig++){
-
-			myprintf("Receive data #%d", isig);
-			iport = io->inputs->signals[isig].port_index;
+			iport = io->outputs->signals[isig].port_index;
+			myprintf("Attach output signal #%d to port #%d\n", isig, iport);
 			io->outputs->signals[isig].valuePtr = (void*)ssGetOutputPortSignal(S,iport);
+		}
 
-			status = (int)receive_ed247_to_simulink(io,&ndata);
-			myprintf("\tstatus = %d", status);
+		//
+		// Receive data
+		//
+		myprintf("Receive data\t");
+		status = (int)receive_ed247_to_simulink(io,&ndata);
+		myprintf("\tstatus = %d", status);
+		myprintf("\t - do refresh = %d", io->outputs->signals[isig].do_refresh);
 
-			if (*refreshFactor > 0 && io->outputs->signals[isig].is_refresh == 1) {
+		if (*refreshFactor > 0){
 
-				int_T irefresh = io->outputs->signals[isig].refresh_index;
-				int8_T* refresh = (int8_T*)ssGetOutputPortSignal(S,irefresh);
+			for (isig = 0; isig < io->outputs->nsignals; isig++){
 
-				real_T timeFromLastUpdate;
-				uint32_T *last_update;
-				last_update = (uint32_T*) ssGetDWork(S,isig);
-				timeFromLastUpdate = ((real_T) *last_update) * ((real_T) sampleTime);
+					int_T irefresh = io->outputs->signals[isig].refresh_index;
+					int8_T* refresh = (int8_T*)ssGetOutputPortSignal(S,irefresh);
 
-				if (timeFromLastUpdate < io->outputs->signals[isig].validity_duration){
-					*refresh = 1;
-				} else {
-					*refresh = 0;
-				}
-				myprintf("\tRefresh = %d (Validity duration = %f sec, Time from last update = %f sec)", *refresh, io->outputs->signals[isig].validity_duration, timeFromLastUpdate);
-			} else {
-				myprintf("\tNo refresh");
+					real_T timeFromLastUpdate;
+					uint32_T *last_update;
+					last_update = (uint32_T*) ssGetDWork(S,isig);
+					timeFromLastUpdate = ((real_T) *last_update) * ((real_T) sampleTime);
+
+					if (io->outputs->signals[isig].do_refresh == 1 || 
+					timeFromLastUpdate < io->outputs->signals[isig].validity_duration){
+						*refresh = 1;
+					} else {
+						*refresh = 0;
+					}
+					myprintf("\tRefresh = %d (Validity duration = %f sec, Time from last update = %f sec)\n", *refresh, io->outputs->signals[isig].validity_duration, timeFromLastUpdate);
+
 			}
-
-			myprintf("\n");
-
+		} else {
+			myprintf("\tNo refresh");
 		}
 
 	} else if (*blockType == SEND){
@@ -383,13 +392,13 @@ static void mdlUpdate(SimStruct *S, int_T tid){
 			myprintf(" : last update = %d | Action = ", *last_update);
 
 			if (io->outputs->signals[isig].do_refresh == 1){
-				myprintf("Reset");
+				myprintf("Reset counter");
 				last_update[0] = 0;
 			} else if (*last_update < MAX_COUNTER){
-				myprintf("Increment");
+				myprintf("Increment counter");
 				last_update[0] = last_update[0]+1;
 			} else {
-				myprintf("No");
+				myprintf("Counter saturation");
 			}
 			myprintf("\n");
 
