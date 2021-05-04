@@ -56,13 +56,25 @@ classdef (SharedTestFixtures={ ...
             input  = out(1).logsout;
             output = out(2).yout;
             
-            input01   = input.get('input01').Values.Data;
-            input02   = input.get('input02').Values.Data;
-            output01  = output.get('output01').Values.Data;
-            output02  = output.get('output02').Values.Data;
+            % Signal #1           
+            output01 = output.get('Signal00').Values.Data;
+            output01 = unique(output01,'stable');
+            output01 = output01(find(output01 == 0, 1, 'last')+1:end);
+            input01  = input.get('input01').Values.Data;
+            input01  = input01(find(input01 > 0, 1, 'first'):end);
+            input01(length(output01)+1:end) = [];
             
-            testCase.verifyTrue(all(ismember(output01,input01)))
-            testCase.verifyTrue(all(ismember(output02,input02)))
+            testCase.verifyEqual(output01,input01, 'Output01 (Signal00) should match Input01')
+            
+            % Signal #2
+            output02 = output.get('Signal01').Values.Data;
+            output02 = unique(output02,'stable');
+            output02 = output02(find(output02 > 0, 1, 'first'):end);            
+            input02  = input.get('input02').Values.Data;
+            input02  = input02(find(input02 > 0, 1, 'first'):end); 
+            input02(length(output02)+1:end) = [];
+                        
+            testCase.verifyEqual(output02,input02, 'Output02 (Signal01) should match Input02')
             
         end
         

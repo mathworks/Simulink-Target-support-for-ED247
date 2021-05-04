@@ -25,6 +25,8 @@ static IO_t *io;
 
 static void mdlInitializeSizes(SimStruct *S)
 {
+
+	int i;
 	int isig,iport,idim,nports;
 	int32_T* d;
 
@@ -122,20 +124,29 @@ static void mdlInitializeSizes(SimStruct *S)
 
 	} else if (*blockType == RECEIVE){
 
+		int_T nrefresh;
+		int_T *refreshFactor;
+
 		myprintf("RECEIVE block (%d)\n", (int) *blockType);
 		if (io == NULL) {
 			myprintf("No IO defined\n");
 			return;
 		}
 
-		int_T *refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(S,3)) );
+		refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(S,3)) );
 		myprintf("Refresh factor = %d\n",*refreshFactor);
 
 		/*
 		 * OUTPUTS
 		 */
+
+		nrefresh = 0;
+		for (i = 0; i < io->outputs->nsignals; i++){
+			nrefresh += io->outputs->signals[isig].is_refresh;
+		}
+
 		nports = io->outputs->nsignals;
-		if (*refreshFactor > 0){nports = 2*nports;}
+		if (*refreshFactor > 0){nports = nports + nrefresh;}
 		myprintf("%d streams\n",io->outputs->nstreams);
 		myprintf("%d output messages\n", io->outputs->nsignals);
 		myprintf("%d output ports\n", nports);
@@ -160,6 +171,8 @@ static void mdlInitializeSizes(SimStruct *S)
 				io->outputs->signals[isig].refresh_index = iport;
 				iport++;
 
+			} else {
+				io->outputs->signals[isig].refresh_index = -1;
 			}
 
 			//
@@ -323,11 +336,15 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 
 			for (isig = 0; isig < io->outputs->nsignals; isig++){
 
-					int_T irefresh = io->outputs->signals[isig].refresh_index;
-					int8_T* refresh = (int8_T*)ssGetOutputPortSignal(S,irefresh);
+				real_T timeFromLastUpdate;
+				uint32_T *last_update;
+				int8_T* refresh;
+				int_T irefresh = io->outputs->signals[isig].refresh_index;
 
-					real_T timeFromLastUpdate;
-					uint32_T *last_update;
+				if (irefresh >= 0){
+
+					refresh = (int8_T*)ssGetOutputPortSignal(S,irefresh);
+
 					last_update = (uint32_T*) ssGetDWork(S,isig);
 					timeFromLastUpdate = ((real_T) *last_update) * ((real_T) sampleTime);
 
@@ -338,6 +355,8 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 						*refresh = 0;
 					}
 					myprintf("\t#%d Refresh = %d (Validity duration = %f sec, Time from last update = %f sec)\n", isig, *refresh, io->outputs->signals[isig].validity_duration, timeFromLastUpdate);
+
+				}
 
 			}
 		} else {
