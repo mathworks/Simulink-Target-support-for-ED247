@@ -38,6 +38,8 @@ classdef ToolboxFixture < matlab.unittest.fixtures.Fixture
             %
             toolboxfile = fullfile(fixture.project_.RootFolder, sprintf('ED247_for_Simulink-r%s.mltbx', version('-release')));
             fixture.print( '## Install toolbox ("%s")\n', toolboxfile);
+            fixture.assumeEqual(exist(toolboxfile,"file"),2, ...
+                "No toolbox file")
             matlab.addons.toolbox.installToolbox(toolboxfile);
             
             if isLoaded(fixture.project_)
