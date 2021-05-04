@@ -134,7 +134,9 @@ classdef (SharedTestFixtures={ ...
             sendmessage(size(recvmessage,1)+1:end,:) = [];
             
             testCase.verifyNotEmpty(recvmessage, 'No data received')
-            testCase.verifyEqual(recvmessage,sendmessage,'AbsTol',1, ...
+            % Convert signals to double to allow usage of AbsTol (ignored
+            % for UINT8)
+            testCase.verifyEqual(double(recvmessage),double(sendmessage),'AbsTol',1, ...
                 sprintf('Received data for %s does not match send data',name))
             
             %
@@ -153,7 +155,9 @@ classdef (SharedTestFixtures={ ...
             sendmessage(size(recvmessage,1)+1:end,:) = [];
             
             testCase.verifyNotEmpty(recvmessage, 'No data received')
-            testCase.verifyEqual(recvmessage,sendmessage,'AbsTol',1, ...
+            % Convert signals to double to allow usage of AbsTol (ignored
+            % for UINT8)
+            testCase.verifyEqual(double(recvmessage),double(sendmessage),'AbsTol',1, ...
                 sprintf('Received data for %s does not match send data',name))
             
             %
@@ -172,7 +176,9 @@ classdef (SharedTestFixtures={ ...
             sendmessage(size(recvmessage,1)+1:end,:) = [];
             
             testCase.verifyNotEmpty(recvmessage, 'No data received')
-            testCase.verifyEqual(recvmessage,sendmessage,'AbsTol',1, ...
+            % Convert signals to double to allow usage of AbsTol (ignored
+            % for UINT8)
+            testCase.verifyEqual(double(recvmessage),double(sendmessage),'AbsTol',1, ...
                 sprintf('Received data for %s does not match send data',name))
             
         end
