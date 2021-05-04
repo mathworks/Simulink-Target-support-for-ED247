@@ -178,9 +178,9 @@ static void mdlInitializeSizes(SimStruct *S)
 			//
 			// Data port
 			//
-			myprintf("Port %d : Signal\n", iport);
-			myprintf("\t-Width = %d\n", io->outputs->signals[isig].width);
-			myprintf("\t-Dimensions = %d\n", io->outputs->signals[isig].dimensions);
+			myprintf("Port %d : Signal", iport);
+			myprintf(", Width = %d", io->outputs->signals[isig].width);
+			myprintf(", Dimensions = %d\n", io->outputs->signals[isig].dimensions);
 
 			di.width	= io->outputs->signals[isig].width;
 			di.numDims	= io->outputs->signals[isig].dimensions;
@@ -280,14 +280,15 @@ static void mdlStart(SimStruct *S)
 		uint32_T *last_update;
 		int_T iCounter,nCounter;
 
-		myprintf("Counter initialization:\n");
+		myprintf("Counter initialization: ");
 
 		nCounter = ssGetNumDWork(S);
 		for (iCounter = 0; iCounter < nCounter; iCounter++){
 			last_update = (uint32_T*) ssGetDWork(S,iCounter);
 			*last_update = MAX_COUNTER;
-			myprintf("\t- #%d = %d\n", iCounter, *last_update);
+			myprintf("[%d] = %d ", iCounter, *last_update);
 		}
+		myprintf("\n");
 
 	}
 }
@@ -453,8 +454,8 @@ static void mdlRTW(SimStruct *S)
 	real_T  blockTypeID;
 	BLOCK_TYPE_T *blockType;
 
-	real_T* portIndex;
-	real_T* refreshIndex;
+	real_T portIndex[100];
+	real_T refreshIndex[100];
 	int_T nSignals;
 
 	blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
@@ -463,9 +464,6 @@ static void mdlRTW(SimStruct *S)
 		blockTypeID = 2.0;
 
 		nSignals = io->inputs->nsignals;
-		portIndex = (real_T*) malloc(sizeof(real_T) * nSignals);
-		refreshIndex = (real_T*) malloc(sizeof(real_T) * nSignals);
-
 		for (i = 0; i < io->inputs->nsignals; i++){
 
 			portIndex[i] = (real_T) io->inputs->signals[i].port_index;
@@ -478,7 +476,15 @@ static void mdlRTW(SimStruct *S)
 		}
 
 	} else if (*blockType == RECEIVE){
+
 		blockTypeID = 1.0;
+
+		nSignals = io->outputs->nsignals;
+		for (i = 0; i < io->outputs->nsignals; i++){
+			portIndex[i] = (real_T) io->outputs->signals[i].port_index;
+			refreshIndex[i] = (real_T) io->outputs->signals[i].refresh_index;
+		}
+
 	} else {
 		blockTypeID = 0.0;
 	}
@@ -492,14 +498,7 @@ static void mdlRTW(SimStruct *S)
 			SSWRITE_VALUE_VECT, "RefreshIndex", refreshIndex, nSignals)) {
 		return; /* An error occurred. */
 	}
-	/*
-	if (portIndex != NULL){
-		free(portIndex);
-	}
-	if (refreshIndex != NULL){
-		free(refreshIndex);
-	}
-	*/ 
+
 }
 #endif /* MDL_RTW */
 
