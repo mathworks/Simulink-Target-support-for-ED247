@@ -317,7 +317,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 		myprintf("Receive data\t");
 		status = (int)receive_ed247_to_simulink(io,&ndata);
 		myprintf("\tstatus = %d", status);
-		myprintf("\t - do refresh = %d", io->outputs->signals[isig].do_refresh);
+		myprintf("\t - do refresh = %d\n", io->outputs->signals[isig].do_refresh);
 
 		if (*refreshFactor > 0){
 
@@ -337,7 +337,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 					} else {
 						*refresh = 0;
 					}
-					myprintf("\tRefresh = %d (Validity duration = %f sec, Time from last update = %f sec)\n", *refresh, io->outputs->signals[isig].validity_duration, timeFromLastUpdate);
+					myprintf("\t#%d Refresh = %d (Validity duration = %f sec, Time from last update = %f sec)\n", isig, *refresh, io->outputs->signals[isig].validity_duration, timeFromLastUpdate);
 
 			}
 		} else {
