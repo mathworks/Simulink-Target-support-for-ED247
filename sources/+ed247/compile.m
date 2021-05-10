@@ -70,6 +70,9 @@ else
     % Source files
     sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_cmd_xml.c');
     sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_interface.c');
+    sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_sfun_configure.c');
+    sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_sfun_receive.c');
+    sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_sfun_send.c');
     sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'tools.c');
 
     if isunix()
