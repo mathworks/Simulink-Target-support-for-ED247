@@ -6,7 +6,7 @@ classdef (ConstructOnLoad) Folder
     enumeration
         
         ADAPTER         ({'c_sources'})
-        DEMOS           ({'demos'})
+        DEMOS           ({'doc','examples'})
         DOC             ({'doc','html'})
         LIBRARY         ({'libraries','ed247'})
         ROOT            ({''})
