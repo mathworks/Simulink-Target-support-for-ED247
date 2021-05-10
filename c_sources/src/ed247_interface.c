@@ -178,14 +178,21 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 					status = ed247_stream_assistant_pop_sample(io->outputs->streams[i].assistant, NULL, NULL, NULL, &empty);
 					if (status == ED247_STATUS_SUCCESS){
 
+						myprintf("\t> %s OK\n", "ed247_stream_assistant_pop_sample");
+
 						for (j=0;j < io->outputs->streams[i].nsignals; j++){
 
 							status = ed247_stream_assistant_read_signal(io->outputs->streams[i].assistant,io->outputs->streams[i].signals[j]->signal,&sample_data,&sample_size);
 							if (checkStatus(status,"ed247_stream_assistant_read_signal",2)){return STREAM_ASSISTANT_READ_SIGNAL_FAILURE;}
 							if (io->outputs->streams[i].signals[j]->valuePtr != NULL && sample_data != NULL){
+
 								memcpy(io->outputs->streams[i].signals[j]->valuePtr,(void*)sample_data,io->outputs->streams[i].signals[j]->sample_size);
 								if (n != NULL){(*n)++;}/* polyspace DEFECT:USELESS_IF RTE:UNR [Justified:Low] Robustness */
 
+								io->outputs->streams[i].signals[j]->do_refresh = 1;
+
+							} else {
+								io->outputs->streams[i].signals[j]->do_refresh = 0;
 							}
 
 						}
@@ -200,11 +207,21 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 
 					for (j=0;j < io->outputs->streams[i].nsignals; j++){
 
+						myprintf("\t> signal #%d/#%d", j+1, io->outputs->streams[i].nsignals);
+
 						status = ed247_stream_pop_sample(io->outputs->streams[i].stream,&sample_data,&sample_size, NULL, NULL, NULL, &empty);
 						if (status == ED247_STATUS_SUCCESS && io->outputs->streams[i].signals[j]->valuePtr != NULL && sample_data != NULL){
+
+							myprintf("\t> %s OK\n", "ed247_stream_pop_sample");
+
 							memcpy(io->outputs->streams[i].signals[j]->valuePtr,(void*)sample_data,io->outputs->streams[i].signals[j]->sample_size);
 							if (n != NULL){(*n)++;}/* polyspace DEFECT:USELESS_IF RTE:UNR [Justified:Low] Robustness */
 
+							io->outputs->streams[i].signals[j]->do_refresh = 1;
+
+						} else {
+							myprintf("\t> %s NOK\n", "ed247_stream_pop_sample");
+							io->outputs->streams[i].signals[j]->do_refresh = 0;
 						}
 
 					}
@@ -222,14 +239,34 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 	else if (io->outputs->streams[0].stream_type == ED247_STREAM_TYPE_A825) { 
 	// Do not generate an error if no A825 message is received 
 	// All A825 are registered as input AND output messages but depending on the configuration it could be only In or only Out)
+
+		for (i=0;i < io->outputs->nstreams; i++){
+			for (j=0;j < io->outputs->streams[i].nsignals; j++){
+				io->outputs->streams[i].signals[j]->do_refresh = 0;
+			}
+		}
+
 		return RECEIVE_A825_SKIP;
 	}
 	else if (status == ED247_STATUS_TIMEOUT) {
-		
+
+		for (i=0;i < io->outputs->nstreams; i++){
+			for (j=0;j < io->outputs->streams[i].nsignals; j++){
+				io->outputs->streams[i].signals[j]->do_refresh = 0;
+			}
+		}
+
 		myprintf("\t\t - No data received before timeout\n");
 		return NO_DATA_BEFORE_TIMEOUT;
 	}
 	else {
+
+		for (i=0;i < io->outputs->nstreams; i++){
+			for (j=0;j < io->outputs->streams[i].nsignals; j++){
+				io->outputs->streams[i].signals[j]->do_refresh = 0;
+			}
+		}
+
 		myprintf("\t\t!! %s returns invalid status\n", "ed247_wait_frame");
 		return WAIT_FRAME_FAILURE;
 	}
@@ -345,6 +382,7 @@ io_free_status_t io_free_memory(IO_t *io){
 				signal_data.type 		= SS_UINT8;
 				signal_data.is_refresh  = 0;
 				signal_data.signal_type = signal_info->type;
+				signal_data.stream_type = stream_info->type;
 				signal_data.dimensions	= 1;
 				signal_data.width		= 1;
 				signal_data.size[0]		= 1;
@@ -359,6 +397,7 @@ io_free_status_t io_free_memory(IO_t *io){
 				signal_data.type 		= SS_SINGLE;
 				signal_data.is_refresh  = 0;
 				signal_data.signal_type = signal_info->type;
+				signal_data.stream_type = stream_info->type;
 				signal_data.dimensions	= 1;
 				signal_data.width		= 1;
 				signal_data.size[0]		= 1;
@@ -373,6 +412,7 @@ io_free_status_t io_free_memory(IO_t *io){
 				signal_data.type 		= NAD2SimulinkDataType(signal_info->info.nad.nad_type);
 				signal_data.is_refresh  = 0;
 				signal_data.signal_type	= signal_info->type;
+				signal_data.stream_type = stream_info->type;
 				signal_data.dimensions	= signal_info->info.nad.dimensions_count;
 				signal_data.width		= 1;
 				for (i = 0; i < signal_info->info.nad.dimensions_count; i++){
@@ -391,6 +431,7 @@ io_free_status_t io_free_memory(IO_t *io){
 				signal_data.type 		= NAD2SimulinkDataType(signal_info->info.vnad.nad_type);
 				signal_data.is_refresh  = 0;
 				signal_data.signal_type	= signal_info->type;
+				signal_data.stream_type = stream_info->type;
 				signal_data.dimensions	= 1;
 				signal_data.width		= signal_info->info.vnad.max_length;
 				signal_data.size[0]		= signal_info->info.vnad.max_length;
@@ -509,15 +550,17 @@ io_free_status_t io_free_memory(IO_t *io){
 						current_signal = &(current_io->signals[current_io->nsignals]);
 
 						strcpy(current_signal->name,data->a429[i].messages[j].name);
-						current_signal->direction		= data->a429[i].messages[j].direction;
-                        current_signal->is_refresh      = 1;
-						current_signal->signal_type 	= data->a429[i].messages[j].type;
-						current_signal->type 			= A429_DATA_TYPE;
-						current_signal->dimensions		= 1;
-						current_signal->width			= A429_DATA_SIZE;
-						current_signal->size[0]			= A429_DATA_SIZE;
-						current_signal->sample_size 	= A429_DATA_SIZE;
-						current_signal->sample_time 	= (float) (data->a429[i].messages[j].period_us * 1e-6);
+						current_signal->direction			= data->a429[i].messages[j].direction;
+						current_signal->is_refresh			= 1;
+						current_signal->signal_type 		= data->a429[i].messages[j].type;
+						current_signal->stream_type			= stream_info->type;
+						current_signal->type 				= A429_DATA_TYPE;
+						current_signal->dimensions			= 1;
+						current_signal->width				= A429_DATA_SIZE;
+						current_signal->size[0]				= A429_DATA_SIZE;
+						current_signal->sample_size			= A429_DATA_SIZE;
+						current_signal->sample_time			= (float) (data->a429[i].messages[j].period_us * 1e-6);
+						current_signal->validity_duration	= (float) (data->a429[i].messages[j].validity_duration_us * 1e-6);
 
 						current_stream->signals[current_stream->nsignals] = current_signal;
 						current_stream->nsignals++;
@@ -566,14 +609,16 @@ io_free_status_t io_free_memory(IO_t *io){
 					current_signal = &(current_io->signals[current_io->nsignals]);
 
 					strcpy(current_signal->name,data->a664[i].name);
-					current_signal->direction		= data->a664[i].direction;
-                    current_signal->is_refresh      = 1;
-					current_signal->type 			= A664_DATA_TYPE;
-					current_signal->dimensions		= 1;
-					current_signal->width			= data->a664[i].sample_max_size_bytes;
-					current_signal->size[0]			= data->a664[i].sample_max_size_bytes;
-					current_signal->sample_size 	= data->a664[i].sample_max_size_bytes * sizeof(char);
-					current_signal->sample_time 	= (float) (data->a664[i].period_us * 1e-6);
+					current_signal->direction			= data->a664[i].direction;
+					current_signal->is_refresh			= 1;
+					current_signal->stream_type			= stream_info->type;
+					current_signal->type 				= A664_DATA_TYPE;
+					current_signal->dimensions			= 1;
+					current_signal->width				= data->a664[i].sample_max_size_bytes;
+					current_signal->size[0]				= data->a664[i].sample_max_size_bytes;
+					current_signal->sample_size			= data->a664[i].sample_max_size_bytes * sizeof(char);
+					current_signal->sample_time			= (float) (data->a664[i].period_us * 1e-6);
+					current_signal->validity_duration	= (float) (data->a664[i].validity_duration_us * 1e-6);
 
 					current_stream->signals[current_stream->nsignals] = current_signal;
 					current_stream->nsignals++;
@@ -623,14 +668,16 @@ io_free_status_t io_free_memory(IO_t *io){
 					current_signal = &(io->inputs->signals[io->inputs->nsignals]);
 
 					strcpy(current_signal->name,data->a825[i].name);
-					current_signal->direction		= ED247_DIRECTION_IN;
-					current_signal->type 			= A825_DATA_TYPE;
-                    current_signal->is_refresh      = 1;
-					current_signal->dimensions		= 1;
-					current_signal->width			= data->a825[i].sample_max_number;
-					current_signal->size[0]			= data->a825[i].sample_max_number;
-					current_signal->sample_size 	= data->a825[i].sample_max_number * sizeof(char);
-					current_signal->sample_time 	= (float) (data->a825[i].period_us * 1e-6);
+					current_signal->direction			= ED247_DIRECTION_IN;
+					current_signal->type 				= A825_DATA_TYPE;
+					current_signal->is_refresh			= 1;
+					current_signal->stream_type			= stream_info->type;
+					current_signal->dimensions			= 1;
+					current_signal->width				= data->a825[i].sample_max_number;
+					current_signal->size[0]				= data->a825[i].sample_max_number;
+					current_signal->sample_size			= data->a825[i].sample_max_number * sizeof(char);
+					current_signal->sample_time			= (float) (data->a825[i].period_us * 1e-6);
+					current_signal->validity_duration	= (float) (data->a825[i].validity_duration_us * 1e-6);
 
 					input_stream->signals[input_stream->nsignals] = current_signal;
 					input_stream->nsignals++;
@@ -639,14 +686,16 @@ io_free_status_t io_free_memory(IO_t *io){
 					current_signal = &(io->outputs->signals[io->outputs->nsignals]);
 
 					strcpy(current_signal->name,data->a825[i].name);
-					current_signal->direction		= ED247_DIRECTION_OUT;
-					current_signal->type 			= A825_DATA_TYPE;
-                    current_signal->is_refresh      = 1;
-					current_signal->dimensions		= 1;
-					current_signal->width			= data->a825[i].sample_max_number;
-					current_signal->size[0]			= data->a825[i].sample_max_number;
-					current_signal->sample_size 	= data->a825[i].sample_max_number * sizeof(char);
-					current_signal->sample_time 	= (float) (data->a825[i].period_us * 1e-6);
+					current_signal->direction			= ED247_DIRECTION_OUT;
+					current_signal->type 				= A825_DATA_TYPE;
+					current_signal->is_refresh			= 1;
+					current_signal->stream_type			= stream_info->type;
+					current_signal->dimensions			= 1;
+					current_signal->width				= data->a825[i].sample_max_number;
+					current_signal->size[0]				= data->a825[i].sample_max_number;
+					current_signal->sample_size			= data->a825[i].sample_max_number * sizeof(char);
+					current_signal->sample_time			= (float) (data->a825[i].period_us * 1e-6);
+					current_signal->validity_duration	= (float) (data->a825[i].validity_duration_us * 1e-6);
 
 					output_stream->signals[output_stream->nsignals] = current_signal;
 					output_stream->nsignals++;

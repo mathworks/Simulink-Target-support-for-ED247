@@ -63,13 +63,13 @@ classdef (SharedTestFixtures={ ...
             
             enable = true(101,1);
             enable(2:2:end) = false;
-            
-            ds = ds.addElement(timeseries(enable,                       (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I_refresh'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I_refresh');
+                        
             ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)),      (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I');
-            ds = ds.addElement(timeseries(enable,                       (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I_refresh'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I_refresh');
+            ds = ds.addElement(timeseries(enable,                       (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I_refresh'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I_refresh');            
             ds = ds.addElement(timeseries(uint8((255:-1:155)' + (1:4)), (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I');
-            ds = ds.addElement(timeseries(enable,                       (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I_refresh'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I_refresh');
+            ds = ds.addElement(timeseries(enable,                       (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I_refresh'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I_refresh');            
             ds = ds.addElement(timeseries(uint8((150:250)' + (1:4)),    (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I');
+            ds = ds.addElement(timeseries(enable,                       (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I_refresh'), 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I_refresh');
             
             in = Simulink.SimulationInput(modelname);
             in = in.setExternalInput(ds);

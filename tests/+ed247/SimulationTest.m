@@ -56,13 +56,25 @@ classdef (SharedTestFixtures={ ...
             input  = out(1).logsout;
             output = out(2).yout;
             
-            input01   = input.get('input01').Values.Data;
-            input02   = input.get('input02').Values.Data;
-            output01  = output.get('output01').Values.Data;
-            output02  = output.get('output02').Values.Data;
+            % Signal #1           
+            output01 = output.get('Signal00').Values.Data;
+            output01 = unique(output01,'stable');
+            output01 = output01(find(output01 == 0, 1, 'last')+1:end);
+            input01  = input.get('input01').Values.Data;
+            input01  = input01(find(input01 > 0, 1, 'first'):end);
+            input01(length(output01)+1:end) = [];
             
-            testCase.verifyTrue(all(ismember(output01,input01)))
-            testCase.verifyTrue(all(ismember(output02,input02)))
+            testCase.verifyEqual(output01,input01, 'Output01 (Signal00) should match Input01')
+            
+            % Signal #2
+            output02 = output.get('Signal01').Values.Data;
+            output02 = unique(output02,'stable');
+            output02 = output02(find(output02 > 0, 1, 'first'):end);            
+            input02  = input.get('input02').Values.Data;
+            input02  = input02(find(input02 > 0, 1, 'first'):end); 
+            input02(length(output02)+1:end) = [];
+                        
+            testCase.verifyEqual(output02,input02, 'Output02 (Signal01) should match Input02')
             
         end
         
@@ -88,13 +100,13 @@ classdef (SharedTestFixtures={ ...
                 ];
             
             ds = Simulink.SimulationData.Dataset();
-            
+                        
+            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)),      (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10'),          'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10');
             ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh');
-            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)),      (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I'),        'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I');
-            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_refresh');
-            ds = ds.addElement(timeseries(uint8((255:-1:155)' + (1:4)), (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I'),        'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I');
-            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_refresh');            
-            ds = ds.addElement(timeseries(uint8((150:250)' + (1:4)),    (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I'),        'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I');
+            ds = ds.addElement(timeseries(uint8((255:-1:155)' + (1:4)), (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10'),          'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10');
+            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_refresh');            
+            ds = ds.addElement(timeseries(uint8((150:250)' + (1:4)),    (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11'),          'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11');
+            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_refresh');
             in(1) = in(1).setExternalInput(ds);
             
             % [ EXERCISE ]
@@ -109,52 +121,64 @@ classdef (SharedTestFixtures={ ...
             %
             % T11M4_A429_SIMU2SWIM_BUS_1_350_10
             %
-            name = 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_I';
+            name = 'T11M4_A429_SIMU2SWIM_BUS_1_350_10';
             in    = input.get(name).Values.Data;
             out   = output.get(name).Values.Data;
             
             nodata = all(out == 0,2);
             out(nodata,:) = [];
+            testCase.assertNotEmpty(out, sprintf('No data received for signal "%s"', name))
             compare = cumsum(all(in == out(1,:),2)) == 1;
             sendmessage = in(compare,:);
             recvmessage = out(1:min([end,size(sendmessage,1)]),:);
             sendmessage(size(recvmessage,1)+1:end,:) = [];
             
-            testCase.verifyEqual(recvmessage,sendmessage,'AbsTol',1, ...
+            testCase.verifyNotEmpty(recvmessage, 'No data received')
+            % Convert signals to double to allow usage of AbsTol (ignored
+            % for UINT8)
+            testCase.verifyEqual(double(recvmessage),double(sendmessage),'AbsTol',1, ...
                 sprintf('Received data for %s does not match send data',name))
             
             %
-            % T11M4_A429_SIMU2SWIM_BUS_1_200_10_I
+            % T11M4_A429_SIMU2SWIM_BUS_1_200_10
             %
-            name = 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_I';
+            name = 'T11M4_A429_SIMU2SWIM_BUS_1_200_10';
             in   = input.get(name).Values.Data;
             out  = output.get(name).Values.Data;
             
             nodata = all(out == 0,2);
             out(nodata,:) = [];
+            testCase.assertNotEmpty(out, sprintf('No data received for signal "%s"', name))
             compare = cumsum(all(in == out(1,:),2)) == 1;
             sendmessage = in(compare,:);
             recvmessage = out(1:min([end,size(sendmessage,1)]),:);
             sendmessage(size(recvmessage,1)+1:end,:) = [];
             
-            testCase.verifyEqual(recvmessage,sendmessage,'AbsTol',1, ...
+            testCase.verifyNotEmpty(recvmessage, 'No data received')
+            % Convert signals to double to allow usage of AbsTol (ignored
+            % for UINT8)
+            testCase.verifyEqual(double(recvmessage),double(sendmessage),'AbsTol',1, ...
                 sprintf('Received data for %s does not match send data',name))
             
             %
-            % T11M4_A429_SIMU2SWIM_BUS_1_200_11_I
+            % T11M4_A429_SIMU2SWIM_BUS_1_200_11
             %
-            name = 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_I';
+            name = 'T11M4_A429_SIMU2SWIM_BUS_1_200_11';
             in   = input.get(name).Values.Data;
             out  = output.get(name).Values.Data;
             
             nodata = all(out == 0,2);
             out(nodata,:) = [];
+            testCase.assertNotEmpty(out, sprintf('No data received for signal "%s"', name))
             compare = cumsum(all(in == out(1,:),2)) == 1;
             sendmessage = in(compare,:);
             recvmessage = out(1:min([end,size(sendmessage,1)]),:);
             sendmessage(size(recvmessage,1)+1:end,:) = [];
             
-            testCase.verifyEqual(recvmessage,sendmessage,'AbsTol',1, ...
+            testCase.verifyNotEmpty(recvmessage, 'No data received')
+            % Convert signals to double to allow usage of AbsTol (ignored
+            % for UINT8)
+            testCase.verifyEqual(double(recvmessage),double(sendmessage),'AbsTol',1, ...
                 sprintf('Received data for %s does not match send data',name))
             
         end
@@ -181,9 +205,9 @@ classdef (SharedTestFixtures={ ...
                 ];
             
             ds = Simulink.SimulationData.Dataset();
-            
-            ds = ds.addElement(timeseries(true(2,1),                [0;10],     'Name', 'T11MX_19492_WAIT_STEP_refresh'),   'Name', 'T11MX_19492_WAIT_STEP_refresh');
+                        
             ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)), (0:0.1:10)', 'Name', 'T11MX_19492_WAIT_STEP_I'),         'Name', 'T11MX_19492_WAIT_STEP_I');
+            ds = ds.addElement(timeseries(true(2,1),                [0;10],     'Name', 'T11MX_19492_WAIT_STEP_refresh'),   'Name', 'T11MX_19492_WAIT_STEP_refresh');
             in(1) = in(1).setExternalInput(ds);
             
             % [ EXERCISE ]
@@ -239,11 +263,11 @@ classdef (SharedTestFixtures={ ...
                 ];
             
             ds = Simulink.SimulationData.Dataset();
-            
-            ds = ds.addElement(timeseries(true(2,1),                [0;10],      'Name', 'Stream0_refresh'),    'Name', 'Stream0_refresh');
+                        
             ds = ds.addElement(timeseries(uint8((0:100)' + (1:3)),  (0:0.1:10)', 'Name', 'Stream0'),            'Name', 'Stream0');
-            ds = ds.addElement(timeseries(true(2,1),                [0;10],      'Name', 'Stream1_refresh'),    'Name', 'Stream1_refresh');
+            ds = ds.addElement(timeseries(true(2,1),                [0;10],      'Name', 'Stream0_refresh'),    'Name', 'Stream0_refresh');
             ds = ds.addElement(timeseries(uint8((0:100)' + (1:5)),  (0:0.1:10)', 'Name', 'Stream1'),            'Name', 'Stream1');
+            ds = ds.addElement(timeseries(true(2,1),                [0;10],      'Name', 'Stream1_refresh'),    'Name', 'Stream1_refresh');
             in(1) = in(1).setExternalInput(ds);
             
             % [ EXERCISE ]

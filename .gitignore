@@ -1,3 +1,4 @@
 archives/
 c_sources/build/
 *.log
+*.mex*

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ComponentMessagesDescription Name="T1">  
+  <A429_Bus Name="T11M4_A429_SIMU2SWIM_BUS_1">
+    <SamplingMessage Direction="In" Name="T11M4_A429_SIMU2SWIM_BUS_1_350_10" Label="350" SDI="10" PeriodUs="1000000" ValidityDurationUs="1000000" Comment="T11_T11_PART1"/>
+    <SamplingMessage Direction="In" Name="T11M4_A429_SIMU2SWIM_BUS_1_200_10" Label="200" SDI="10" PeriodUs="1000000" ValidityDurationUs="2000000" Comment="T11_T11_PART1"/>
+    <SamplingMessage Direction="In" Name="T11M4_A429_SIMU2SWIM_BUS_1_200_11" Label="200" SDI="11" PeriodUs="1000000" ValidityDurationUs="3000000" Comment="T11_T11_PART1"/>    
+  </A429_Bus>
+</ComponentMessagesDescription>

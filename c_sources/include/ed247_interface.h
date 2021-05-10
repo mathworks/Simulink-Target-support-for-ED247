@@ -115,15 +115,17 @@ typedef struct {
 	int 						width;
 	size_t 						size[MAX_DIMENSIONS];
 	float 						sample_time;
+	float 						validity_duration;
 	void 						*valuePtr;
+	ed247_stream_type_t 		stream_type;
 	ed247_signal_type_t			signal_type;
 	ed247_signal_t 				signal;
 	void 						*sample;
 	size_t 						sample_size;
-    int                         port_index;     // Placeholder for S-Function
-    int                         is_refresh;
-    int                         do_refresh;
-    int                         refresh_index;  // Placeholder for S-Function
+	int							port_index;     // Placeholder for S-Function
+	int							is_refresh; // [Send|Receive] Signal is associated with a refresh flag
+	int							do_refresh; // [Send] Boolean value from inport associated with signal | [Receive] Boolean value if signal was written from ED247 read function
+	int							refresh_index;  // Placeholder for S-Function
 } signal_characteristics_t;
 
 typedef struct {

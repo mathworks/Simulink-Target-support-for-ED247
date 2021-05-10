@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ComponentMessagesDescription Name="T1">
-  <A825_SamplingMessage Name="Stream0" SampleMaxNumber="3" PeriodUs="1000000" Comment="Stream0"/>
-  <A825_SamplingMessage Name="Stream1" SampleMaxNumber="5" PeriodUs="64000" Comment="Stream1"/>
+  <A825_SamplingMessage Name="Stream0" SampleMaxNumber="3" PeriodUs="1000000" ValidityDurationUs="1000000" Comment="Stream0"/>
+  <A825_SamplingMessage Name="Stream1" SampleMaxNumber="5" PeriodUs="64000" ValidityDurationUs="64000" Comment="Stream1"/>
 </ComponentMessagesDescription>

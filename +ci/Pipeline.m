@@ -231,7 +231,10 @@ classdef Pipeline < matlab.mixin.SetGet
             % Compile MEX
             %
             obj.print('## Compile ED247 S-Function\n')
-            ed247.compile()
+            ed247.compile('MEXFile', 'ed247_sfun.c')
+            
+            obj.print('## Compile ED247 C-MEX\n')
+            ed247.compile('MEXFile', 'ed247_mex.c')
             
         end
         

@@ -1,34 +1,21 @@
-classdef SFunctionBlock < matlab.mixin.SetGet
+classdef Configure < ed247.blocks.aBlock
     %
     % Copyright 2020 The MathWorks, Inc.
     %
     
     %% DEPENDENT PROPERTIES
     properties (Dependent)
+        ConfigurationFile
         ConfigurationFileInt8
         DisplayText
         LogFileInt8
     end
-    
-    %% IMMUTABLE PROPERTIES
-    properties (SetAccess = immutable, GetAccess = private)
-        block_
-    end
-    
+            
     %% CONSTRUCTOR
     methods
         
-        function obj = SFunctionBlock(block,varargin)
-            
-            if isnumeric(block)
-                block = strjoin({get(block,'Path'),get(block,'Name')},'/');
-            end
-            obj.block_ = block;
-            
-            if ~isempty(varargin)
-                set(obj,varargin{:})
-            end
-            
+        function obj = Configure(block,varargin)
+            obj@ed247.blocks.aBlock(block,varargin{:})
         end
         
     end
@@ -36,12 +23,11 @@ classdef SFunctionBlock < matlab.mixin.SetGet
     %% ACCESSORS
     methods
         
-        function configurationfileint8 = get.ConfigurationFileInt8(obj)
-            
+        function configurationfile = get.ConfigurationFile(obj)
             
             filename = get_param(obj.block_,'configurationFilename');
             if isempty(filename)
-                configurationfileint8 = int8(0);
+                configurationfile = '';
                 return
             end
             
@@ -53,12 +39,21 @@ classdef SFunctionBlock < matlab.mixin.SetGet
             end
             
             if ~isempty(which(configurationfile))
-                configurationfileint8 = int8([which(configurationfile),0]);
-            elseif exist(configurationfile,'file') == 2
-                configurationfileint8 = int8([configurationfile,0]);
-            else
-                error('ED247:IOVariableNumber:invalidFile', ...
+                configurationfile = which(configurationfile);
+            elseif exist(configurationfile,'file') ~= 2
+                obj.error('ED247:IOVariableNumber:invalidFile', ...
                     'Cannot find file %s', configurationfile)
+            end
+            
+        end
+        
+        function configurationfileint8 = get.ConfigurationFileInt8(obj)            
+            
+            configurationfile = obj.ConfigurationFile;
+            if isempty(configurationfile)
+                configurationfileint8 = int8(0);
+            else
+                configurationfileint8 = int8([configurationfile,0]);
             end
             
         end
@@ -122,10 +117,32 @@ classdef SFunctionBlock < matlab.mixin.SetGet
             
         end
         
+        function save(obj)
+            % Save data to Model workspace
+            obj.print("No action (deprecated)")
+        end
+        
     end
     
     %% BLOCK CALLBACKS
     methods
+        
+        function LoadFcn(obj)
+            
+            try
+                
+                islibrary = bdIsLibrary(bdroot(obj.block_));
+                if ~islibrary
+                    saveConfigurationInModelWorkspace(obj)
+                end
+                
+            catch me
+                if ~strcmp(me.identifier,'ED247:IOVariableNumber:invalidFile')
+                    rethrow(me)
+                end
+            end
+            
+        end
        
         function InitFcn(obj)
             
@@ -144,9 +161,9 @@ classdef SFunctionBlock < matlab.mixin.SetGet
         function browseConfigurationFile(obj)
             
             filename = get_param(obj.block_,'configurationFilename');
-            if ~isempty(strfind(filename,''''))
+            if contains(filename,'''')
                 filename = strrep(filename,'''','');
-            elseif ~isempty(strfind(filename,'"'))
+            elseif contains(filename,'"')
                 filename = strrep(filename,'"','');
             end
             [filename,pathname] = uigetfile({'*.xml','ECIC configuration file'}, 'Select configuration file', filename);
@@ -158,14 +175,16 @@ classdef SFunctionBlock < matlab.mixin.SetGet
             end
             set_param(obj.block_, 'configurationFilename', sprintf('''%s''', filename))
             
+            saveConfigurationInModelWorkspace(obj)
+            
         end
         
         function browseLogFile(obj)
             
             filename = get_param(obj.block_,'logFilename');
-            if ~isempty(strfind(filename,''''))
+            if contains(filename,'''')
                 filename = strrep(filename,'''','');
-            elseif ~isempty(strfind(filename,'"'))
+            elseif contains(filename,'"')
                 filename = strrep(filename,'"','');
             end
             [filename,pathname] = uiputfile({'*.log','LOG file';'*.txt','TXT file';'*.*','All files'}, 'Define log file', filename);
@@ -185,6 +204,34 @@ classdef SFunctionBlock < matlab.mixin.SetGet
         
         function enableLogFile(obj)
             update(obj)
+        end
+        
+    end
+    
+    %% PROTECTED METHODS
+    methods (Access = protected)
+       
+        function saveConfigurationInModelWorkspace(obj)
+            
+            modelname   = bdroot(obj.block_);
+            mdlwrksp    = get_param(modelname,'ModelWorkspace');
+            
+            filename = obj.ConfigurationFile;
+            if ~isempty(filename)
+                ecic = ed247.ECIC(filename);
+                read(ecic)
+                assignin(mdlwrksp, 'ED247Configuration', ecic.Configuration)
+            end
+            
+        end
+        
+    end
+        
+    %% STATIC METHODS
+    methods (Static)
+        
+        function obj = fromCurrent(varargin)
+            obj = ed247.blocks.Configure(gcbh);
         end
         
     end
