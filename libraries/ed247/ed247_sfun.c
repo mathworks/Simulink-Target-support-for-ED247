@@ -76,23 +76,6 @@ static void mdlInitializeSizes(SimStruct *S)
 		for (isig = 0; isig < io->inputs->nsignals; isig++){
 
 			//
-			// Refresh ports
-			//
-			if (io->inputs->signals[isig].is_refresh == 1){
-
-				myprintf("Port %d : Refresh\n", iport);
-
-				ssSetInputPortVectorDimension(S, iport, 1);
-				ssSetInputPortDirectFeedThrough(S, iport, 1);
-				ssSetInputPortDataType(S, iport, SS_BOOLEAN);
-				ssSetInputPortRequiredContiguous(S, iport, 1);
-
-				io->inputs->signals[isig].refresh_index = iport;
-				iport++;
-
-			}
-
-			//
 			// Data port
 			//
 			myprintf("Port %d : Signal\n", iport);
@@ -119,6 +102,23 @@ static void mdlInitializeSizes(SimStruct *S)
 
 			io->inputs->signals[isig].port_index = iport;
 			iport++;
+
+			//
+			// Refresh ports
+			//
+			if (io->inputs->signals[isig].is_refresh == 1){
+
+				myprintf("Port %d : Refresh\n", iport);
+
+				ssSetInputPortVectorDimension(S, iport, 1);
+				ssSetInputPortDirectFeedThrough(S, iport, 1);
+				ssSetInputPortDataType(S, iport, SS_BOOLEAN);
+				ssSetInputPortRequiredContiguous(S, iport, 1);
+
+				io->inputs->signals[isig].refresh_index = iport;
+				iport++;
+
+			}
 
 		}
 
@@ -159,23 +159,6 @@ static void mdlInitializeSizes(SimStruct *S)
 		for (isig = 0; isig < io->outputs->nsignals; isig++){
 
 			//
-			// Refresh ports
-			//
-			if (*refreshFactor > 0 && io->outputs->signals[isig].is_refresh == 1){
-
-				myprintf("Port %d : Refresh\n", iport);
-
-				ssSetOutputPortVectorDimension(S, iport, 1);
-				ssSetOutputPortDataType(S, iport, SS_BOOLEAN);
-
-				io->outputs->signals[isig].refresh_index = iport;
-				iport++;
-
-			} else {
-				io->outputs->signals[isig].refresh_index = -1;
-			}
-
-			//
 			// Data port
 			//
 			myprintf("Port %d : Signal", iport);
@@ -198,6 +181,23 @@ static void mdlInitializeSizes(SimStruct *S)
 
 			io->outputs->signals[isig].port_index = iport;
 			iport++;
+
+			//
+			// Refresh ports
+			//
+			if (*refreshFactor > 0 && io->outputs->signals[isig].is_refresh == 1){
+
+				myprintf("Port %d : Refresh\n", iport);
+
+				ssSetOutputPortVectorDimension(S, iport, 1);
+				ssSetOutputPortDataType(S, iport, SS_BOOLEAN);
+
+				io->outputs->signals[isig].refresh_index = iport;
+				iport++;
+
+			} else {
+				io->outputs->signals[isig].refresh_index = -1;
+			}
 
 			//
 			// COUNTER

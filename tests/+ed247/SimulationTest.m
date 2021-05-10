@@ -100,13 +100,13 @@ classdef (SharedTestFixtures={ ...
                 ];
             
             ds = Simulink.SimulationData.Dataset();
-            
-            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh');
+                        
             ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)),      (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10'),          'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10');
-            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_refresh');
+            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_350_10_refresh');
             ds = ds.addElement(timeseries(uint8((255:-1:155)' + (1:4)), (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10'),          'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10');
-            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_refresh');            
+            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_10_refresh');            
             ds = ds.addElement(timeseries(uint8((150:250)' + (1:4)),    (0:0.1:10)', 'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11'),          'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11');
+            ds = ds.addElement(timeseries(true(2,1),                    [0;10],      'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_refresh'),  'Name', 'T11M4_A429_SIMU2SWIM_BUS_1_200_11_refresh');
             in(1) = in(1).setExternalInput(ds);
             
             % [ EXERCISE ]
@@ -205,9 +205,9 @@ classdef (SharedTestFixtures={ ...
                 ];
             
             ds = Simulink.SimulationData.Dataset();
-            
-            ds = ds.addElement(timeseries(true(2,1),                [0;10],     'Name', 'T11MX_19492_WAIT_STEP_refresh'),   'Name', 'T11MX_19492_WAIT_STEP_refresh');
+                        
             ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)), (0:0.1:10)', 'Name', 'T11MX_19492_WAIT_STEP_I'),         'Name', 'T11MX_19492_WAIT_STEP_I');
+            ds = ds.addElement(timeseries(true(2,1),                [0;10],     'Name', 'T11MX_19492_WAIT_STEP_refresh'),   'Name', 'T11MX_19492_WAIT_STEP_refresh');
             in(1) = in(1).setExternalInput(ds);
             
             % [ EXERCISE ]
@@ -263,11 +263,11 @@ classdef (SharedTestFixtures={ ...
                 ];
             
             ds = Simulink.SimulationData.Dataset();
-            
-            ds = ds.addElement(timeseries(true(2,1),                [0;10],      'Name', 'Stream0_refresh'),    'Name', 'Stream0_refresh');
+                        
             ds = ds.addElement(timeseries(uint8((0:100)' + (1:3)),  (0:0.1:10)', 'Name', 'Stream0'),            'Name', 'Stream0');
-            ds = ds.addElement(timeseries(true(2,1),                [0;10],      'Name', 'Stream1_refresh'),    'Name', 'Stream1_refresh');
+            ds = ds.addElement(timeseries(true(2,1),                [0;10],      'Name', 'Stream0_refresh'),    'Name', 'Stream0_refresh');
             ds = ds.addElement(timeseries(uint8((0:100)' + (1:5)),  (0:0.1:10)', 'Name', 'Stream1'),            'Name', 'Stream1');
+            ds = ds.addElement(timeseries(true(2,1),                [0;10],      'Name', 'Stream1_refresh'),    'Name', 'Stream1_refresh');
             in(1) = in(1).setExternalInput(ds);
             
             % [ EXERCISE ]
