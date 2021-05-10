@@ -67,13 +67,16 @@ classdef Receive < ed247.blocks.aBlock
                 for isig = 1:numel(outputsignals)
                     
                     basename = outputsignals(isig).name;
+                    
+                    % Data port                    
+                    portlabel.Label{iport} = basename;
+                    iport = iport + 1;
+                    
+                    % Refresh port
                     if isrefresh && height(portlabel) > numel(outputsignals)
                         portlabel.Label{iport} = sprintf('%s_refresh',basename);
                         iport = iport + 1;
                     end
-                    
-                    portlabel.Label{iport} = basename;
-                    iport = iport + 1;
                     
                 end
                 
