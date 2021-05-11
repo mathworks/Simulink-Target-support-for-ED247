@@ -77,8 +77,6 @@
 
 /* ED247 Receive block : Update refresh counter */
 
-int_T last_update;
-
 %foreach sigIdx = SFcnParamSettings.NumSignals
 
 	%assign refreshIdx = SFcnParamSettings.RefreshIndex[sigIdx]
