@@ -17,9 +17,17 @@
     %<SLibAddToStaticSources("tools.c")>
     
     %assign modelname = LibGetModelName()
+	%assign blockname = LibGetBlockName(block)
 
     %assign headerfilename = LibGetMdlPubHdrBaseName()
     %assign hFile = LibCreateSourceFile("Header","Simulink",headerfilename)
+
+	%if ISEQUAL(SFcnParamSettings.BlockType,1.0) %% RECEIVE
+		%openfile tmpBuf
+		#define ED247_RECEIVE_SAMPLE_TIME %<LibBlockSampleTime(block)>
+		%closefile tmpBuf
+		%<LibSetSourceFileSection(hFile,"Defines",tmpBuf)>
+	%endif
 
     %openfile tmpBuf
     extern char configurationFile[256];
