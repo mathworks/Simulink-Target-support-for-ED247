@@ -60,7 +60,7 @@ classdef Send < ed247.blocks.aBlock
                 
                 inputsignals   = configuration(ismember({configuration.direction},{'OUT','INOUT'}));
                 
-                isrefresh = strcmp(get(obj.block_,'enable_refresh'),'on');
+                isrefresh = obj.IsRefresh && strcmp(get(obj.block_,'enable_refresh'),'on');
                 
                 iport = 1;
                 for isig = 1:numel(inputsignals)
@@ -88,7 +88,16 @@ classdef Send < ed247.blocks.aBlock
     %% PUBLIC METHODS
     methods
         
-        function initialize(obj) %#ok<MANU>
+        function initialize(obj)
+            
+            m = Simulink.Mask.get(obj.block_);
+            
+            enablerefresh = m.Parameters(strcmp({m.Parameters.Name},'enable_refresh'));
+            enablerefresh.Visible = 'off';
+            enablerefresh.Enabled = 'off';
+            
+            set(obj.block_,'enable_refresh','off')
+            
         end
                 
     end
