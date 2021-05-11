@@ -1,5 +1,5 @@
 
-%function ConfigureBlockInstanceSetup (block, system) void
+%function ConfigureBlockTypeSetup (block, system) void
 
 %% Get context variables
 %assign modelname = LibGetModelName()
@@ -41,6 +41,9 @@ char configurationFile[] = "%<filename>";
 %closefile tmpBuf
 %<LibSetSourceFileSection(cData,"Definitions",tmpBuf)>
 
+%endfunction
+
+%function ConfigureBlockInstanceSetup (block, system) void
 %endfunction
 
 %function ConfigureStart (block, system) Output

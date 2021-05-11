@@ -16,16 +16,19 @@
 %% Function: BlockTypeSetup ===============================================
 %function BlockTypeSetup (block, system) void
 
-    %<LibAddToCommonIncludes("ed247_interface.h")>
-    %<SLibAddToStaticSources("ed247_interface.c")>
-    %<SLibAddToStaticSources("ed247_cmd_xml.c")>
-    %<SLibAddToStaticSources("tools.c")>
+	%<LibAddToCommonIncludes("ed247_interface.h")>
+	%<SLibAddToStaticSources("ed247_interface.c")>
+	%<SLibAddToStaticSources("ed247_cmd_xml.c")>
+	%<SLibAddToStaticSources("tools.c")>
+
+	%<ConfigureBlockTypeSetup (block, system)>
 
 %endfunction
 
 %% Function: BlockInstanceSetup ===========================================
 %function BlockInstanceSetup (block, system) void
-    %<LibBlockSetIsExpressionCompliant(block)>
+
+	%<LibBlockSetIsExpressionCompliant(block)>
 
 	%if ISEQUAL(SFcnParamSettings.BlockType,2.0) %% SEND
 		%<SendBlockInstanceSetup (block, system)>
