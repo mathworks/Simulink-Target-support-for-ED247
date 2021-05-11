@@ -10,6 +10,7 @@
 
 #include "ed247_sfun_configure.h"
 #include "ed247_sfun_receive.h"
+#include "ed247_sfun_send.h"
 
 /*
 typedef struct {
