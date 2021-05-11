@@ -1,0 +1,53 @@
+
+%function ReceiveBlockInstanceSetup (block, system) void
+
+	%assign headerfilename = LibGetMdlPubHdrBaseName()
+	%assign hFile = LibCreateSourceFile("Header","Simulink",headerfilename)
+
+	%openfile tmpBuf
+	/* ED247 Receive block sample time */
+	#define ED247_RECEIVE_SAMPLE_TIME %<LibBlockSampleTime(block)>
+	%closefile tmpBuf
+	%<LibSetSourceFileSection(hFile,"Defines",tmpBuf)>
+
+%endfunction
+
+%function ReceiveStart (block, system) Output
+
+%endfunction
+
+%function ReceiveOutputs (block, system) Output
+
+%assign modelname = LibGetModelName()
+
+%if ISEQUAL(block.NumDataOutputPorts, 0.0)
+
+%else
+
+	int status, ndata;
+	status = (int)receive_ed247_to_simulink(%<modelname>_io,&ndata);
+
+	%foreach sigIdx = SFcnParamSettings.NumSignals
+
+		%assign portIdx = SFcnParamSettings.PortIndex[sigIdx]
+		%assign refreshIdx = SFcnParamSettings.RefreshIndex[sigIdx]
+		
+		%if ISEQUAL(refreshIdx,-1.0)
+		%else
+			%<LibBlockOutputSignal(refreshIdx, "", "", 0)> = ((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].do_refresh;
+		%endif
+		%<LibBlockOutputSignalAddr(portIdx, "", "", 0)> = ((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].valuePtr;
+		
+	%endforeach
+	
+%endif
+
+%endfunction
+
+%function ReceiveUpdate (block, system) Output
+
+%endfunction
+
+%function ReceiveTerminate (block, system) Output
+
+%endfunction

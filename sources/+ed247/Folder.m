@@ -10,6 +10,7 @@ classdef (ConstructOnLoad) Folder
         DOC             ({'doc','html'})
         LIBRARY         ({'libraries','ed247'})
         ROOT            ({''})
+        SFUN_SOURCES    ({'libraries','ed247','sources'})
         WORK            ({'work'})
         
     end

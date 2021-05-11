@@ -1,0 +1,69 @@
+
+%function ConfigureBlockInstanceSetup (block, system) void
+
+%% Get context variables
+%assign modelname = LibGetModelName()
+
+%% Get public H file
+%assign headerfilename = LibGetMdlPubHdrBaseName()
+%assign hFile = LibCreateSourceFile("Header","Simulink",headerfilename)
+
+%% Get C source file
+%assign sourcefilename = LibGetMdlSrcBaseName()
+%assign cData = LibCreateSourceFile("Source","Simulink",sourcefilename)
+
+%% Get C data file
+%assign datafilename = LibGetMdlDataSrcBaseName()
+%assign cData = LibCreateSourceFile("Source","Simulink",datafilename)
+%assign filename  = STRING(SFcnParamSettings.Filename)
+
+%%
+%% Declare configurationFile variable
+%%
+%openfile tmpBuf
+extern char configurationFile[256];
+%closefile tmpBuf
+%<LibSetSourceFileSection(hFile,"Declarations",tmpBuf)>
+
+%%
+%% Declare IO variable
+%%
+%openfile tmpBuf
+static IO_t *%<modelname>_io;
+%closefile tmpBuf
+%<LibSetSourceFileSection(cData,"Declarations",tmpBuf)>
+
+%%
+%% Define configurationFile variable
+%%
+%openfile tmpBuf
+char configurationFile[] = "%<filename>";
+%closefile tmpBuf
+%<LibSetSourceFileSection(cData,"Definitions",tmpBuf)>
+
+%endfunction
+
+%function ConfigureStart (block, system) Output
+
+%assign modelname = LibGetModelName()
+
+io_allocate_memory((IO_t **)&(%<modelname>_io));
+read_ed247_configuration(configurationFile, (IO_t *)%<modelname>_io, "");
+
+%endfunction
+
+%function ConfigureOutputs (block, system) Output
+
+%endfunction
+
+%function ConfigureUpdate (block, system) Output
+
+%endfunction
+
+%function ConfigureTerminate (block, system) Output
+
+%assign modelname = LibGetModelName()
+
+io_free_memory((IO_t *)%<modelname>_io);
+
+%endfunction

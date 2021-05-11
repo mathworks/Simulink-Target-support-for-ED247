@@ -8,6 +8,11 @@
 
 %implements ed247_sfun "C"
 
+%addincludepath "./sources"
+%include "ed247_sfun_receive.tlc"
+%include "ed247_sfun_send.tlc"
+%include "ed247_sfun_configure.tlc"
+
 %% Function: BlockTypeSetup ===============================================
 %function BlockTypeSetup (block, system) void
 
@@ -15,136 +20,73 @@
     %<SLibAddToStaticSources("ed247_interface.c")>
     %<SLibAddToStaticSources("ed247_cmd_xml.c")>
     %<SLibAddToStaticSources("tools.c")>
-    
-    %assign modelname = LibGetModelName()
-	%assign blockname = LibGetBlockName(block)
 
-    %assign headerfilename = LibGetMdlPubHdrBaseName()
-    %assign hFile = LibCreateSourceFile("Header","Simulink",headerfilename)
-
-	%if ISEQUAL(SFcnParamSettings.BlockType,1.0) %% RECEIVE
-		%openfile tmpBuf
-		#define ED247_RECEIVE_SAMPLE_TIME %<LibBlockSampleTime(block)>
-		%closefile tmpBuf
-		%<LibSetSourceFileSection(hFile,"Defines",tmpBuf)>
-	%endif
-
-    %openfile tmpBuf
-    extern char configurationFile[256];
-    %closefile tmpBuf
-    %<LibSetSourceFileSection(hFile,"Declarations",tmpBuf)>
-
-    %assign sourcefilename = LibGetMdlSrcBaseName()
-    %assign cFile = LibCreateSourceFile("Source","Simulink",sourcefilename)
-
-    %openfile tmpBuf
-    static IO_t *%<modelname>_io;
-    %closefile tmpBuf
-    %<LibSetSourceFileSection(cFile,"Declarations",tmpBuf)>
-
-    %assign datafilename = LibGetMdlDataSrcBaseName()
-    %assign cFile = LibCreateSourceFile("Source","Simulink",datafilename)
-    %assign filename  = STRING(SFcnParamSettings.Filename)
-
-    %openfile tmpBuf
-    char configurationFile[] = "%<filename>";
-    %closefile tmpBuf
-    %<LibSetSourceFileSection(cFile,"Definitions",tmpBuf)>
-    
 %endfunction
 
 %% Function: BlockInstanceSetup ===========================================
 %function BlockInstanceSetup (block, system) void
     %<LibBlockSetIsExpressionCompliant(block)>
+
+	%if ISEQUAL(SFcnParamSettings.BlockType,2.0) %% SEND
+		%<SendBlockInstanceSetup (block, system)>
+	%elseif ISEQUAL(SFcnParamSettings.BlockType,1.0) %% RECEIVE
+		%<ReceiveBlockInstanceSetup (block, system)>
+	%else %% CONFIGURE
+		%<ConfigureBlockInstanceSetup (block, system)>
+	%endif
+
 %endfunction
 
 %% Function: Start ======================================================
 %function Start (block, system) Output
-    
-    %assign modelname = LibGetModelName()
-    %if ISEQUAL(SFcnParamSettings.BlockType,0.0)
-    io_allocate_memory((IO_t **)&(%<modelname>_io));
-    read_ed247_configuration(configurationFile, (IO_t *)%<modelname>_io, "");
-    %endif
+
+	%if ISEQUAL(SFcnParamSettings.BlockType,2.0) %% SEND
+		%<SendStart (block, system)>
+	%elseif ISEQUAL(SFcnParamSettings.BlockType,1.0) %% RECEIVE
+		%<ReceiveStart (block, system)>
+	%else %% CONFIGURE
+		%<ConfigureStart (block, system)>
+	%endif
 
 %endfunction
 
 %% Function: Outputs ======================================================
 %function Outputs (block, system) Output
     %% 
-        
-    %assign modelname = LibGetModelName()
-    
-    %if ISEQUAL(SFcnParamSettings.BlockType,2.0) %% SEND
 
-        %if ISEQUAL(block.NumDataInputPorts, 0.0)
-        %else
-            
-            %foreach sigIdx = SFcnParamSettings.NumSignals
-
-                %assign portIdx = SFcnParamSettings.PortIndex[sigIdx]
-                %assign refreshIdx = SFcnParamSettings.RefreshIndex[sigIdx]
-                
-                %if ISEQUAL(refreshIdx,-1.0)
-                    ((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].do_refresh = 1;
-                %else
-                    ((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].do_refresh = (int) %<LibBlockInputSignal(refreshIdx, "", "", 0)>;
-                %endif
-                ((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].valuePtr = (void*)%<LibBlockInputSignalAddr(portIdx, "", "", 0)>;
-
-            %endforeach
-
-            send_simulink_to_ed247(%<modelname>_io);
-
-        %endif
-
-    %elseif ISEQUAL(SFcnParamSettings.BlockType,1.0) %% RECEIVE
-        
-        %if ISEQUAL(block.NumDataOutputPorts, 0.0)
-            
-        %else
-
-            int status, ndata;
-            status = (int)receive_ed247_to_simulink(%<modelname>_io,&ndata);
-                        
-            %foreach sigIdx = SFcnParamSettings.NumSignals
-
-                %assign portIdx = SFcnParamSettings.PortIndex[sigIdx]
-                %assign refreshIdx = SFcnParamSettings.RefreshIndex[sigIdx]
-                
-                %if ISEQUAL(refreshIdx,-1.0)
-                %else
-                    %<LibBlockOutputSignal(refreshIdx, "", "", 0)> = ((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].do_refresh;
-                %endif
-                %<LibBlockOutputSignalAddr(portIdx, "", "", 0)> = ((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].valuePtr;
-                
-            %endforeach
-            
-        %endif
-
-    %endif
+	%if ISEQUAL(SFcnParamSettings.BlockType,2.0) %% SEND
+		%<SendOutputs (block, system)>
+	%elseif ISEQUAL(SFcnParamSettings.BlockType,1.0) %% RECEIVE
+		%<ReceiveOutputs (block, system)>
+	%else %% CONFIGURE
+		%<ConfigureOutputs (block, system)>
+	%endif
 
 %endfunction
 
 %% Function: Update ======================================================
 %function Update (block, system) Output
 
-    %%         
-    %assign modelname = LibGetModelName()
-
-    %if ISEQUAL(SFcnParamSettings.BlockType,1.0) %% RECEIVE
-        /* Update receive */
-    %endif
+	%if ISEQUAL(SFcnParamSettings.BlockType,2.0) %% SEND
+		%<SendUpdate (block, system)>
+	%elseif ISEQUAL(SFcnParamSettings.BlockType,1.0) %% RECEIVE
+		%<ReceiveUpdate (block, system)>
+	%else %% CONFIGURE
+		%<ConfigureUpdate (block, system)>
+	%endif
 
 %endfunction
 
 %% Function: Terminate ====================================================
 %function Terminate (block, system) Output
 
-    %assign modelname = LibGetModelName()
-    %if ISEQUAL(SFcnParamSettings.BlockType,0.0)
-    io_free_memory((IO_t *)%<modelname>_io);
-    %endif
+	%if ISEQUAL(SFcnParamSettings.BlockType,2.0) %% SEND
+		%<SendTerminate (block, system)>
+	%elseif ISEQUAL(SFcnParamSettings.BlockType,1.0) %% RECEIVE
+		%<ReceiveTerminate (block, system)>
+	%else %% CONFIGURE
+		%<ConfigureTerminate (block, system)>
+	%endif
 
 %endfunction
 

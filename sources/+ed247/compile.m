@@ -26,6 +26,8 @@ adapterfolder   = config.Adapter;
 ed247folder     = config.ED247;
 libxml2folder   = config.LibXML2;
 
+sfunsourcefolder = ed247.Folder.SFUN_SOURCES.Path;
+
 if ispc()
     assert(isdir(mingwpath), sprintf('Invalid MinGW configuration "%s".\nSet folder using <a href="matlab:ed247.ConfigurationUI.open()">Configuration App</a>.', mingwpath)) %#ok<ISDIR>
 end
@@ -70,10 +72,11 @@ else
     % Source files
     sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_cmd_xml.c');
     sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_interface.c');
-    sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_sfun_configure.c');
-    sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_sfun_receive.c');
-    sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_sfun_send.c');
     sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'tools.c');
+        
+    sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_configure.c');
+    sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_receive.c');
+    sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_send.c');
 
     if isunix()
         sourcefiles{end+1} = fullfile(ed247folder,   'lib',  'libed247.so');
@@ -101,6 +104,7 @@ else
     includedirectories{end+1} = fullfile(ed247folder,   'inc');
     includedirectories{end+1} = fullfile(libxml2folder, 'include','libxml2');
     includedirectories{end+1} = fullfile(libxml2folder, 'include');
+    includedirectories{end+1} = sfunsourcefolder;
 
 end
 
