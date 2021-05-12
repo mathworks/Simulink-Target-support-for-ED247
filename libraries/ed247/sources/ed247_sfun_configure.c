@@ -43,8 +43,16 @@ void configureTerminate(SimStruct *S, IO_t* io){}
 
 #ifdef ED247_CONFIGURE_RTW
 void configureRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, char_T* configurationFile){
-	        
+	      
+    char *base;
+    
     char_T* filename = (char_T *)( mxGetData(ssGetSFcnParam(S,1)) );
+    
+    base = strtok(filename, "\\");
+    while(base) {
+        strcpy(filename, base);
+        base = strtok(NULL, "\\");
+    }
     strncpy( configurationFile, filename, strlen(filename) + 1 );
 
     *blockTypeID = 0.0;
