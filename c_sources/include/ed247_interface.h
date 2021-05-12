@@ -130,6 +130,7 @@ typedef struct {
 
 typedef struct {
 	char 						name[STRING_MAX_LENGTH];
+	char 						filename[STRING_MAX_LENGTH];
 	ed247_direction_t 			direction;
 	int 						nsignals;
 	ed247_stream_type_t 		stream_type;

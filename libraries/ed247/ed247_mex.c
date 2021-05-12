@@ -38,61 +38,77 @@ void mexFunction( int nlhs, mxArray *plhs[],
     memcpy(fieldnames[8],"signal_type",sizeof("signal_type"));
     fieldnames[9] = (char*)mxMalloc(MAX_STRING_SIZE);
     memcpy(fieldnames[9],"sample_size",sizeof("sample_size"));
-    
-    /* check for proper number of arguments */
-    if(nrhs!=1) {
-        mexErrMsgIdAndTxt("ED247:arrayProduct:nrhs","One inputs required.");
-    }
-    
-    if(nlhs!=1) {
-        mexErrMsgIdAndTxt("ED247:arrayProduct:nlhs","One output required.");
-    }
-    
-    /* make sure the first input argument is char */
-    if(!mxIsChar(prhs[0]) || (mxGetM(prhs[0]) != 1 ) ){
-        mexErrMsgIdAndTxt("ED247:arrayProduct:notScalar","Input filename must be a non-empty char.");
-    }
-            
-    buflen = mxGetN(prhs[0]) + 1;
-    filename = mxMalloc(buflen);
-    
-    /* Copy the string data into buf. */ 
-    status = mxGetString(prhs[0], filename, (mwSize) buflen);
-    if (status != 0) {
-        mexErrMsgIdAndTxt( "ED247:mxGetString", 
-                           "Failed to copy input string into allocated memory.");
-    }
-    
-    
-    mexPrintf("The input string is:  %s\n", filename);
-    
-    io_allocate_memory(&io);
-    read_ed247_configuration(filename, io, "");
-    
-    nIn = io->inputs->nsignals;
-    nOut = io->outputs->nsignals;
-    
-    mexPrintf("%d inputs, %d outputs\n", nIn, nOut);
-    
-    plhs[0] = mxCreateStructMatrix(nIn + nOut,1,N_FIELDNAMES,(const char**)fieldnames);
-    
-    for (i = 0; i < nIn; i++){
-        mexPrintf("Fill elements %d/%d\n", i+1, nIn + nOut);
-        fillStructure(plhs[0], i, io->inputs->signals[i]);        
-    }
-    for (j = 0; j < nOut; j++){
-        mexPrintf("Fill elements %d/%d\n", i+j+1, nIn + nOut);
-        fillStructure(plhs[0], i+j, io->outputs->signals[j]);  
-    }
-    
-    //Deallocate memory for the fieldnames
-    for (i = 0; i < N_FIELDNAMES; i++){
-        mxFree( fieldnames[i] );
-    }
-    
-    mxFree(filename);
-    io_free_memory(io);
-    
+
+	/* check for proper number of arguments */
+	if(nrhs!=1) {
+		mexErrMsgIdAndTxt("ED247:arrayProduct:nrhs","One inputs required.");
+	}
+
+	if(nlhs < 1 ||nlhs > 2) {
+		mexErrMsgIdAndTxt("ED247:arrayProduct:nlhs","At least one output is required.");
+	}
+
+	/* make sure the first input argument is char */
+	if(!mxIsChar(prhs[0]) || (mxGetM(prhs[0]) != 1 ) ){
+		mexErrMsgIdAndTxt("ED247:arrayProduct:notScalar","Input filename must be a non-empty char.");
+	}
+
+	buflen = mxGetN(prhs[0]) + 1;
+	filename = mxMalloc(buflen);
+
+	/* Copy the string data into buf. */ 
+	status = mxGetString(prhs[0], filename, (mwSize) buflen);
+	if (status != 0) {
+		mexErrMsgIdAndTxt( "ED247:mxGetString", 
+							"Failed to copy input string into allocated memory.");
+	}
+
+	mexPrintf("The input string is:  %s\n", filename);
+
+	io_allocate_memory(&io);
+	read_ed247_configuration(filename, io, "");
+
+	//
+	// Configuration structure
+	//
+	nIn = io->inputs->nsignals;
+	nOut = io->outputs->nsignals;
+	mexPrintf("%d input signals, %d output signal\n", nIn, nOut);
+	plhs[0] = mxCreateStructMatrix(nIn + nOut,1,N_FIELDNAMES,(const char**)fieldnames);
+
+	for (i = 0; i < nIn; i++){
+		mexPrintf("Fill elements %d/%d\n", i+1, nIn + nOut);
+		fillStructure(plhs[0], i, io->inputs->signals[i]);
+	}
+	for (j = 0; j < nOut; j++){
+		mexPrintf("Fill elements %d/%d\n", i+j+1, nIn + nOut);
+		fillStructure(plhs[0], i+j, io->outputs->signals[j]);  
+	}
+
+	//Deallocate memory for the fieldnames
+	for (i = 0; i < N_FIELDNAMES; i++){
+		mxFree( fieldnames[i] );
+	}
+
+	//
+	// List of files
+	//
+	nIn = io->inputs->nstreams;
+	nOut = io->outputs->nstreams;
+	mexPrintf("%d input streams, %d output streams\n", nIn, nOut);
+	plhs[1] = mxCreateCellMatrix(nIn + nOut, 1);
+	for (i = 0; i < nIn; i++){
+		mexPrintf("Store filenames for input stream %d/%d\n", i+1, nIn + nOut);
+		mxSetCell(plhs[1],i,mxCreateString(io->inputs->streams[i].filename));
+	}
+	for (j = 0; j < nOut; j++){
+		mexPrintf("Store filenames for output stream %d/%d\n", i+j+1, nIn + nOut);
+		mxSetCell(plhs[1],i+j,mxCreateString(io->outputs->streams[j].filename));
+	}
+
+	mxFree(filename);
+	io_free_memory(io);
+
 }
 
 void fillStructure(mxArray *S, int index, signal_characteristics_t signal){

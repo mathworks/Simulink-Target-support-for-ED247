@@ -74,9 +74,11 @@ else
     sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_interface.c');
     sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'tools.c');
         
-    sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_configure.c');
-    sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_receive.c');
-    sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_send.c');
+    if strcmp(p.Results.MEXFile,'ed247_sfun.c')
+        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_configure.c');
+        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_receive.c');
+        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_send.c');
+    end
 
     if isunix()
         sourcefiles{end+1} = fullfile(ed247folder,   'lib',  'libed247.so');
