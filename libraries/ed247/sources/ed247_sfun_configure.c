@@ -42,7 +42,12 @@ void configureTerminate(SimStruct *S, IO_t* io){}
 #endif
 
 #ifdef ED247_CONFIGURE_RTW
-void configureRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, int_T* nSignals, real_T portIndex[100], real_T refreshIndex[100]){
-	*blockTypeID = 0.0;
+void configureRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, char_T* configurationFile){
+	        
+    char_T* filename = (char_T *)( mxGetData(ssGetSFcnParam(S,1)) );
+    strncpy( configurationFile, filename, strlen(filename) + 1 );
+
+    *blockTypeID = 0.0;
+    
 }
 #endif

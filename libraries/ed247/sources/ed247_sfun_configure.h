@@ -20,6 +20,6 @@ void configureUpdate(SimStruct *S, IO_t* io);
 void configureTerminate(SimStruct *S, IO_t* io);
 
 #define ED247_CONFIGURE_RTW
-void configureRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, int_T* nSignals, real_T portIndex[100], real_T refreshIndex[100]);
+void configureRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, char_T* configurationFile);
 
 #endif

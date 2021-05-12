@@ -1,5 +1,5 @@
 
-%function ConfigureBlockTypeSetup (block, system) void
+%function ConfigureBlockInstanceSetup (block, system) void
 
 %% Get context variables
 %assign modelname = LibGetModelName()
@@ -22,7 +22,7 @@
 %% Declare configurationFile variable
 %%
 %openfile tmpBuf
-extern char configurationFile[256];
+extern char *configurationFile;
 %closefile tmpBuf
 %<LibSetSourceFileSection(hFile,"Declarations",tmpBuf)>
 
@@ -38,13 +38,10 @@ static IO_t *%<modelname>_io;
 %% Define configurationFile variable
 %%
 %openfile tmpBuf
-char configurationFile[] = "%<filename>";
+char *configurationFile = "%<filename>";
 %closefile tmpBuf
 %<LibSetSourceFileSection(cData,"Definitions",tmpBuf)>
 
-%endfunction
-
-%function ConfigureBlockInstanceSetup (block, system) void
 %endfunction
 
 %function ConfigureStart (block, system) Output

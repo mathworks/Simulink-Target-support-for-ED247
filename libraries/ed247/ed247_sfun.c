@@ -225,7 +225,7 @@ static void mdlTerminate(SimStruct *S){
  */
 static void mdlRTW(SimStruct *S)
 {
-	char_T  *configurationFile;
+	char_T configurationFile[512];
 	real_T  blockTypeID;
 	BLOCK_TYPE_T *blockType;
 
@@ -235,31 +235,41 @@ static void mdlRTW(SimStruct *S)
 
 	blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
 	if (*blockType == SEND){
+        
 		#if defined(ED247_SEND_RTW)
 		sendRTW(S, io, &blockTypeID, &nSignals, portIndex, refreshIndex);
+        if (!ssWriteRTWParamSettings(S, 4, 
+			SSWRITE_VALUE_NUM,  "BlockType",    blockTypeID,
+			SSWRITE_VALUE_NUM,  "NumSignals",   (real_T) nSignals,
+			SSWRITE_VALUE_VECT, "PortIndex",    portIndex, nSignals, 
+			SSWRITE_VALUE_VECT, "RefreshIndex", refreshIndex, nSignals)) {
+            return; /* An error occurred. */
+        }
 		#endif
 
 	} else if (*blockType == RECEIVE){
 		#if defined(ED247_RECEIVE_RTW)
 		receiveRTW(S, io, &blockTypeID, &nSignals, portIndex, refreshIndex);
-		#endif
-
-	} else {
-		#if defined(ED247_CONFIGURE_RTW)
-		configureRTW(S, io, &blockTypeID, &nSignals, portIndex, refreshIndex);
-		#endif
-	}
-
-	configurationFile = (char_T *)( mxGetData(ssGetSFcnParam(S,1)) );
-	if (!ssWriteRTWParamSettings(S, 5, 
-			SSWRITE_VALUE_QSTR, "Filename",     configurationFile,
+        if (!ssWriteRTWParamSettings(S, 4, 
 			SSWRITE_VALUE_NUM,  "BlockType",    blockTypeID,
 			SSWRITE_VALUE_NUM,  "NumSignals",   (real_T) nSignals,
 			SSWRITE_VALUE_VECT, "PortIndex",    portIndex, nSignals, 
 			SSWRITE_VALUE_VECT, "RefreshIndex", refreshIndex, nSignals)) {
-		return; /* An error occurred. */
-	}
+            return; /* An error occurred. */
+        }
+		#endif
 
+	} else {
+		#if defined(ED247_CONFIGURE_RTW)
+		configureRTW(S, io, &blockTypeID, configurationFile);
+        if (!ssWriteRTWParamSettings(S, 2, 
+			SSWRITE_VALUE_QSTR, "Filename",     configurationFile,
+			SSWRITE_VALUE_NUM,  "BlockType",    blockTypeID)) {
+            return; /* An error occurred. */
+        }
+		#endif
+	}
+    
 }
 #endif /* MDL_RTW */
 

@@ -21,8 +21,6 @@
 	%<SLibAddToStaticSources("ed247_cmd_xml.c")>
 	%<SLibAddToStaticSources("tools.c")>
 
-	%<ConfigureBlockTypeSetup (block, system)>
-
 %endfunction
 
 %% Function: BlockInstanceSetup ===========================================
