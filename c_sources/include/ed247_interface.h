@@ -18,7 +18,7 @@
 
 #define WAIT_FRAME_TIMEOUT_US 1000
 
-#ifndef MATLAB_MEX_FILE
+#if !defined(MATLAB_MEX_FILE) && !defined(BUILTIN_TYPEID_TYPES)
 
 	typedef enum {
 		SS_DOUBLE	= 0,
@@ -154,6 +154,10 @@ typedef struct {
 	data_characteristics_t *outputs;
 } IO_t;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 /*
  * ED247 INTERFACE
  */
@@ -183,6 +187,10 @@ static int sizeofNADDataType(ed247_nad_type_t type);
 #ifndef __MYPRINTFDEBUG__
 #define __MYPRINTFDEBUG__
 void myprintf(const char *fmt, ...);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif
