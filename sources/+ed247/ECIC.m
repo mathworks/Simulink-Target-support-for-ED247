@@ -70,6 +70,27 @@ classdef ECIC < matlab.mixin.SetGet
             
         end
         
+        function sendTo(obj,destination,target,varargin)
+           
+            %       src = fullfile('c:', 'work', 'dstfile.txt');
+            %       dst = '/home/slrt/srcfile.txt';
+            %       ssh = matlabshared.network.internal.SSH( ...
+            %               '10.10.10.10', 22, 'myuser', 'mypassword';
+            %
+            %       tg.sendFile(src, dst);
+            %       tg.sendFile(src, dst, ssh);
+            
+            files = [{char(obj.filename_)};obj.icdfiles_];
+            
+            for i_file = 1:numel(files)
+                [folder,file,ext] = fileparts(files{i_file});
+                src = fullfile(folder,[file,ext]);
+                dst = fullfile(destination, [file.ext]);
+                target.sendFile(src,dst,varargin{:});
+            end
+            
+        end
+        
     end
     
     %% PROTECTED HELPERS
