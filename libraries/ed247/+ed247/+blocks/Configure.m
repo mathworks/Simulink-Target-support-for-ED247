@@ -234,6 +234,22 @@ classdef Configure < ed247.blocks.aBlock
             obj = ed247.blocks.Configure(gcbh);
         end
         
+        function obj = fromModel(varargin)
+            
+            if ~isempty(varargin)
+                modelname = varargin{1};
+            else
+                modelname = bdroot;
+            end
+            
+            block = find_system(modelname,"FindAll",'on',"ReferenceBlock","lib_ed247/ED247_Configuration");
+            assert(numel(block) == 1, "Model '%s' should contain 1 ED247 Configure block (currently %d)", ...
+                modelname, numel(block))
+            
+            obj = ed247.blocks.Configure(block);
+            
+        end
+        
     end
     
 end
