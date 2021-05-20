@@ -15,23 +15,60 @@
     <param.platforms />
     <param.guid>4116ee43-4665-4578-bb0f-420175ae02b3</param.guid>
     <param.exclude.filters>+ci/
+
 .SimulinkProject
+
 .git/
+
 .git*
+
 tests/
+
 Jenkinsfile
+
 *.bckp
+
 *.pdf
+
 Coverage*.xml
+
 *.tap
+
 *.log
-archives/</param.exclude.filters>
+
+archives/
+
+Jenkinsfile*
+
+work/
+
+*.prj</param.exclude.filters>
+    <param.exclude.pcodedmfiles>true</param.exclude.pcodedmfiles>
     <param.examples />
     <param.demosxml />
     <param.apps />
+    <param.registered.apps />
     <param.docs>${PROJECT_ROOT}\doc\info.xml</param.docs>
+    <param.getting.started.guide>${PROJECT_ROOT}\doc\GettingStarted.mlx</param.getting.started.guide>
     <param.matlabpath.excludes />
     <param.javaclasspath.excludes />
+    <param.exported.on.package>false</param.exported.on.package>
+    <param.required.addons />
+    <param.matlab.project.id />
+    <param.matlab.project.name />
+    <param.release.start />
+    <param.release.end />
+    <param.release.current.only>false</param.release.current.only>
+    <param.compatiblity.windows>true</param.compatiblity.windows>
+    <param.compatiblity.macos>false</param.compatiblity.macos>
+    <param.compatiblity.linux>false</param.compatiblity.linux>
+    <param.compatiblity.matlabonline>false</param.compatiblity.matlabonline>
+    <param.installation.map />
+    <param.additional.sw.names />
+    <param.additional.sw.licenses />
+    <param.additional.sw.win.url />
+    <param.additional.sw.mac.url />
+    <param.additional.sw.linux.url />
     <unset>
       <param.summary />
       <param.description />
@@ -41,20 +78,37 @@ archives/</param.exclude.filters>
       <param.products.id />
       <param.products.version />
       <param.platforms />
+      <param.exclude.pcodedmfiles />
       <param.examples />
       <param.demosxml />
       <param.apps />
+      <param.registered.apps />
       <param.matlabpath.excludes />
       <param.javaclasspath.excludes />
+      <param.exported.on.package />
+      <param.required.addons />
+      <param.matlab.project.id />
+      <param.matlab.project.name />
+      <param.release.start />
+      <param.release.end />
+      <param.release.current.only />
+      <param.compatiblity.windows />
+      <param.installation.map />
+      <param.additional.sw.names />
+      <param.additional.sw.licenses />
+      <param.additional.sw.win.url />
+      <param.additional.sw.mac.url />
+      <param.additional.sw.linux.url />
     </unset>
     <fileset.rootdir>
-      <file>C:\Files\SANDBOX\git\ED247\ed247_for_simulink</file>
+      <file>${PROJECT_ROOT}</file>
     </fileset.rootdir>
     <fileset.rootfiles>
       <file>${PROJECT_ROOT}\.metadata</file>
       <file>${PROJECT_ROOT}\c_sources</file>
       <file>${PROJECT_ROOT}\CHANGELOG.md</file>
       <file>${PROJECT_ROOT}\doc</file>
+      <file>${PROJECT_ROOT}\ed247_for_simulink-2019b.mlproj</file>
       <file>${PROJECT_ROOT}\libraries</file>
       <file>${PROJECT_ROOT}\README.md</file>
       <file>${PROJECT_ROOT}\sources</file>
@@ -63,26 +117,38 @@ archives/</param.exclude.filters>
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
-      <file location="C:\Files\SANDBOX\git\ED247\ed247_for_simulink" name="ED247_for_Simulink.mltbx" optional="false">C:\Files\SANDBOX\git\ED247\ed247_for_simulink\ED247_for_Simulink.mltbx</file>
+      <file location="${PROJECT_ROOT}" name="ED247_for_Simulink.mltbx" optional="false">C:\Files\SANDBOX\git\ED247\ed247_for_simulink\ED247_for_Simulink.mltbx</file>
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>C:\Files\PROGRAMS\Mathworks\MATLAB\R2016b</root>
+      <root>C:\Files\PROGRAMS\Mathworks\MATLAB\r2020b</root>
       <toolboxes>
-        <toolbox name="fixedpoint" />
         <toolbox name="matlabcoder" />
-        <toolbox name="matlabhdlcoder" />
         <toolbox name="embeddedcoder" />
+        <toolbox name="gpucoder" />
+        <toolbox name="fixedpoint" />
+        <toolbox name="matlabhdlcoder" />
+        <toolbox name="neuralnetwork" />
       </toolboxes>
-      <toolbox>
-        <fixedpoint>
-          <enabled>true</enabled>
-        </fixedpoint>
-      </toolbox>
       <toolbox>
         <matlabcoder>
           <enabled>true</enabled>
         </matlabcoder>
+      </toolbox>
+      <toolbox>
+        <embeddedcoder>
+          <enabled>true</enabled>
+        </embeddedcoder>
+      </toolbox>
+      <toolbox>
+        <gpucoder>
+          <enabled>true</enabled>
+        </gpucoder>
+      </toolbox>
+      <toolbox>
+        <fixedpoint>
+          <enabled>true</enabled>
+        </fixedpoint>
       </toolbox>
       <toolbox>
         <matlabhdlcoder>
@@ -90,9 +156,9 @@ archives/</param.exclude.filters>
         </matlabhdlcoder>
       </toolbox>
       <toolbox>
-        <embeddedcoder>
+        <neuralnetwork>
           <enabled>true</enabled>
-        </embeddedcoder>
+        </neuralnetwork>
       </toolbox>
     </matlab>
     <platform>
@@ -104,7 +170,7 @@ archives/</param.exclude.filters>
       <vista>false</vista>
       <linux>false</linux>
       <solaris>false</solaris>
-      <osver>6.2</osver>
+      <osver>10.0</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>win64</arch>
