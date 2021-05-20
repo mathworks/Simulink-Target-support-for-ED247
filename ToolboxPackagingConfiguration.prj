@@ -16,33 +16,65 @@
     <param.guid>4116ee43-4665-4578-bb0f-420175ae02b3</param.guid>
     <param.exclude.filters>+ci/
 
+
+
 .SimulinkProject
+
+
 
 .git/
 
+
+
 .git*
+
+
 
 tests/
 
+
+
 Jenkinsfile
+
+
 
 *.bckp
 
+
+
 *.pdf
+
+
 
 Coverage*.xml
 
+
+
 *.tap
+
+
 
 *.log
 
+
+
 archives/
+
+
 
 Jenkinsfile*
 
+
+
 work/
 
-*.prj</param.exclude.filters>
+
+
+*.prj
+
+
+
+*.mlproj</param.exclude.filters>
     <param.exclude.pcodedmfiles>true</param.exclude.pcodedmfiles>
     <param.examples />
     <param.demosxml />
@@ -108,7 +140,6 @@ work/
       <file>${PROJECT_ROOT}\c_sources</file>
       <file>${PROJECT_ROOT}\CHANGELOG.md</file>
       <file>${PROJECT_ROOT}\doc</file>
-      <file>${PROJECT_ROOT}\ed247_for_simulink-2019b.mlproj</file>
       <file>${PROJECT_ROOT}\libraries</file>
       <file>${PROJECT_ROOT}\README.md</file>
       <file>${PROJECT_ROOT}\sources</file>
