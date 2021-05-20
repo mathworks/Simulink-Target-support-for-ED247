@@ -1,5 +1,16 @@
 classdef Speedgoat < matlab.mixin.SetGet
-   
+    % SPEEDGOAT Create the executable (.mldatx) ready to be deployed on
+    % Speedgoat machine
+    %
+    % Syntax
+    %   ed247.Speedgoat.deployModel(modelname)
+    %
+    % Inputs
+    %   - modelname (string) Name of model to compile
+    %
+    % Copyright 2020 The MathWorks, Inc.
+    %
+    
     %% DEPENDENT PROPERTIES
     properties (Dependent)
         Executable

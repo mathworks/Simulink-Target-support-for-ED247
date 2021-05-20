@@ -2,14 +2,11 @@
 <toc version="2.0">
 
     <tocitem target="ed247_index.html">Ed247
-        <tocitem target="installation_guide.html">Installation guide
-        </tocitem>
-        <tocitem target="developer_guide.html">Developer guide
-        </tocitem>
-        <tocitem target="demos.html">Demos
-        </tocitem>
-        <tocitem target="package_and_share.html">Package and share
-        </tocitem>
+        <tocitem target="installation_guide.html">Installation guide</tocitem>
+        <tocitem target="developer_guide.html">Developer guide</tocitem>
+        <tocitem target="demos.html">Demos</tocitem>
+        <tocitem target="package_and_share.html">Package and share</tocitem>
+        <tocitem target="speedgoat.html">Speedgoat</tocitem>
     </tocitem>
     
 </toc>
