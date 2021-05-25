@@ -55,7 +55,7 @@ configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, 
 			local_signals_from_ecic(io, stream, stream_info);
 		}
 
-		// ICD is defined only for A664 and A429
+		// ICD is defined only for A429, A664 and A825
 		else if (stream_info->type == ED247_STREAM_TYPE_A429 || 
 			stream_info->type == ED247_STREAM_TYPE_A664 || 
 			stream_info->type == ED247_STREAM_TYPE_A825)
@@ -541,6 +541,7 @@ io_free_status_t io_free_memory(IO_t *io){
 						}
 
 						strcpy(current_stream->name,stream_info->name);
+						strcpy(current_stream->filename,icdfullpath);
 						strcpy(current_stream->icd,icdname);
 						strcpy(current_stream->bus,busname);
 						current_stream->stream_type = stream_info->type;
@@ -596,6 +597,7 @@ io_free_status_t io_free_memory(IO_t *io){
 			current_io->nstreams++;
 
 			strcpy(current_stream->name,stream_info->name);
+			strcpy(current_stream->filename,icdfullpath);
 			strcpy(current_stream->icd,icdname);
 			strcpy(current_stream->bus,busname);
 			current_stream->stream_type = stream_info->type;
@@ -643,6 +645,7 @@ io_free_status_t io_free_memory(IO_t *io){
 			io->inputs->nstreams++;
 
 			strcpy(input_stream->name,stream_info->name);
+			strcpy(input_stream->filename,icdfullpath);
 			strcpy(input_stream->icd,icdname);
 			strcpy(input_stream->bus,busname);
 			input_stream->stream_type 	= stream_info->type;
@@ -655,6 +658,7 @@ io_free_status_t io_free_memory(IO_t *io){
 			io->outputs->nstreams++;
 
 			strcpy(output_stream->name,stream_info->name);
+			strcpy(output_stream->filename,icdfullpath);
 			strcpy(output_stream->icd,icdname);
 			strcpy(output_stream->bus,busname);
 			output_stream->stream_type 	= stream_info->type;

@@ -7,6 +7,7 @@
  
  #include <string.h>
  #include <stdio.h>
+ #include <libxml/parser.h>
  #include <libxml/xmlreader.h>
 
 /************
@@ -155,6 +156,10 @@
 /**********
  * Common *
  **********/ 
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
  extern LIBED247_EXPORT cmd_read_status_t cmd_read_data(const char *filename, cmd_data_t *data);
  
  extern LIBED247_EXPORT cmd_allocate_memory_status_t cmd_allocate_memory(cmd_data_t **config);
@@ -172,4 +177,8 @@
  // END TODO
  static a429_message_type_t local_a429_message_type_from_string(const char *type);
 
+#ifdef __cplusplus
+}
+#endif
+    
  #endif

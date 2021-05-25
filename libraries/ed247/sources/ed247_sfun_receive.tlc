@@ -1,0 +1,106 @@
+
+%function ReceiveBlockInstanceSetup (block, system) void
+
+	%assign headerfilename = LibGetMdlPubHdrBaseName()
+	%assign hFile = LibCreateSourceFile("Header","Simulink",headerfilename)
+
+	%openfile tmpBuf
+	/* ED247 Receive block max counter value */
+	#define ED247_RECEIVE_MAX_COUNTER 10000000
+
+	/* ED247 Receive block sample time */
+	#define ED247_RECEIVE_SAMPLE_TIME %<LibBlockSampleTime(block)>
+	%closefile tmpBuf
+	%<LibSetSourceFileSection(hFile,"Defines",tmpBuf)>
+
+%endfunction
+
+%function ReceiveStart (block, system) Output
+
+%foreach iDW = SIZE(DWork,1)
+	%<LibBlockDWork(DWork[iDW], "", "", 0)> = ED247_RECEIVE_MAX_COUNTER;
+%endforeach
+
+%endfunction
+
+%function ReceiveOutputs (block, system) Output
+
+/* ED247 Receive block : Assign outputs */
+
+%assign modelname = LibGetModelName()
+
+%if ISEQUAL(block.NumDataOutputPorts, 0.0)
+
+%else
+
+	int_T status, ndata, last_update;
+	int_T iPort;
+	real_T timeFromLastUpdate;
+
+	%%
+	%% Assign pointer to value
+	%%
+	%foreach sigIdx = SFcnParamSettings.NumSignals
+		%assign portIdx = SFcnParamSettings.PortIndex[sigIdx]
+		((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].valuePtr = (void*) %<LibBlockOutputSignalAddr(portIdx, "", "", 0)>;
+	%endforeach
+
+	status = (int)receive_ed247_to_simulink(%<modelname>_io,&ndata);
+
+	%foreach sigIdx = SFcnParamSettings.NumSignals
+
+		%assign refreshIdx = SFcnParamSettings.RefreshIndex[sigIdx]
+
+		%if ISEQUAL(refreshIdx,-1.0)
+		%else
+
+			last_update = (int_T) %<LibBlockDWork(DWork[sigIdx], "", "", 0)>;
+			timeFromLastUpdate = ((real_T) last_update) * ((real_T) ED247_RECEIVE_SAMPLE_TIME);
+
+			if (((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].do_refresh == 1 || timeFromLastUpdate < ((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].validity_duration){
+				%<LibBlockOutputSignal(refreshIdx, "", "", 0)> = 1;
+			} else {
+				%<LibBlockOutputSignal(refreshIdx, "", "", 0)> = 0;
+			}
+
+		%endif
+
+	%endforeach
+
+%endif
+
+/* End ED247 Receive block : Assign outputs */
+
+%endfunction
+
+%function ReceiveUpdate (block, system) Output
+
+%assign modelname = LibGetModelName()
+
+/* ED247 Receive block : Update refresh counter */
+
+%foreach sigIdx = SFcnParamSettings.NumSignals
+
+	%assign refreshIdx = SFcnParamSettings.RefreshIndex[sigIdx]
+
+	%if ISEQUAL(refreshIdx,-1.0)
+	%else
+
+		last_update = (int_T) %<LibBlockDWork(DWork[sigIdx], "", "", 0)>;
+		if (((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].do_refresh == 1){
+			last_update = 0;
+		} else if (last_update < ED247_RECEIVE_MAX_COUNTER){
+			last_update = last_update+1;
+		}
+		%<LibBlockDWork(DWork[sigIdx], "", "", 0)> = last_update;
+
+	%endif
+
+%endforeach
+/* End ED247 Receive block : Update counter*/
+
+%endfunction
+
+%function ReceiveTerminate (block, system) Output
+
+%endfunction

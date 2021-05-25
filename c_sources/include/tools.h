@@ -19,10 +19,18 @@
  #else
 	#define FILESEP "/" 
  #endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
  
  void myprintf(const char *fmt, ...); 
  int fileexists(const char * filename);
  void fileparts(const char* path, char* folder);
-  
+ 
+#ifdef __cplusplus
+}
+#endif
+
  #endif
  

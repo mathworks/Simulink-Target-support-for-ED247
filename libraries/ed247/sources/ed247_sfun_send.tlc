@@ -1,0 +1,43 @@
+
+%function SendBlockInstanceSetup (block, system) void
+
+%endfunction
+
+%function SendStart (block, system) Output
+
+%endfunction
+
+%function SendOutputs (block, system) Output
+
+%assign modelname = LibGetModelName()
+
+%if ISEQUAL(block.NumDataInputPorts, 0.0)
+%else
+
+	%foreach sigIdx = SFcnParamSettings.NumSignals
+
+		%assign portIdx = SFcnParamSettings.PortIndex[sigIdx]
+		%assign refreshIdx = SFcnParamSettings.RefreshIndex[sigIdx]
+		
+		%if ISEQUAL(refreshIdx,-1.0)
+			((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].do_refresh = 1;
+		%else
+			((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].do_refresh = (int) %<LibBlockInputSignal(refreshIdx, "", "", 0)>;
+		%endif
+		((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].valuePtr = (void*)%<LibBlockInputSignalAddr(portIdx, "", "", 0)>;
+
+	%endforeach
+
+	send_simulink_to_ed247(%<modelname>_io);
+
+%endif
+
+%endfunction
+
+%function SendUpdate (block, system) Output
+
+%endfunction
+
+%function SendTerminate (block, system) Output
+
+%endfunction

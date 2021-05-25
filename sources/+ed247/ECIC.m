@@ -5,11 +5,18 @@ classdef ECIC < matlab.mixin.SetGet
         Configuration
     end
     
+    %% DEPENDENT PROPERTIES
+    properties (Dependent)
+        ECICFile
+        ICDFiles
+    end
+    
     %% PRIVATE PROPERTIES
     properties (Access = private)
         configuration_
+        icdfiles_
     end
-    
+        
     %% IMMUTABLE PROPERTIES
     properties (SetAccess = immutable, GetAccess = private)
         filename_
@@ -34,14 +41,54 @@ classdef ECIC < matlab.mixin.SetGet
             configuration = obj.configuration_;
         end
         
+        function ecicfile = get.ECICFile(obj)
+            ecicfile = obj.filename_;
+        end
+        
+        function icdfiles = get.ICDFiles(obj)
+            icdfiles = obj.icdfiles_;
+        end
+        
     end
     
     %% PUBLIC METHODS
     methods
         
         function read(obj)
+            
             obj.assert(exist(obj.filename_,'file') == 2, 'File "%s" does not exist', obj.filename_)
-            obj.configuration_ = ed247_mex(obj.filename_);
+            
+            if ~isempty(which(obj.filename_))
+                filename = which(obj.filename_);
+            else
+                filename = char(obj.filename_);
+            end
+            [configuration,icdfiles] = ed247_mex(filename);
+            
+            obj.configuration_ = configuration;
+            obj.icdfiles_ = unique(icdfiles);
+            
+        end
+        
+        function sendTo(obj,destination,target,varargin)
+           
+            %       src = fullfile('c:', 'work', 'dstfile.txt');
+            %       dst = '/home/slrt/srcfile.txt';
+            %       ssh = matlabshared.network.internal.SSH( ...
+            %               '10.10.10.10', 22, 'myuser', 'mypassword';
+            %
+            %       tg.sendFile(src, dst);
+            %       tg.sendFile(src, dst, ssh);
+            
+            files = [{char(obj.filename_)};obj.icdfiles_];
+            
+            for i_file = 1:numel(files)
+                [folder,file,ext] = fileparts(files{i_file});
+                src = fullfile(folder,[file,ext]);
+                dst = fullfile(destination, [file.ext]);
+                target.sendFile(src,dst,varargin{:});
+            end
+            
         end
         
     end
