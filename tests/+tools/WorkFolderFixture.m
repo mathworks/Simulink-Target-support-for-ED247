@@ -1,5 +1,5 @@
 classdef WorkFolderFixture < matlab.unittest.fixtures.Fixture
-    % TOOLBOXFIXTURE
+    % WORKFOLDERFIXTURE
     %
     % Copyright 2021, The MathWorks Inc.
     %
