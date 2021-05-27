@@ -58,6 +58,9 @@ classdef (SharedTestFixtures={...
             warning('on')
             
             % [ VERIFY ]
+            %
+            % Number of ports for Send and Receive blocks
+            %
             receiveports = get(receiveblock,'PortHandles');
             testCase.verifyLength(receiveports.Outport,6, ...
                 sprintf('[A429] Receive block should have %d ports (%d x2 as refresh is enabled)', 6, 3))
@@ -65,6 +68,41 @@ classdef (SharedTestFixtures={...
             sendports = get(sendblock,'PortHandles');
             testCase.verifyLength(sendports.Inport,4, ...
                 sprintf('[A429] Send block should have %d ports (%d x2 as refresh is enabled)', 4, 2))
+            
+            %
+            % Mask display (text and port labels)
+            %
+            
+            % Displayed text should be empty as "Show port labels" is
+            % enabled
+            receivemask = ed247.blocks.Receive(receiveblock);
+            testCase.verifyEmpty(receivemask.DisplayText, ...
+                'No text should be displayed in Receive Mask as "Show port label" is enabled')
+            
+            % Displayed text should be empty as "Show port labels" is
+            % enabled
+            sendmask = ed247.blocks.Send(sendblock);
+            testCase.verifyEmpty(sendmask.DisplayText, ...
+                'No text should be displayed in Send Mask as "Show port label" is enabled')
+            
+            %
+            % Port labels
+            %
+            actual = receivemask.PortLabel;
+            Type = repmat({'output'},6,1);
+            Number = (1:6)';
+            Label = {'A429_BUS_1_MSG_1';'A429_BUS_1_MSG_1_refresh';'A429_BUS_1_MSG_2';'A429_BUS_1_MSG_2_refresh';'A429_BUS_1_MSG_3';'A429_BUS_1_MSG_3_refresh'};
+            expected = table(Type,Number,Label);            
+            testCase.verifyEqual(actual,expected, ...
+                'Receive port labels does not match expected')
+            
+            actual = sendmask.PortLabel;
+            Type = repmat({'input'},4,1);
+            Number = (1:4)';
+            Label = {'A429_BUS_2_MSG_1';'A429_BUS_2_MSG_1_refresh';'A429_BUS_2_MSG_2';'A429_BUS_2_MSG_2_refresh'};
+            expected = table(Type,Number,Label);            
+            testCase.verifyEqual(actual,expected, ...
+                'Receive port labels does not match expected')
             
         end
         
