@@ -82,7 +82,10 @@ work/
     <param.registered.apps />
     <param.docs>${PROJECT_ROOT}\doc\info.xml</param.docs>
     <param.getting.started.guide>${PROJECT_ROOT}\doc\GettingStarted.mlx</param.getting.started.guide>
-    <param.matlabpath.excludes />
+    <param.matlabpath.excludes>
+      <item>/work</item>
+      <item>/tests</item>
+    </param.matlabpath.excludes>
     <param.javaclasspath.excludes />
     <param.exported.on.package>false</param.exported.on.package>
     <param.required.addons />
@@ -115,7 +118,6 @@ work/
       <param.demosxml />
       <param.apps />
       <param.registered.apps />
-      <param.matlabpath.excludes />
       <param.javaclasspath.excludes />
       <param.exported.on.package />
       <param.required.addons />
