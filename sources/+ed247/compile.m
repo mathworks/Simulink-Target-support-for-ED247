@@ -2,13 +2,10 @@ function compile(varargin)
 % COMPILE
 %
 % Name-Value arguments
-%   - Mode (mock | ed247)
-%   - SourceFolder (char) Default = <projroot>/libraries/ed247
-%       contains mock and interface subfolders
+%   - MEXFile (char) Default = all (all C-files in MEXFolder)
 %   - MEXFolder (char) Default = <projroot>/libraries/ed247
-%   - MEXFile (char) Default = ed247_sfun.c
+%   - OutputFolder (char) Default = <projroot>/libraries/ed247
 %   - Verbose (true|false)
-%   - EnableLog (true|false): Compile MEX with logging functionality
 %
 % Copyright 2020 The MathWorks, Inc.
 %
@@ -38,18 +35,13 @@ assert(isdir(libxml2folder), sprintf('Invalid LibXML2 configuration "%s".\nSet f
 %% Inputs
 % Analyze optional arguments
 p = inputParser();
-p.addParameter('Mode','ed247',@(x) ischar(x) && ismember(x,{'mock','ed247'}))
+p.addParameter('MEXFile','all',@(x) ischar(x) || isstring(x))
+p.addParameter('MEXFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR>
 p.addParameter('OutputFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR> Backward compatibility with r2016b
 p.addParameter('Verbose',false,@(x) validateattributes(x,{'logical'},{'scalar'}))
-p.addParameter('MEXFile','ed247_sfun.c',@(x) ischar(x) || isstring(x))
-p.addParameter('MEXFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR>
-p.addParameter('EnableLog',true, @(x) validateattributes(x,{'logical'},{'scalar'}))
 parse(p,varargin{:})
 
 %% MEX argument definition
-
-% C-MEX S-Function
-cmexsfcn = fullfile(p.Results.MEXFolder,p.Results.MEXFile);
 
 sourcefiles         = {};
 includedirectories  = {};
@@ -74,12 +66,6 @@ else
     sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_interface.c');
     sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'tools.c');
         
-    if strcmp(p.Results.MEXFile,'ed247_sfun.c')
-        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_configure.c');
-        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_receive.c');
-        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_send.c');
-    end
-
     if isunix()
         sourcefiles{end+1} = fullfile(ed247folder,   'lib',  'libed247.so');
         sourcefiles{end+1} = fullfile(libxml2folder, 'lib',  'libxml2.so');
@@ -110,13 +96,9 @@ else
 
 end
 
-if p.Results.Verbose || strcmp(p.Results.Mode,'mock')
+if p.Results.Verbose
     % Defines
     defines{end+1} = 'DEBUG';
-end
-
-if ~p.Results.EnableLog
-    defines{end+1} = 'DISABLE_LOG';
 end
 
 if isunix
@@ -131,11 +113,30 @@ defines             = cellfun(@(d) sprintf('-D%s',d), cellstr(defines), 'Uniform
 %% Compile C-MEX file
 cd(mexfolder)
 
-fprintf(1, '## Run MEX compilation\n')
+if strcmp(p.Results.MEXFile,'all')
+    mexfiles = dir(fullfile(mexfolder,'*.c'));
+    mexfiles = {mexfiles.name};
+else
+    mexfiles = {p.Results.MEXFile};
+end
 
-fprintf(1, 'mex %s %s %s %s %s \n', strjoin(opts,' '), '-outdir', p.Results.OutputFolder, cmexsfcn, strjoin([sourcefiles, includedirectories, defines],' '));
-
-warning('off','MATLAB:mex:MinGWVersion_link')
-cc = onCleanup(@() warning('on','MATLAB:mex:MinGWVersion_link'));
-mex(opts{:},'-outdir',p.Results.OutputFolder,cmexsfcn,sourcefiles{:}, includedirectories{:},defines{:});
-
+for i_mex = 1:numel(mexfiles)
+    
+    % C-MEX S-Function
+    cmexsfcn = fullfile(p.Results.MEXFolder,mexfiles{i_mex});
+    
+    fprintf(1, '## Run MEX compilation : %s (%02d/%02d)\n', mexfiles{i_mex}, i_mex, numel(mexfiles))
+    
+    if strcmp(mexfiles{i_mex},'ed247_sfun.c')
+        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_configure.c'); %#ok<AGROW>
+        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_receive.c'); %#ok<AGROW>
+        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_send.c'); %#ok<AGROW>
+    end
+    
+    fprintf(1, 'mex %s %s %s %s %s \n', strjoin(opts,' '), '-outdir', p.Results.OutputFolder, cmexsfcn, strjoin([sourcefiles, includedirectories, defines],' '));
+    
+    warning('off','MATLAB:mex:MinGWVersion_link')
+    mex(opts{:},'-outdir',p.Results.OutputFolder,cmexsfcn,sourcefiles{:}, includedirectories{:},defines{:});
+    warning('on','MATLAB:mex:MinGWVersion_link')
+    
+end
