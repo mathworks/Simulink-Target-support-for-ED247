@@ -92,7 +92,7 @@ classdef (SharedTestFixtures={...
             Type = repmat({'output'},6,1);
             Number = (1:6)';
             Label = {'A429_BUS_1_MSG_1';'A429_BUS_1_MSG_1_refresh';'A429_BUS_1_MSG_2';'A429_BUS_1_MSG_2_refresh';'A429_BUS_1_MSG_3';'A429_BUS_1_MSG_3_refresh'};
-            expected = table(Type,Number,Label);            
+            expected = table(Type,Number,Label);
             testCase.verifyEqual(actual,expected, ...
                 'Receive port labels does not match expected')
             
@@ -100,7 +100,7 @@ classdef (SharedTestFixtures={...
             Type = repmat({'input'},4,1);
             Number = (1:4)';
             Label = {'A429_BUS_2_MSG_1';'A429_BUS_2_MSG_1_refresh';'A429_BUS_2_MSG_2';'A429_BUS_2_MSG_2_refresh'};
-            expected = table(Type,Number,Label);            
+            expected = table(Type,Number,Label);
             testCase.verifyEqual(actual,expected, ...
                 'Receive port labels does not match expected')
             
@@ -237,88 +237,6 @@ classdef (SharedTestFixtures={...
             
         end
         
-        function testReadELACWithRefresh(testCase)
-            
-            % [ SETUP ]
-            archivename = fullfile(testCase.filefolder_, 'ELAC_full.zip');
-            unzip(archivename,pwd)
-            
-            modelname = 'readelac';
-            new_system(modelname)
-            load_system(modelname)
-            closeModel = onCleanup(@() bdclose(modelname));
-            
-            %
-            % Add blocks in the model
-            %
-            configurationblockname = [modelname,'/Configure'];
-            configurationblock = add_block('lib_ed247/ED247_Configuration', configurationblockname);
-            
-            receiveblockname = [modelname,'/Receive'];
-            receiveblock = add_block('lib_ed247/ED247_Receive', receiveblockname);
-            
-            %
-            % Configure blocks
-            %   - configuration file
-            %   - Enable refresh
-            %
-            set(configurationblock, 'configurationFilename', '''ELACe2M_ECIC.xml''')
-            set(receiveblock, 'enable_refresh', 'on')
-            
-            % [ EXERCISE ]
-            % Run SIM to update diagram only (do not care about warnings)
-            warning('off')
-            sim(modelname,'StopTime','0');
-            warning('on')
-            
-            % [ VERIFY ]
-            receiveports = get(receiveblock,'PortHandles');
-            testCase.verifyLength(receiveports.Outport,968, ...
-                sprintf('[A429] Receive block should have %d ports (%d x2 as refresh is enabled)', 1936, 968))
-            
-        end
-        
-        function testReadELACWithoutRefresh(testCase)
-            
-            % [ SETUP ]
-            archivename = fullfile(testCase.filefolder_, 'ELAC_full.zip');
-            unzip(archivename,pwd)
-            
-            modelname = 'readelac';
-            new_system(modelname)
-            load_system(modelname)
-            closeModel = onCleanup(@() bdclose(modelname));
-            
-            %
-            % Add blocks in the model
-            %
-            configurationblockname = [modelname,'/Configure'];
-            configurationblock = add_block('lib_ed247/ED247_Configuration', configurationblockname);
-            
-            receiveblockname = [modelname,'/Receive'];
-            receiveblock = add_block('lib_ed247/ED247_Receive', receiveblockname);
-            
-            %
-            % Configure blocks
-            %   - configuration file
-            %   - Disable refresh
-            %
-            set(configurationblock, 'configurationFilename', '''ELACe2M_ECIC.xml''')
-            set(receiveblock, 'enable_refresh', 'off')
-            
-            % [ EXERCISE ]
-            % Run SIM to update diagram only (do not care about warnings)
-            warning('off')
-            sim(modelname,'StopTime','0');
-            warning('on')
-            
-            % [ VERIFY ]
-            receiveports = get(receiveblock,'PortHandles');
-            testCase.verifyLength(receiveports.Outport,968, ...
-                sprintf('[A429] Receive block should have %d ports (refresh is disabled)', 968))
-            
-        end
-                
     end
     
     %% PRIVATE PROPERTIES
