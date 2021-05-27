@@ -4,6 +4,7 @@
 void sendInitialize(SimStruct *S, IO_t *io){
 
 	int isig,iport,idim,nports;
+	int_T isRefreshEnabled;
 	int32_T* d;
 
 	ssAllowSignalsWithMoreThan2D(S);
@@ -11,12 +12,15 @@ void sendInitialize(SimStruct *S, IO_t *io){
 
 	ssSetNumDWork(S, 0);
 
+	isRefreshEnabled = *((int_T *)( mxGetData(ssGetSFcnParam(S,3)) ));
+	myprintf("Is refresh enabled = %d\n",isRefreshEnabled);
+
 	/*
 	 * INPUTS
 	 */
 	nports = io->inputs->nsignals;
 	for (iport = 0; iport < io->inputs->nsignals; iport++){
-		if (io->inputs->signals[iport].is_refresh == 1){
+		if (io->inputs->signals[iport].is_refresh == 1 && isRefreshEnabled == 1){
 			nports++;
 		}
 	}
@@ -60,7 +64,7 @@ void sendInitialize(SimStruct *S, IO_t *io){
 		//
 		// Refresh ports
 		//
-		if (io->inputs->signals[isig].is_refresh == 1){
+		if (io->inputs->signals[isig].is_refresh == 1 && isRefreshEnabled == 1){
 
 			myprintf("Port %d : Refresh\n", iport);
 
@@ -72,6 +76,8 @@ void sendInitialize(SimStruct *S, IO_t *io){
 			io->inputs->signals[isig].refresh_index = iport;
 			iport++;
 
+		} else {
+			io->inputs->signals[isig].refresh_index = -1;
 		}
 
 	}
@@ -94,7 +100,7 @@ void sendOutputs(SimStruct *S, IO_t* io){
 		iport = io->inputs->signals[isig].port_index;
 		io->inputs->signals[isig].valuePtr = (void*)ssGetInputPortSignal(S,iport);
 
-		if (io->inputs->signals[isig].is_refresh == 1){
+		if (io->inputs->signals[isig].is_refresh == 1 && io->inputs->signals[isig].refresh_index >= 0){
 			refresh = (int8_T*)ssGetInputPortSignal(S,io->inputs->signals[isig].refresh_index); 
 			myprintf("Refresh port #%d = %d\n", io->inputs->signals[isig].refresh_index, *refresh);
 			io->inputs->signals[isig].do_refresh = *refresh;
@@ -133,7 +139,7 @@ void sendRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, int_T* nSignals, real_
 	for (i = 0; i < *nSignals; i++){
 
 		portIndex[i] = (real_T) io->inputs->signals[i].port_index;
-		if (io->inputs->signals[i].is_refresh == 1){ 
+		if (io->inputs->signals[i].is_refresh == 1 && io->inputs->signals[i].refresh_index >= 0){ 
 			refreshIndex[i] = (real_T) io->inputs->signals[i].refresh_index;
 		} else {
 			refreshIndex[i] = -1.0;
