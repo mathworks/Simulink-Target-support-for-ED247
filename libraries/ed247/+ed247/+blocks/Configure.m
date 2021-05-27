@@ -146,13 +146,15 @@ classdef Configure < ed247.blocks.aBlock
        
         function InitFcn(obj)
             
-            config = ed247.Configuration.default();
-            config.addLibrariesToPath()
-                   
-            update(obj)
+            saveConfigurationInModelWorkspace(obj)
+            
+%             config = ed247.Configuration.default();
+%             config.addLibrariesToPath()
+%                    
+%             update(obj)
             
         end
-        
+                
     end
     
     %% PUBLIC METHODS
