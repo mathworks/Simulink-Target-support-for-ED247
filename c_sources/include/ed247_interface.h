@@ -13,7 +13,8 @@
 #include "ed247_cmd_xml.h"
 #include "tools.h"
 
-#define MAX_ELEMENTS 50
+#define MAX_SIGNALS 500
+#define MAX_STREAMS 100
 #define MAX_DIMENSIONS 10
 
 #define WAIT_FRAME_TIMEOUT_US 1000
@@ -71,7 +72,8 @@ typedef enum {
 	SIGNAL_ALLOCATE_SAMPLE_FAILURE,
 	SIGNAL_GET_INFO_FAILURE,
 	SIGNAL_LIST_FREE_FAILURE,
-	STREAM_LIST_FREE_FAILURE
+	STREAM_LIST_FREE_FAILURE,
+	STREAM_REACH_ARRAY_LIMIT
 } configuration_status_t;
 
 typedef enum {
@@ -138,14 +140,14 @@ typedef struct {
 	ed247_stream_assistant_t 	assistant; 				// Only for ANA, DIS, NAD, VNAD
 	char 						icd[STRING_MAX_LENGTH]; // Only for A664, A429
 	char 						bus[STRING_MAX_LENGTH]; // Only for A664, A429
-	signal_characteristics_t*	signals[MAX_ELEMENTS];
+	signal_characteristics_t*	signals[MAX_SIGNALS];
 } stream_characteristics_t;
 
 typedef struct {
 	int nstreams;
 	int nsignals;
-	stream_characteristics_t streams[MAX_ELEMENTS];
-	signal_characteristics_t signals[MAX_ELEMENTS];
+	stream_characteristics_t streams[MAX_STREAMS];
+	signal_characteristics_t signals[MAX_SIGNALS];
 } data_characteristics_t;
 
 typedef struct {

@@ -1,5 +1,7 @@
 #include "mex.h"
+
 #include "ed247_interface.h"
+#include "tools.h"
 
 #define N_FIELDNAMES 10
 #define MAX_STRING_SIZE 20
@@ -63,7 +65,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 							"Failed to copy input string into allocated memory.");
 	}
 
-	mexPrintf("The input string is:  %s\n", filename);
+	myprintf("The input string is:  %s\n", filename);
 
 	io_allocate_memory(&io);
 	read_ed247_configuration(filename, io, "");
@@ -73,15 +75,15 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	//
 	nIn = io->inputs->nsignals;
 	nOut = io->outputs->nsignals;
-	mexPrintf("%d input signals, %d output signal\n", nIn, nOut);
+	myprintf("%d input signals, %d output signal\n", nIn, nOut);
 	plhs[0] = mxCreateStructMatrix(nIn + nOut,1,N_FIELDNAMES,(const char**)fieldnames);
 
 	for (i = 0; i < nIn; i++){
-		mexPrintf("Fill elements %d/%d\n", i+1, nIn + nOut);
+		myprintf("Fill elements %d/%d\n", i+1, nIn + nOut);
 		fillStructure(plhs[0], i, io->inputs->signals[i]);
 	}
 	for (j = 0; j < nOut; j++){
-		mexPrintf("Fill elements %d/%d\n", i+j+1, nIn + nOut);
+		myprintf("Fill elements %d/%d\n", i+j+1, nIn + nOut);
 		fillStructure(plhs[0], i+j, io->outputs->signals[j]);  
 	}
 
@@ -95,14 +97,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	//
 	nIn = io->inputs->nstreams;
 	nOut = io->outputs->nstreams;
-	mexPrintf("%d input streams, %d output streams\n", nIn, nOut);
+	myprintf("%d input streams, %d output streams\n", nIn, nOut);
 	plhs[1] = mxCreateCellMatrix(nIn + nOut, 1);
 	for (i = 0; i < nIn; i++){
-		mexPrintf("Store filenames for input stream %d/%d\n", i+1, nIn + nOut);
+		myprintf("Store filenames for input stream %d/%d\n", i+1, nIn + nOut);
 		mxSetCell(plhs[1],i,mxCreateString(io->inputs->streams[i].filename));
 	}
 	for (j = 0; j < nOut; j++){
-		mexPrintf("Store filenames for output stream %d/%d\n", i+j+1, nIn + nOut);
+		myprintf("Store filenames for output stream %d/%d\n", i+j+1, nIn + nOut);
 		mxSetCell(plhs[1],i+j,mxCreateString(io->outputs->streams[j].filename));
 	}
 

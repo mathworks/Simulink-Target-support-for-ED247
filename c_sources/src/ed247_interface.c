@@ -12,7 +12,8 @@ configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, 
 	int i,streamidx;
 	char folder[STRING_MAX_LENGTH];
 
-    libed247_configuration_t    config = LIBED247_CONFIGURATION_DEFAULT;
+	libed247_configuration_t	config = LIBED247_CONFIGURATION_DEFAULT;
+	configuration_status_t		read_status;
 	ed247_status_t				status;
 	ed247_stream_list_t			streams;
 	ed247_stream_t				stream;
@@ -52,7 +53,8 @@ configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, 
 			stream_info->type == ED247_STREAM_TYPE_NAD ||
 			stream_info->type == ED247_STREAM_TYPE_VNAD)
 		{
-			local_signals_from_ecic(io, stream, stream_info);
+			read_status = local_signals_from_ecic(io, stream, stream_info);
+			if (read_status == STREAM_REACH_ARRAY_LIMIT){myprintf("WARNING: Stream array limit reached (%d), some data may be skipped\n", MAX_STREAMS);}
 		}
 
 		// ICD is defined only for A429, A664 and A825
@@ -60,7 +62,8 @@ configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, 
 			stream_info->type == ED247_STREAM_TYPE_A664 || 
 			stream_info->type == ED247_STREAM_TYPE_A825)
 		{
-			local_signals_from_icd(io, stream, stream_info, folder);
+			read_status = local_signals_from_icd(io, stream, stream_info, folder);
+			if (read_status == STREAM_REACH_ARRAY_LIMIT){myprintf("WARNING: Stream array limit reached (%d), some data may be skipped\n", MAX_STREAMS);}
 		}
 
 	}
@@ -349,6 +352,7 @@ io_free_status_t io_free_memory(IO_t *io){
 
 	streamidx = current_io->nstreams;
 	current_io->nstreams++;
+	if (streamidx >= MAX_STREAMS){return STREAM_REACH_ARRAY_LIMIT;}
 
 	status = ed247_stream_get_assistant(stream, &(current_io->streams[streamidx].assistant));
 	if (checkStatus(status,"ed247_stream_get_assistant",4)){return STREAM_GET_ASSISTANT_FAILURE;}
@@ -362,7 +366,7 @@ io_free_status_t io_free_memory(IO_t *io){
 	status = ed247_find_stream_signals(current_io->streams[streamidx].stream,".*",&signals);
 	if (checkStatus(status,"ed247_find_stream_signals",4)){return FIND_STREAM_SIGNALS_FAILURE;}
 
-	while(current_io->nsignals < MAX_ELEMENTS && ed247_signal_list_next(signals,&(signal)) == ED247_STATUS_SUCCESS && signal != NULL){
+	while(current_io->nsignals < MAX_SIGNALS && ed247_signal_list_next(signals,&(signal)) == ED247_STATUS_SUCCESS && signal != NULL){
 
 		signal_data.signal = signal;
 
@@ -451,6 +455,7 @@ io_free_status_t io_free_memory(IO_t *io){
 		current_io->nsignals++;
 
 	}
+	if (current_io->nsignals == MAX_SIGNALS){myprintf("WARNING: Limit of maximum signal number reached (%d), some signals may be missing\n", MAX_SIGNALS);}
 
 	status = ed247_signal_list_free(signals);
 	if (checkStatus(status,"ed247_signal_list_free",4)){return SIGNAL_LIST_FREE_FAILURE;}
@@ -516,6 +521,7 @@ io_free_status_t io_free_memory(IO_t *io){
 							case ED247_DIRECTION_IN:
 
 								current_io = io->outputs;
+								if (current_io->nstreams >= MAX_STREAMS){return STREAM_REACH_ARRAY_LIMIT;}
 								if (current_stream_out == NULL){
 									current_stream_out = &(current_io->streams[current_io->nstreams]);
 									current_stream_out->nsignals = 0;
@@ -527,6 +533,7 @@ io_free_status_t io_free_memory(IO_t *io){
 							case ED247_DIRECTION_OUT:
 
 								current_io = io->inputs;
+								if (current_io->nstreams >= MAX_STREAMS){return STREAM_REACH_ARRAY_LIMIT;}
 								if (current_stream_in == NULL){
 									current_stream_in = &(current_io->streams[current_io->nstreams]);
 									current_stream_in->nsignals = 0;
@@ -548,24 +555,31 @@ io_free_status_t io_free_memory(IO_t *io){
 						current_stream->stream 		= stream;
 						current_stream->direction 	= stream_info->direction;
 
-						current_signal = &(current_io->signals[current_io->nsignals]);
+						if (current_io->nsignals < MAX_SIGNALS && current_stream->nsignals < MAX_SIGNALS){
 
-						strcpy(current_signal->name,data->a429[i].messages[j].name);
-						current_signal->direction			= data->a429[i].messages[j].direction;
-						current_signal->is_refresh			= 1;
-						current_signal->signal_type 		= data->a429[i].messages[j].type;
-						current_signal->stream_type			= stream_info->type;
-						current_signal->type 				= A429_DATA_TYPE;
-						current_signal->dimensions			= 1;
-						current_signal->width				= A429_DATA_SIZE;
-						current_signal->size[0]				= A429_DATA_SIZE;
-						current_signal->sample_size			= A429_DATA_SIZE;
-						current_signal->sample_time			= (float) (data->a429[i].messages[j].period_us * 1e-6);
-						current_signal->validity_duration	= (float) (data->a429[i].messages[j].validity_duration_us * 1e-6);
+							myprintf("[A429] Store signal information #%d/#%d\n", current_io->nsignals+1, data->a429[i].n_messages);
+							current_signal = &(current_io->signals[current_io->nsignals]);
 
-						current_stream->signals[current_stream->nsignals] = current_signal;
-						current_stream->nsignals++;
-						current_io->nsignals++;
+							strcpy(current_signal->name,data->a429[i].messages[j].name);
+							current_signal->direction			= data->a429[i].messages[j].direction;
+							current_signal->is_refresh			= 1;
+							current_signal->signal_type 		= data->a429[i].messages[j].type;
+							current_signal->stream_type			= stream_info->type;
+							current_signal->type 				= A429_DATA_TYPE;
+							current_signal->dimensions			= 1;
+							current_signal->width				= A429_DATA_SIZE;
+							current_signal->size[0]				= A429_DATA_SIZE;
+							current_signal->sample_size			= A429_DATA_SIZE;
+							current_signal->sample_time			= (float) (data->a429[i].messages[j].period_us * 1e-6);
+							current_signal->validity_duration	= (float) (data->a429[i].messages[j].validity_duration_us * 1e-6);
+
+							current_stream->signals[current_stream->nsignals] = current_signal;
+							current_stream->nsignals++;
+							current_io->nsignals++;
+
+						} else {
+							myprintf("[A429] Cannot store signal #%d/#%d (array max size = %d)\n", current_io->nsignals+1, data->a429[i].n_messages, MAX_SIGNALS);
+						}
 
 					}
 
@@ -592,6 +606,7 @@ io_free_status_t io_free_memory(IO_t *io){
 
 			}
 
+			if (current_io->nstreams >= MAX_STREAMS){return STREAM_REACH_ARRAY_LIMIT;}
 			current_stream = &(current_io->streams[current_io->nstreams]);
 			current_stream->nsignals = 0;
 			current_io->nstreams++;
@@ -607,24 +622,30 @@ io_free_status_t io_free_memory(IO_t *io){
 			for (i = 0; i<data->counter.a664; i++){
 
 				if (strcmp(data->a664[i].name,busname) == 0){
-					
-					current_signal = &(current_io->signals[current_io->nsignals]);
 
-					strcpy(current_signal->name,data->a664[i].name);
-					current_signal->direction			= data->a664[i].direction;
-					current_signal->is_refresh			= 1;
-					current_signal->stream_type			= stream_info->type;
-					current_signal->type 				= A664_DATA_TYPE;
-					current_signal->dimensions			= 1;
-					current_signal->width				= data->a664[i].sample_max_size_bytes;
-					current_signal->size[0]				= data->a664[i].sample_max_size_bytes;
-					current_signal->sample_size			= data->a664[i].sample_max_size_bytes * sizeof(char);
-					current_signal->sample_time			= (float) (data->a664[i].period_us * 1e-6);
-					current_signal->validity_duration	= (float) (data->a664[i].validity_duration_us * 1e-6);
+					if (current_io->nsignals < MAX_SIGNALS && current_stream->nsignals < MAX_SIGNALS){
 
-					current_stream->signals[current_stream->nsignals] = current_signal;
-					current_stream->nsignals++;
-					current_io->nsignals++;
+						myprintf("[A664] Store signal information #%d/#%d\n", current_io->nsignals+1, data->counter.a664);
+						current_signal = &(current_io->signals[current_io->nsignals]);
+
+						strcpy(current_signal->name,data->a664[i].name);
+						current_signal->direction			= data->a664[i].direction;
+						current_signal->is_refresh			= 1;
+						current_signal->stream_type			= stream_info->type;
+						current_signal->type 				= A664_DATA_TYPE;
+						current_signal->dimensions			= 1;
+						current_signal->width				= data->a664[i].sample_max_size_bytes;
+						current_signal->size[0]				= data->a664[i].sample_max_size_bytes;
+						current_signal->sample_size			= data->a664[i].sample_max_size_bytes * sizeof(char);
+						current_signal->sample_time			= (float) (data->a664[i].period_us * 1e-6);
+						current_signal->validity_duration	= (float) (data->a664[i].validity_duration_us * 1e-6);
+
+						current_stream->signals[current_stream->nsignals] = current_signal;
+						current_stream->nsignals++;
+						current_io->nsignals++;
+					} else {
+						myprintf("[A664] Cannot store signal #%d/#%d (array max size = %d)\n", current_io->nsignals+1, data->counter.a664, MAX_SIGNALS);
+					}
 
 				}
 
@@ -640,6 +661,7 @@ io_free_status_t io_free_memory(IO_t *io){
 		 */
 
 			// Inputs
+			if (io->inputs->nstreams >= MAX_STREAMS){return STREAM_REACH_ARRAY_LIMIT;}
 			input_stream = &(io->inputs->streams[io->inputs->nstreams]);
 			input_stream->nsignals = 0;
 			io->inputs->nstreams++;
@@ -653,6 +675,7 @@ io_free_status_t io_free_memory(IO_t *io){
 			input_stream->direction 	= ED247_DIRECTION_IN;
 
 			// Outputs
+			if (io->outputs->nstreams >= MAX_STREAMS){return STREAM_REACH_ARRAY_LIMIT;}
 			output_stream = &(io->outputs->streams[io->outputs->nstreams]);
 			output_stream->nsignals = 0;
 			io->outputs->nstreams++;
@@ -669,41 +692,55 @@ io_free_status_t io_free_memory(IO_t *io){
 
 				if (strcmp(data->a825[i].name,busname) == 0){
 
-					current_signal = &(io->inputs->signals[io->inputs->nsignals]);
+					if (io->inputs->nsignals < MAX_SIGNALS && input_stream->nsignals < MAX_SIGNALS){
 
-					strcpy(current_signal->name,data->a825[i].name);
-					current_signal->direction			= ED247_DIRECTION_IN;
-					current_signal->type 				= A825_DATA_TYPE;
-					current_signal->is_refresh			= 1;
-					current_signal->stream_type			= stream_info->type;
-					current_signal->dimensions			= 1;
-					current_signal->width				= data->a825[i].sample_max_number;
-					current_signal->size[0]				= data->a825[i].sample_max_number;
-					current_signal->sample_size			= data->a825[i].sample_max_number * sizeof(char);
-					current_signal->sample_time			= (float) (data->a825[i].period_us * 1e-6);
-					current_signal->validity_duration	= (float) (data->a825[i].validity_duration_us * 1e-6);
+						myprintf("[A825] Store signal information #%d/#%d\n", io->inputs->nsignals+1, data->counter.a825);
+						current_signal = &(io->inputs->signals[io->inputs->nsignals]);
 
-					input_stream->signals[input_stream->nsignals] = current_signal;
-					input_stream->nsignals++;
-					io->inputs->nsignals++;
+						strcpy(current_signal->name,data->a825[i].name);
+						current_signal->direction			= ED247_DIRECTION_IN;
+						current_signal->type 				= A825_DATA_TYPE;
+						current_signal->is_refresh			= 1;
+						current_signal->stream_type			= stream_info->type;
+						current_signal->dimensions			= 1;
+						current_signal->width				= data->a825[i].sample_max_number;
+						current_signal->size[0]				= data->a825[i].sample_max_number;
+						current_signal->sample_size			= data->a825[i].sample_max_number * sizeof(char);
+						current_signal->sample_time			= (float) (data->a825[i].period_us * 1e-6);
+						current_signal->validity_duration	= (float) (data->a825[i].validity_duration_us * 1e-6);
 
-					current_signal = &(io->outputs->signals[io->outputs->nsignals]);
+						input_stream->signals[input_stream->nsignals] = current_signal;
+						input_stream->nsignals++;
+						io->inputs->nsignals++;
 
-					strcpy(current_signal->name,data->a825[i].name);
-					current_signal->direction			= ED247_DIRECTION_OUT;
-					current_signal->type 				= A825_DATA_TYPE;
-					current_signal->is_refresh			= 1;
-					current_signal->stream_type			= stream_info->type;
-					current_signal->dimensions			= 1;
-					current_signal->width				= data->a825[i].sample_max_number;
-					current_signal->size[0]				= data->a825[i].sample_max_number;
-					current_signal->sample_size			= data->a825[i].sample_max_number * sizeof(char);
-					current_signal->sample_time			= (float) (data->a825[i].period_us * 1e-6);
-					current_signal->validity_duration	= (float) (data->a825[i].validity_duration_us * 1e-6);
+					} else {
+						myprintf("[A825] Cannot store signal #%d/#%d (array max size = %d)\n", io->inputs->nsignals+1, data->counter.a825, MAX_SIGNALS);
+					}
 
-					output_stream->signals[output_stream->nsignals] = current_signal;
-					output_stream->nsignals++;
-					io->outputs->nsignals++;
+					if (io->outputs->nsignals < MAX_SIGNALS && output_stream->nsignals < MAX_SIGNALS){
+
+						myprintf("[A825] Store signal information #%d/#%d\n", io->outputs->nsignals+1, data->counter.a825);
+						current_signal = &(io->outputs->signals[io->outputs->nsignals]);
+
+						strcpy(current_signal->name,data->a825[i].name);
+						current_signal->direction			= ED247_DIRECTION_OUT;
+						current_signal->type 				= A825_DATA_TYPE;
+						current_signal->is_refresh			= 1;
+						current_signal->stream_type			= stream_info->type;
+						current_signal->dimensions			= 1;
+						current_signal->width				= data->a825[i].sample_max_number;
+						current_signal->size[0]				= data->a825[i].sample_max_number;
+						current_signal->sample_size			= data->a825[i].sample_max_number * sizeof(char);
+						current_signal->sample_time			= (float) (data->a825[i].period_us * 1e-6);
+						current_signal->validity_duration	= (float) (data->a825[i].validity_duration_us * 1e-6);
+
+						output_stream->signals[output_stream->nsignals] = current_signal;
+						output_stream->nsignals++;
+						io->outputs->nsignals++;
+
+					} else {
+						myprintf("[A825] Cannot store signal #%d/#%d (array max size = %d)\n", io->outputs->nsignals+1, data->counter.a825, MAX_SIGNALS);
+					}
 
 				}
 
