@@ -2,6 +2,15 @@
 
 ## Ongoing
 
+## v2.0.0-RC3 - 2021/05/27 - R2020b
+
+### Changed
+- Refresh option for Send block (was disabled)
+
+### Fixed
+- Read XML : Increase the maximum signals (was 50)
+- Read XML : Add defensive code to avoid MATLAB crashes
+
 ## v2.0.0-RC2 - 2021/05/20 - R2020b
 
 ### Added
