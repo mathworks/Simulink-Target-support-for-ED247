@@ -48,53 +48,38 @@ includedirectories  = {};
 defines             = {};
 opts                = {};
 
-if strcmp(p.Results.Mode,'mock')
+% Source files
+sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_cmd_xml.c');
+sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_interface.c');
+sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'tools.c');
 
-    proj = simulinkproject();
-    mockfolder = fullfile(proj.RootFolder,'tests','_mock');
-
-    % Source files 
-    sourcefiles{end+1}          = fullfile(mockfolder,'ed247_interface.c');
-
-    % Include directories
-    includedirectories{end+1}   = mockfolder;
-
+if isunix()
+    sourcefiles{end+1} = fullfile(ed247folder,   'lib',  'libed247.so');
+    sourcefiles{end+1} = fullfile(libxml2folder, 'lib',  'libxml2.so');
 else
     
-    % Source files
-    sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_cmd_xml.c');
-    sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_interface.c');
-    sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'tools.c');
-        
-    if isunix()
-        sourcefiles{end+1} = fullfile(ed247folder,   'lib',  'libed247.so');
-        sourcefiles{end+1} = fullfile(libxml2folder, 'lib',  'libxml2.so');
+    sourcefiles{end+1} = fullfile(ed247folder,   'lib',  'libed247.dll.a');
+    
+    dllfile = fullfile(libxml2folder, 'lib',  'libxml2.dll.a');
+    afile   = fullfile(libxml2folder, 'lib',  'libxml2.a');
+    if exist(dllfile,'file') == 2
+        sourcefiles{end+1} = dllfile;
     else
-
-        sourcefiles{end+1} = fullfile(ed247folder,   'lib',  'libed247.dll.a');
-        
-        dllfile = fullfile(libxml2folder, 'lib',  'libxml2.dll.a');
-        afile   = fullfile(libxml2folder, 'lib',  'libxml2.a');
-        if exist(dllfile,'file') == 2
-            sourcefiles{end+1} = dllfile;
-        else
-            sourcefiles{end+1} = afile;
-        end
-        
-        % FIXME : Ws2_32 library is usually included with -l flag
-        sourcefiles{end+1} = fullfile(mingwpath,'x86_64-w64-mingw32','lib','libws2_32.a');
-        % End FIXME
-
+        sourcefiles{end+1} = afile;
     end
-
-    % Include directories
-    includedirectories{end+1} = fullfile(adapterfolder, 'include');
-    includedirectories{end+1} = fullfile(ed247folder,   'inc');
-    includedirectories{end+1} = fullfile(libxml2folder, 'include','libxml2');
-    includedirectories{end+1} = fullfile(libxml2folder, 'include');
-    includedirectories{end+1} = sfunsourcefolder;
-
+    
+    % FIXME : Ws2_32 library is usually included with -l flag
+    sourcefiles{end+1} = fullfile(mingwpath,'x86_64-w64-mingw32','lib','libws2_32.a');
+    % End FIXME
+    
 end
+
+% Include directories
+includedirectories{end+1} = fullfile(adapterfolder, 'include');
+includedirectories{end+1} = fullfile(ed247folder,   'inc');
+includedirectories{end+1} = fullfile(libxml2folder, 'include','libxml2');
+includedirectories{end+1} = fullfile(libxml2folder, 'include');
+includedirectories{end+1} = sfunsourcefolder;
 
 if p.Results.Verbose
     % Defines
