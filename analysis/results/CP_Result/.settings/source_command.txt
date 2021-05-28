@@ -1,0 +1,7 @@
+C:\Files\SANDBOX\git\ED247\ed247_for_simulink\c_sources\src\ed247_cmd_xml.c
+C:\Files\SANDBOX\git\ED247\ed247_for_simulink\c_sources\src\ed247_interface.c
+C:\Files\SANDBOX\git\ED247\ed247_for_simulink\c_sources\src\tools.c
+C:\Files\SANDBOX\git\ED247\ed247_for_simulink\libraries\ed247\sources\ed247_sfun_configure.c
+C:\Files\SANDBOX\git\ED247\ed247_for_simulink\libraries\ed247\sources\ed247_sfun_receive.c
+C:\Files\SANDBOX\git\ED247\ed247_for_simulink\libraries\ed247\sources\ed247_sfun_send.c
+C:\Files\SANDBOX\git\ED247\ed247_for_simulink\libraries\ed247\ed247_sfun.c
