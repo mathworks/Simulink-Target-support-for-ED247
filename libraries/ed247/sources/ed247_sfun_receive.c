@@ -20,7 +20,7 @@ void receiveInitialize(SimStruct *S, IO_t *io) {
 
 	nrefresh = 0;
 	for (i = 0; i < io->outputs->nsignals; i++){
-		nrefresh += io->outputs->signals[isig].is_refresh;
+		nrefresh += io->outputs->signals[i].is_refresh;
 	}
 
 	nports = io->outputs->nsignals;
