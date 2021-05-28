@@ -2,3 +2,8 @@ archives/
 c_sources/build/
 *.log
 *.mex*
+CoverageResults-*.xml
+*.mltbx
+*.tap
+*.pdf
+work/

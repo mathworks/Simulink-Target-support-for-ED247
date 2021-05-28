@@ -1,0 +1,37 @@
+# Options file
+-include C:\Temp\ED247\stub.h
+-I C:\Files\SANDBOX\git\ED247\ed247_for_simulink\c_sources\include
+-I C:\Files\SANDBOX\git\ED247\ed247_for_simulink\libraries\ed247\sources
+-I C:\Files\SANDBOX\git\ED247\ED247_LIBRARY\_install\inc
+-I C:\Files\SANDBOX\git\ED247\libxml2\include
+-I C:\Files\SANDBOX\git\ED247\libxml2\include\libxml
+-I C:\Files\SANDBOX\git\ED247\libxml2\include\libxml2
+-I C:\Files\SANDBOX\git\ED247\libxml2\include\libxml2\libxml
+-I C:\Files\PROGRAMS\Mathworks\MATLAB\r2020b\extern\include
+-I C:\Files\PROGRAMS\Mathworks\MATLAB\r2020b\simulink\include
+-I C:\Files\PROGRAMS\Mathworks\MATLAB\r2020b\extern\lib\win64\mingw64
+-I C:\Files\PROGRAMS\Mathworks\MATLAB\r2020b\extern\include\win64
+-I C:\Files\SANDBOX\git\ED247\ed247_for_simulink\work\Polyspace\include_wrappers
+-prog ED247_for_Simulink
+-verif-version 1.0
+-author odufour
+-sources-list-file C:\Files\SANDBOX\Polyspace\Projects\ED247_for_Simulink\Module_1\CP_Result\.settings\source_command.txt
+-lang C
+-target i386
+-compiler generic
+-c-version c99
+-D LIBED247_EXPORT=
+-D MATLAB_MEX_FILE=1
+-dos
+-main-generator
+-main-generator-writes-variables public
+-main-generator-calls unused
+-float-rounding-mode to-nearest
+-signed-integer-overflows forbid
+-unsigned-integer-overflows allow
+-uncalled-function-checks none
+-check-subnormal allow
+-O2
+-to Software Safety Analysis level 0
+-import-comments C:\Files\SANDBOX\Polyspace\Projects\ED247_for_Simulink\Module_1\CP_Result
+
