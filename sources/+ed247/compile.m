@@ -39,6 +39,7 @@ p.addParameter('MEXFile','all',@(x) ischar(x) || isstring(x))
 p.addParameter('MEXFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR>
 p.addParameter('OutputFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR> Backward compatibility with r2016b
 p.addParameter('Verbose',false,@(x) validateattributes(x,{'logical'},{'scalar'}))
+p.addParameter('EnablePolyspace',false,@(x) validateattributes(x,{'logical'},{'scalar'}))
 parse(p,varargin{:})
 
 %% MEX argument definition
@@ -117,11 +118,16 @@ for i_mex = 1:numel(mexfiles)
         sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_receive.c'); %#ok<AGROW>
         sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_send.c'); %#ok<AGROW>
     end
-    
-    fprintf(1, 'mex %s %s %s %s %s \n', strjoin(opts,' '), '-outdir', p.Results.OutputFolder, cmexsfcn, strjoin([sourcefiles, includedirectories, defines],' '));
-    
+            
     warning('off','MATLAB:mex:MinGWVersion_link')
-    mex(opts{:},'-outdir',p.Results.OutputFolder,cmexsfcn,sourcefiles{:}, includedirectories{:},defines{:});
+    if p.Results.EnablePolyspace
+        opts{end+1} = '-sldv'; %#ok<AGROW>
+        fprintf(1, 'slcovmex %s %s %s %s %s \n', strjoin(opts,' '), '-outdir', p.Results.OutputFolder, cmexsfcn, strjoin([sourcefiles, includedirectories, defines],' '));
+        slcovmex(opts{:},'-outdir',p.Results.OutputFolder,cmexsfcn,sourcefiles{:}, includedirectories{:},defines{:});
+    else
+        fprintf(1, 'mex %s %s %s %s %s \n', strjoin(opts,' '), '-outdir', p.Results.OutputFolder, cmexsfcn, strjoin([sourcefiles, includedirectories, defines],' '));
+        mex(opts{:},'-outdir',p.Results.OutputFolder,cmexsfcn,sourcefiles{:}, includedirectories{:},defines{:});
+    end
     warning('on','MATLAB:mex:MinGWVersion_link')
     
 end
