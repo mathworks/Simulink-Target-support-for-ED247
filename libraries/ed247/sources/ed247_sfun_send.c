@@ -19,7 +19,7 @@ void sendInitialize(SimStruct *S, IO_t *io){
 	 * INPUTS
 	 */
 	nports = io->inputs->nsignals;
-	for (iport = 0; iport < io->inputs->nsignals; iport++){
+	for (iport = 0; iport < io->inputs->nsignals && iport < MAX_SIGNALS; iport++){
 		if (io->inputs->signals[iport].is_refresh == 1 && isRefreshEnabled == 1){
 			nports++;
 		}
@@ -31,7 +31,7 @@ void sendInitialize(SimStruct *S, IO_t *io){
 	if (!ssSetNumInputPorts(S, nports)) return;
 
 	iport = 0;
-	for (isig = 0; isig < io->inputs->nsignals; isig++){
+	for (isig = 0; isig < io->inputs->nsignals && isig < MAX_SIGNALS; isig++){
 
 		//
 		// Data port
@@ -44,7 +44,7 @@ void sendInitialize(SimStruct *S, IO_t *io){
 		di.numDims	= io->inputs->signals[isig].dimensions;
 
 		d = (int32_T*) malloc(di.numDims*sizeof(int32_T));
-		for (idim = 0; idim < di.numDims; idim++){
+		for (idim = 0; idim < di.numDims && idim < MAX_DIMENSIONS; idim++){
 			myprintf("\t\t-Dimension #%d = %d\n", idim, io->inputs->signals[isig].size[idim]);
 			d[idim] = (int32_T)(io->inputs->signals[isig].size[idim]);
 		}
@@ -95,7 +95,7 @@ void sendOutputs(SimStruct *S, IO_t* io){
 	int isig, iport,status;
 	int8_T* refresh;
 
-	for (isig = 0; isig < io->inputs->nsignals; isig++){
+	for (isig = 0; isig < io->inputs->nsignals && isig < MAX_SIGNALS; isig++){
 
 		iport = io->inputs->signals[isig].port_index;
 		io->inputs->signals[isig].valuePtr = (void*)ssGetInputPortSignal(S,iport);
@@ -129,13 +129,18 @@ void sendTerminate(SimStruct *S, IO_t* io){}
 #endif
 
 #ifdef ED247_SEND_RTW
-void sendRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, int_T* nSignals, real_T portIndex[100], real_T refreshIndex[100]){
+void sendRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, int_T* nSignals, real_T portIndex[MAX_SIGNALS], real_T refreshIndex[MAX_SIGNALS]){
 
 	int i;
 
 	*blockTypeID = 2.0;
 
-	*nSignals = io->inputs->nsignals;
+	if (io->inputs->nsignals <= MAX_SIGNALS){
+		*nSignals = io->inputs->nsignals;
+	} else {
+		*nSignals = MAX_SIGNALS;
+	}
+
 	for (i = 0; i < *nSignals; i++){
 
 		portIndex[i] = (real_T) io->inputs->signals[i].port_index;

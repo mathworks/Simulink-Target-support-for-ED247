@@ -19,11 +19,12 @@ void receiveInitialize(SimStruct *S, IO_t *io) {
 	 */
 
 	nrefresh = 0;
-	for (i = 0; i < io->outputs->nsignals; i++){
-		nrefresh += io->outputs->signals[isig].is_refresh;
+	for (i = 0; i < io->outputs->nsignals && i < MAX_SIGNALS; i++){
+		nrefresh += io->outputs->signals[i].is_refresh;
 	}
 
 	nports = io->outputs->nsignals;
+	if (nports > MAX_SIGNALS){nports = MAX_SIGNALS;}
 	if (*refreshFactor > 0){nports = nports + nrefresh;}
 	myprintf("%d streams\n",io->outputs->nstreams);
 	myprintf("%d output messages\n", io->outputs->nsignals);
@@ -34,7 +35,7 @@ void receiveInitialize(SimStruct *S, IO_t *io) {
 	ssSetNumDWork(S, io->outputs->nsignals);
 
 	iport = 0;
-	for (isig = 0; isig < io->outputs->nsignals; isig++){
+	for (isig = 0; isig < io->outputs->nsignals && isig < MAX_SIGNALS; isig++){
 
 		//
 		// Data port
@@ -46,7 +47,7 @@ void receiveInitialize(SimStruct *S, IO_t *io) {
 		di.width	= io->outputs->signals[isig].width;
 		di.numDims	= io->outputs->signals[isig].dimensions;
 		d = (int32_T*) malloc(di.numDims*sizeof(int32_T));
-		for (idim = 0; idim < di.numDims; idim++){
+		for (idim = 0; idim < di.numDims && idim < MAX_DIMENSIONS; idim++){
 			d[idim] = (int32_T)(io->outputs->signals[isig].size[idim]);
 		}
 		di.dims = &(d[0]);
@@ -117,7 +118,7 @@ void receiveOutputs(SimStruct *S, IO_t* io){
 	//
 	// Prepare output (assign pointer to block output)
 	//
-	for (isig = 0; isig < io->outputs->nsignals; isig++){
+	for (isig = 0; isig < io->outputs->nsignals && isig < MAX_SIGNALS; isig++){
 		iport = io->outputs->signals[isig].port_index;
 		myprintf("Attach output signal #%d to port #%d\n", isig, iport);
 		io->outputs->signals[isig].valuePtr = (void*)ssGetOutputPortSignal(S,iport);
@@ -129,11 +130,10 @@ void receiveOutputs(SimStruct *S, IO_t* io){
 	myprintf("Receive data\t");
 	status = (int)receive_ed247_to_simulink(io,&ndata);
 	myprintf("\tstatus = %d", status);
-	myprintf("\t - do refresh = %d\n", io->outputs->signals[isig].do_refresh);
 
 	if (*refreshFactor > 0){
 
-		for (isig = 0; isig < io->outputs->nsignals; isig++){
+		for (isig = 0; isig < io->outputs->nsignals && isig < MAX_SIGNALS; isig++){
 
 			real_T timeFromLastUpdate;
 			uint32_T *last_update;
@@ -172,7 +172,7 @@ void receiveUpdate(SimStruct *S, IO_t* io){
 	uint32_T *last_update;
 
 	myprintf("Update receive block:\n");
-	for (isig = 0; isig < io->outputs->nsignals; isig++){
+	for (isig = 0; isig < io->outputs->nsignals && isig < MAX_SIGNALS; isig++){
 
 		myprintf("\tSignal #%d", isig);
 
@@ -200,13 +200,14 @@ void receiveTerminate(SimStruct *S, IO_t* io){}
 #endif
 
 #ifdef ED247_RECEIVE_RTW
-void receiveRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, int_T* nSignals, real_T portIndex[100], real_T refreshIndex[100]){
+void receiveRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, int_T* nSignals, real_T portIndex[MAX_SIGNALS], real_T refreshIndex[MAX_SIGNALS]){
 
 	int i;
 
 	*blockTypeID = 1.0;
 
 	*nSignals = io->outputs->nsignals;
+	if (*nSignals > MAX_SIGNALS){*nSignals = MAX_SIGNALS;}
 	for (i = 0; i < *nSignals; i++){
 		portIndex[i] = (real_T) io->outputs->signals[i].port_index;
 		refreshIndex[i] = (real_T) io->outputs->signals[i].refresh_index;

@@ -12,10 +12,11 @@
 -I C:\Files\PROGRAMS\Mathworks\MATLAB\r2020b\extern\lib\win64\mingw64
 -I C:\Files\PROGRAMS\Mathworks\MATLAB\r2020b\extern\include\win64
 -I C:\Files\SANDBOX\git\ED247\ed247_for_simulink\work\Polyspace\include_wrappers
+-I C:\Files\SANDBOX\git\ED247\ed247_for_simulink\analysis\include_wrappers
 -prog ED247_for_Simulink
 -verif-version 1.0
 -author odufour
--sources-list-file C:\Files\SANDBOX\Polyspace\Projects\ED247_for_Simulink\Module_1\CP_Result\.settings\source_command.txt
+-sources-list-file C:\Files\SANDBOX\git\ED247\ed247_for_simulink\analysis\results\CP_Result\.settings\source_command.txt
 -lang C
 -target i386
 -compiler generic
@@ -32,6 +33,6 @@
 -uncalled-function-checks none
 -check-subnormal allow
 -O2
--to Software Safety Analysis level 0
--import-comments C:\Files\SANDBOX\Polyspace\Projects\ED247_for_Simulink\Module_1\CP_Result
+-to Software Safety Analysis level 2
+-import-comments C:\Files\SANDBOX\git\ED247\ed247_for_simulink\analysis\results\CP_Result
 

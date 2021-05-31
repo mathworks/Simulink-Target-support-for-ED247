@@ -85,7 +85,7 @@ send_status_t send_simulink_to_ed247(IO_t *io){
 		return NO_DATA_TO_SEND;
 	}
 
-	for (i=0;i < io->inputs->nstreams; i++){
+	for (i=0;i < io->inputs->nstreams && i < MAX_STREAMS; i++){
 
 		// ANA, DIS, NAD and VNAD use assistant
 		// A429, A664 and A825 use push sample
@@ -96,7 +96,7 @@ send_status_t send_simulink_to_ed247(IO_t *io){
 			case ED247_STREAM_TYPE_NAD:
 			case ED247_STREAM_TYPE_VNAD:
 
-				for (j=0;j < io->inputs->streams[i].nsignals; j++){
+				for (j=0;j < io->inputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
                     
                     if (io->inputs->streams[i].signals[j]->do_refresh == 1){
                         status = ed247_stream_assistant_write_signal(io->inputs->streams[i].assistant,io->inputs->streams[i].signals[j]->signal,io->inputs->streams[i].signals[j]->valuePtr,io->inputs->streams[i].signals[j]->sample_size);
@@ -114,7 +114,7 @@ send_status_t send_simulink_to_ed247(IO_t *io){
 			case ED247_STREAM_TYPE_A664:
 			case ED247_STREAM_TYPE_A825:
 
-				for (j=0;j < io->inputs->streams[i].nsignals; j++){
+				for (j=0;j < io->inputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
                     
                     myprintf("Refresh value for signal #%d = %d\n", j, io->inputs->streams[i].signals[j]->do_refresh);
                     if (io->inputs->streams[i].signals[j]->do_refresh == 1){
@@ -167,7 +167,7 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 
 		myprintf("\t> %s OK\n", "ed247_wait_frame");
 
-		for (i=0;i < io->outputs->nstreams; i++){
+		for (i=0;i < io->outputs->nstreams && i < MAX_STREAMS; i++){
 
 			// ANA, DIS, NAD and VNAD use assistant
 			// A429, A664 and A825 use pop sample
@@ -183,7 +183,7 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 
 						myprintf("\t> %s OK\n", "ed247_stream_assistant_pop_sample");
 
-						for (j=0;j < io->outputs->streams[i].nsignals; j++){
+						for (j=0;j < io->outputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
 
 							status = ed247_stream_assistant_read_signal(io->outputs->streams[i].assistant,io->outputs->streams[i].signals[j]->signal,&sample_data,&sample_size);
 							if (checkStatus(status,"ed247_stream_assistant_read_signal",2)){return STREAM_ASSISTANT_READ_SIGNAL_FAILURE;}
@@ -208,7 +208,7 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 				case ED247_STREAM_TYPE_A664:
 				case ED247_STREAM_TYPE_A825:
 
-					for (j=0;j < io->outputs->streams[i].nsignals; j++){
+					for (j=0;j < io->outputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
 
 						myprintf("\t> signal #%d/#%d", j+1, io->outputs->streams[i].nsignals);
 
@@ -243,8 +243,8 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 	// Do not generate an error if no A825 message is received 
 	// All A825 are registered as input AND output messages but depending on the configuration it could be only In or only Out)
 
-		for (i=0;i < io->outputs->nstreams; i++){
-			for (j=0;j < io->outputs->streams[i].nsignals; j++){
+		for (i=0;i < io->outputs->nstreams && i < MAX_STREAMS; i++){
+			for (j=0;j < io->outputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
 				io->outputs->streams[i].signals[j]->do_refresh = 0;
 			}
 		}
@@ -253,8 +253,8 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 	}
 	else if (status == ED247_STATUS_TIMEOUT) {
 
-		for (i=0;i < io->outputs->nstreams; i++){
-			for (j=0;j < io->outputs->streams[i].nsignals; j++){
+		for (i=0;i < io->outputs->nstreams && i < MAX_STREAMS; i++){
+			for (j=0;j < io->outputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
 				io->outputs->streams[i].signals[j]->do_refresh = 0;
 			}
 		}
@@ -264,8 +264,8 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 	}
 	else {
 
-		for (i=0;i < io->outputs->nstreams; i++){
-			for (j=0;j < io->outputs->streams[i].nsignals; j++){
+		for (i=0;i < io->outputs->nstreams && i < MAX_STREAMS; i++){
+			for (j=0;j < io->outputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
 				io->outputs->streams[i].signals[j]->do_refresh = 0;
 			}
 		}
