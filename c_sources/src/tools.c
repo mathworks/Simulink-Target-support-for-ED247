@@ -43,5 +43,10 @@
 			return;
 		}
 	}
+
+	if (strcmp(folder,path) == 0){
+		strcpy(folder,"");
+	}
+
  }
 
