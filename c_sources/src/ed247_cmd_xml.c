@@ -114,12 +114,13 @@
 	if (data->a664 != NULL) {
 		free(data->a664);
 	}
-
-	for (i = 0; i<data->counter.a429; i++){
+/*
+	for (i = 0; i<data->counter.a429 && i<MAX_A429_BUS; i++){
 		if (data->a429[i].messages != NULL) {
 			free(data->a429[i].messages);
 		}
-	}	
+	}
+*/
 	if (data->a429 != NULL) {
 		free(data->a429);
 	}
