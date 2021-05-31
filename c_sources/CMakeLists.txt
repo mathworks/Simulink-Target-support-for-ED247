@@ -3,7 +3,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 project(ed247SimulinkAdapter)
 
 set(CMAKE_CXX_STANDARD 11)
-set(DEPS_DIR "${PROJECT_SOURCE_DIR}/..")
+set(DEPS_DIR "${PROJECT_SOURCE_DIR}/../..")
 
 OPTION(DEFINE_DEBUG
   "Build the project using debugging code"
@@ -14,11 +14,11 @@ ENDIF(DEFINE_DEBUG)
 
 include_directories(
 	"${PROJECT_SOURCE_DIR}/include"
-	"${DEPS_DIR}/ed247/windows/mingw4.9.2/x64/inc"
+	"${DEPS_DIR}/ED247_LIBRARY/_install/inc"
 	)
 
 link_directories(
-	"${DEPS_DIR}/ed247/windows/mingw4.9.2/x64/lib"
+	"${DEPS_DIR}/ED247_LIBRARY/_install/lib"
 	)
 
 IF(WIN32)
@@ -67,6 +67,7 @@ enable_testing()
 set(SOURCES 
 		${PROJECT_SOURCE_DIR}/tests/ed247_cmd_xml_test.cpp 
 		${PROJECT_SOURCE_DIR}/tests/ed247_interface_test.cpp 
+		${PROJECT_SOURCE_DIR}/tests/issues_test.cpp 
 		${PROJECT_SOURCE_DIR}/tests/a429_test.cpp 
 		${PROJECT_SOURCE_DIR}/tests/a664_test.cpp 
 		${PROJECT_SOURCE_DIR}/tests/a825_test.cpp 

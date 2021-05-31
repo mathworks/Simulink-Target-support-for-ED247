@@ -20,7 +20,7 @@ fi
 #CMAKE_FOLDER=/c/Files/SANDBOX/git/P11222-AirbusOperationsSAS-ED247/ED247_LIBRARY/deps/new_dependencies/CMAKE/mingw4.9.2/x64
 
 MINGW_FOLDER=/c/Files/PROGRAMS/ThirdParty/MinGW64/4.9.2-airbus/bin
-CMAKE_FOLDER=/c/Files/PROGRAMS/ThirdParty/cmake
+CMAKE_FOLDER=/c/Files/PROGRAMS/ThirdParty/cmake/3.20.2
 
 # Application
 ROOT_FOLDER=$(cd `dirname $0` && pwd)
@@ -31,7 +31,7 @@ export CC=${MINGW_FOLDER}/gcc.exe
 export CXX=${MINGW_FOLDER}/g++.exe
 export AR=${MINGW_FOLDER}/ar.exe
 
-export PATH=${ROOT_FOLDER}/../ed247/windows/mingw4.9.2/x64/lib:${PATH}
+export PATH=${ROOT_FOLDER}/../../ED247_LIBRARY/_install/lib:${PATH}
 
 pushd ${BUILD_FOLDER}
 
