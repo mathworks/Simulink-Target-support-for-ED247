@@ -26,7 +26,7 @@
  #define LIBED247_EXPORT
  #endif
  
- #define MAX_A429_BUS			64
+ #define MAX_A429_BUS			128
  #define MAX_A429_MSG_PER_BUS	128
  #define MAX_A664_MESSAGES		64
  #define MAX_A825_MESSAGES		64

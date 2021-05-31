@@ -13,7 +13,7 @@
 #include "ed247_cmd_xml.h"
 #include "tools.h"
 
-#define MAX_SIGNALS 500
+#define MAX_SIGNALS 1000
 #define MAX_STREAMS 100
 #define MAX_DIMENSIONS 10
 
