@@ -4656,217 +4656,217 @@
          </pointer>
          <pointer name="arg2" comment="" line="4" complete_type="struct *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR"/>
       </function>
-      <function name="receiveOutputs" comment="" line="111" main_generator_called="MAIN_GENERATOR">
-         <pointer name="arg1" comment="" line="111" complete_type="struct SimStruct_tag *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
-            <struct comment="" line="111" complete_type="struct SimStruct_tag">
-               <struct name="blkInfo" comment="" line="111" complete_type="struct _ssBlkInfo">
-                  <struct name="sfcnFlags" comment="" line="111">
-                     <scalar name="localErrorStatusIsMsg" comment="" line="111" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+      <function name="receiveOutputs" comment="" line="112" main_generator_called="MAIN_GENERATOR">
+         <pointer name="arg1" comment="" line="112" complete_type="struct SimStruct_tag *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
+            <struct comment="" line="112" complete_type="struct SimStruct_tag">
+               <struct name="blkInfo" comment="" line="112" complete_type="struct _ssBlkInfo">
+                  <struct name="sfcnFlags" comment="" line="112">
+                     <scalar name="localErrorStatusIsMsg" comment="" line="112" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
                </struct>
-               <struct name="sfcnParams" comment="" line="111" complete_type="struct _ssSFcnParams">
-                  <scalar name="dlgNum" comment="" line="111" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+               <struct name="sfcnParams" comment="" line="112" complete_type="struct _ssSFcnParams">
+                  <scalar name="dlgNum" comment="" line="112" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                </struct>
-               <struct name="sizes" comment="" line="111" complete_type="struct _ssSizes">
-                  <array name="checksums" comment="" line="111" complete_type="uint32 [4]">
-                     <scalar comment="" line="111" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+               <struct name="sizes" comment="" line="112" complete_type="struct _ssSizes">
+                  <array name="checksums" comment="" line="112" complete_type="uint32 [4]">
+                     <scalar comment="" line="112" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </array>
-                  <struct name="flags" comment="" line="111">
-                     <scalar name="hasMdlDimensionsFcn" comment="" line="111" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                     <scalar name="usesNumPorts" comment="" line="111" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="flags" comment="" line="112">
+                     <scalar name="hasMdlDimensionsFcn" comment="" line="112" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                     <scalar name="usesNumPorts" comment="" line="112" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <struct name="in" comment="" line="111">
-                     <scalar name="numInputPorts" comment="" line="111" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="in" comment="" line="112">
+                     <scalar name="numInputPorts" comment="" line="112" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <scalar name="mexApiInt1" comment="" line="111" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numContStates" comment="" line="111" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numDWork" comment="" line="111" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numIWork" comment="" line="111" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numPWork" comment="" line="111" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numRWork" comment="" line="111" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numSFcnParams" comment="" line="111" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numSampleTimes" comment="" line="111" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="options" comment="" line="111" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <struct name="out" comment="" line="111">
-                     <scalar name="numOutputPorts" comment="" line="111" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="mexApiInt1" comment="" line="112" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numContStates" comment="" line="112" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numDWork" comment="" line="112" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numIWork" comment="" line="112" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numPWork" comment="" line="112" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numRWork" comment="" line="112" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numSFcnParams" comment="" line="112" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numSampleTimes" comment="" line="112" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="options" comment="" line="112" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="out" comment="" line="112">
+                     <scalar name="numOutputPorts" comment="" line="112" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <scalar name="simStructVer" comment="" line="111" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="simStructVer" comment="" line="112" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                </struct>
             </struct>
          </pointer>
-         <pointer name="arg2" comment="" line="111" complete_type="struct *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR"/>
+         <pointer name="arg2" comment="" line="112" complete_type="struct *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR"/>
       </function>
-      <function name="receiveRTW" comment="" line="203" main_generator_called="MAIN_GENERATOR">
-         <pointer name="arg1" comment="" line="203" complete_type="struct SimStruct_tag *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
-            <struct comment="" line="203" complete_type="struct SimStruct_tag">
-               <struct name="blkInfo" comment="" line="203" complete_type="struct _ssBlkInfo">
-                  <struct name="sfcnFlags" comment="" line="203">
-                     <scalar name="localErrorStatusIsMsg" comment="" line="203" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+      <function name="receiveRTW" comment="" line="204" main_generator_called="MAIN_GENERATOR">
+         <pointer name="arg1" comment="" line="204" complete_type="struct SimStruct_tag *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
+            <struct comment="" line="204" complete_type="struct SimStruct_tag">
+               <struct name="blkInfo" comment="" line="204" complete_type="struct _ssBlkInfo">
+                  <struct name="sfcnFlags" comment="" line="204">
+                     <scalar name="localErrorStatusIsMsg" comment="" line="204" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
                </struct>
-               <struct name="sfcnParams" comment="" line="203" complete_type="struct _ssSFcnParams">
-                  <scalar name="dlgNum" comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+               <struct name="sfcnParams" comment="" line="204" complete_type="struct _ssSFcnParams">
+                  <scalar name="dlgNum" comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                </struct>
-               <struct name="sizes" comment="" line="203" complete_type="struct _ssSizes">
-                  <array name="checksums" comment="" line="203" complete_type="uint32 [4]">
-                     <scalar comment="" line="203" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+               <struct name="sizes" comment="" line="204" complete_type="struct _ssSizes">
+                  <array name="checksums" comment="" line="204" complete_type="uint32 [4]">
+                     <scalar comment="" line="204" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </array>
-                  <struct name="flags" comment="" line="203">
-                     <scalar name="hasMdlDimensionsFcn" comment="" line="203" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                     <scalar name="usesNumPorts" comment="" line="203" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="flags" comment="" line="204">
+                     <scalar name="hasMdlDimensionsFcn" comment="" line="204" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                     <scalar name="usesNumPorts" comment="" line="204" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <struct name="in" comment="" line="203">
-                     <scalar name="numInputPorts" comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="in" comment="" line="204">
+                     <scalar name="numInputPorts" comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <scalar name="mexApiInt1" comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numContStates" comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numDWork" comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numIWork" comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numPWork" comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numRWork" comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numSFcnParams" comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numSampleTimes" comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="options" comment="" line="203" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <struct name="out" comment="" line="203">
-                     <scalar name="numOutputPorts" comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="mexApiInt1" comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numContStates" comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numDWork" comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numIWork" comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numPWork" comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numRWork" comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numSFcnParams" comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numSampleTimes" comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="options" comment="" line="204" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="out" comment="" line="204">
+                     <scalar name="numOutputPorts" comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <scalar name="simStructVer" comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="simStructVer" comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                </struct>
             </struct>
          </pointer>
-         <pointer name="arg2" comment="" line="203" complete_type="struct *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR"/>
-         <pointer name="arg3" comment="" line="203" complete_type="float64 *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
-            <scalar comment="" line="203" base_type="float64" complete_type="float64" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+         <pointer name="arg2" comment="" line="204" complete_type="struct *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR"/>
+         <pointer name="arg3" comment="" line="204" complete_type="float64 *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
+            <scalar comment="" line="204" base_type="float64" complete_type="float64" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
          </pointer>
-         <pointer name="arg4" comment="" line="203" complete_type="int32 *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
-            <scalar comment="" line="203" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+         <pointer name="arg4" comment="" line="204" complete_type="int32 *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
+            <scalar comment="" line="204" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
          </pointer>
-         <pointer name="arg5" comment="" line="203" complete_type="float64 *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
-            <scalar comment="" line="203" base_type="float64" complete_type="float64" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+         <pointer name="arg5" comment="" line="204" complete_type="float64 *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
+            <scalar comment="" line="204" base_type="float64" complete_type="float64" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
          </pointer>
-         <pointer name="arg6" comment="" line="203" complete_type="float64 *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
-            <scalar comment="" line="203" base_type="float64" complete_type="float64" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+         <pointer name="arg6" comment="" line="204" complete_type="float64 *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
+            <scalar comment="" line="204" base_type="float64" complete_type="float64" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
          </pointer>
       </function>
-      <function name="receiveStart" comment="" line="92" main_generator_called="MAIN_GENERATOR">
-         <pointer name="arg1" comment="" line="92" complete_type="struct SimStruct_tag *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
-            <struct comment="" line="92" complete_type="struct SimStruct_tag">
-               <struct name="blkInfo" comment="" line="92" complete_type="struct _ssBlkInfo">
-                  <struct name="sfcnFlags" comment="" line="92">
-                     <scalar name="localErrorStatusIsMsg" comment="" line="92" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+      <function name="receiveStart" comment="" line="93" main_generator_called="MAIN_GENERATOR">
+         <pointer name="arg1" comment="" line="93" complete_type="struct SimStruct_tag *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
+            <struct comment="" line="93" complete_type="struct SimStruct_tag">
+               <struct name="blkInfo" comment="" line="93" complete_type="struct _ssBlkInfo">
+                  <struct name="sfcnFlags" comment="" line="93">
+                     <scalar name="localErrorStatusIsMsg" comment="" line="93" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
                </struct>
-               <struct name="sfcnParams" comment="" line="92" complete_type="struct _ssSFcnParams">
-                  <scalar name="dlgNum" comment="" line="92" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+               <struct name="sfcnParams" comment="" line="93" complete_type="struct _ssSFcnParams">
+                  <scalar name="dlgNum" comment="" line="93" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                </struct>
-               <struct name="sizes" comment="" line="92" complete_type="struct _ssSizes">
-                  <array name="checksums" comment="" line="92" complete_type="uint32 [4]">
-                     <scalar comment="" line="92" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+               <struct name="sizes" comment="" line="93" complete_type="struct _ssSizes">
+                  <array name="checksums" comment="" line="93" complete_type="uint32 [4]">
+                     <scalar comment="" line="93" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </array>
-                  <struct name="flags" comment="" line="92">
-                     <scalar name="hasMdlDimensionsFcn" comment="" line="92" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                     <scalar name="usesNumPorts" comment="" line="92" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="flags" comment="" line="93">
+                     <scalar name="hasMdlDimensionsFcn" comment="" line="93" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                     <scalar name="usesNumPorts" comment="" line="93" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <struct name="in" comment="" line="92">
-                     <scalar name="numInputPorts" comment="" line="92" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="in" comment="" line="93">
+                     <scalar name="numInputPorts" comment="" line="93" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <scalar name="mexApiInt1" comment="" line="92" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numContStates" comment="" line="92" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numDWork" comment="" line="92" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numIWork" comment="" line="92" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numPWork" comment="" line="92" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numRWork" comment="" line="92" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numSFcnParams" comment="" line="92" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numSampleTimes" comment="" line="92" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="options" comment="" line="92" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <struct name="out" comment="" line="92">
-                     <scalar name="numOutputPorts" comment="" line="92" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="mexApiInt1" comment="" line="93" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numContStates" comment="" line="93" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numDWork" comment="" line="93" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numIWork" comment="" line="93" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numPWork" comment="" line="93" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numRWork" comment="" line="93" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numSFcnParams" comment="" line="93" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numSampleTimes" comment="" line="93" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="options" comment="" line="93" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="out" comment="" line="93">
+                     <scalar name="numOutputPorts" comment="" line="93" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <scalar name="simStructVer" comment="" line="92" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="simStructVer" comment="" line="93" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                </struct>
             </struct>
          </pointer>
-         <pointer name="arg2" comment="" line="92" complete_type="struct *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR"/>
+         <pointer name="arg2" comment="" line="93" complete_type="struct *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR"/>
       </function>
-      <function name="receiveTerminate" comment="" line="199" main_generator_called="MAIN_GENERATOR">
-         <pointer name="arg1" comment="" line="199" complete_type="struct SimStruct_tag *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
-            <struct comment="" line="199" complete_type="struct SimStruct_tag">
-               <struct name="blkInfo" comment="" line="199" complete_type="struct _ssBlkInfo">
-                  <struct name="sfcnFlags" comment="" line="199">
-                     <scalar name="localErrorStatusIsMsg" comment="" line="199" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+      <function name="receiveTerminate" comment="" line="200" main_generator_called="MAIN_GENERATOR">
+         <pointer name="arg1" comment="" line="200" complete_type="struct SimStruct_tag *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
+            <struct comment="" line="200" complete_type="struct SimStruct_tag">
+               <struct name="blkInfo" comment="" line="200" complete_type="struct _ssBlkInfo">
+                  <struct name="sfcnFlags" comment="" line="200">
+                     <scalar name="localErrorStatusIsMsg" comment="" line="200" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
                </struct>
-               <struct name="sfcnParams" comment="" line="199" complete_type="struct _ssSFcnParams">
-                  <scalar name="dlgNum" comment="" line="199" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+               <struct name="sfcnParams" comment="" line="200" complete_type="struct _ssSFcnParams">
+                  <scalar name="dlgNum" comment="" line="200" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                </struct>
-               <struct name="sizes" comment="" line="199" complete_type="struct _ssSizes">
-                  <array name="checksums" comment="" line="199" complete_type="uint32 [4]">
-                     <scalar comment="" line="199" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+               <struct name="sizes" comment="" line="200" complete_type="struct _ssSizes">
+                  <array name="checksums" comment="" line="200" complete_type="uint32 [4]">
+                     <scalar comment="" line="200" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </array>
-                  <struct name="flags" comment="" line="199">
-                     <scalar name="hasMdlDimensionsFcn" comment="" line="199" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                     <scalar name="usesNumPorts" comment="" line="199" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="flags" comment="" line="200">
+                     <scalar name="hasMdlDimensionsFcn" comment="" line="200" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                     <scalar name="usesNumPorts" comment="" line="200" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <struct name="in" comment="" line="199">
-                     <scalar name="numInputPorts" comment="" line="199" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="in" comment="" line="200">
+                     <scalar name="numInputPorts" comment="" line="200" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <scalar name="mexApiInt1" comment="" line="199" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numContStates" comment="" line="199" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numDWork" comment="" line="199" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numIWork" comment="" line="199" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numPWork" comment="" line="199" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numRWork" comment="" line="199" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numSFcnParams" comment="" line="199" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numSampleTimes" comment="" line="199" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="options" comment="" line="199" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <struct name="out" comment="" line="199">
-                     <scalar name="numOutputPorts" comment="" line="199" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="mexApiInt1" comment="" line="200" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numContStates" comment="" line="200" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numDWork" comment="" line="200" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numIWork" comment="" line="200" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numPWork" comment="" line="200" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numRWork" comment="" line="200" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numSFcnParams" comment="" line="200" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numSampleTimes" comment="" line="200" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="options" comment="" line="200" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="out" comment="" line="200">
+                     <scalar name="numOutputPorts" comment="" line="200" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <scalar name="simStructVer" comment="" line="199" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="simStructVer" comment="" line="200" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                </struct>
             </struct>
          </pointer>
-         <pointer name="arg2" comment="" line="199" complete_type="struct *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR"/>
+         <pointer name="arg2" comment="" line="200" complete_type="struct *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR"/>
       </function>
-      <function name="receiveUpdate" comment="" line="169" main_generator_called="MAIN_GENERATOR">
-         <pointer name="arg1" comment="" line="169" complete_type="struct SimStruct_tag *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
-            <struct comment="" line="169" complete_type="struct SimStruct_tag">
-               <struct name="blkInfo" comment="" line="169" complete_type="struct _ssBlkInfo">
-                  <struct name="sfcnFlags" comment="" line="169">
-                     <scalar name="localErrorStatusIsMsg" comment="" line="169" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+      <function name="receiveUpdate" comment="" line="170" main_generator_called="MAIN_GENERATOR">
+         <pointer name="arg1" comment="" line="170" complete_type="struct SimStruct_tag *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR">
+            <struct comment="" line="170" complete_type="struct SimStruct_tag">
+               <struct name="blkInfo" comment="" line="170" complete_type="struct _ssBlkInfo">
+                  <struct name="sfcnFlags" comment="" line="170">
+                     <scalar name="localErrorStatusIsMsg" comment="" line="170" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
                </struct>
-               <struct name="sfcnParams" comment="" line="169" complete_type="struct _ssSFcnParams">
-                  <scalar name="dlgNum" comment="" line="169" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+               <struct name="sfcnParams" comment="" line="170" complete_type="struct _ssSFcnParams">
+                  <scalar name="dlgNum" comment="" line="170" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                </struct>
-               <struct name="sizes" comment="" line="169" complete_type="struct _ssSizes">
-                  <array name="checksums" comment="" line="169" complete_type="uint32 [4]">
-                     <scalar comment="" line="169" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+               <struct name="sizes" comment="" line="170" complete_type="struct _ssSizes">
+                  <array name="checksums" comment="" line="170" complete_type="uint32 [4]">
+                     <scalar comment="" line="170" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </array>
-                  <struct name="flags" comment="" line="169">
-                     <scalar name="hasMdlDimensionsFcn" comment="" line="169" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                     <scalar name="usesNumPorts" comment="" line="169" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="flags" comment="" line="170">
+                     <scalar name="hasMdlDimensionsFcn" comment="" line="170" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                     <scalar name="usesNumPorts" comment="" line="170" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <struct name="in" comment="" line="169">
-                     <scalar name="numInputPorts" comment="" line="169" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="in" comment="" line="170">
+                     <scalar name="numInputPorts" comment="" line="170" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <scalar name="mexApiInt1" comment="" line="169" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numContStates" comment="" line="169" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numDWork" comment="" line="169" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numIWork" comment="" line="169" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numPWork" comment="" line="169" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numRWork" comment="" line="169" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numSFcnParams" comment="" line="169" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="numSampleTimes" comment="" line="169" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <scalar name="options" comment="" line="169" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
-                  <struct name="out" comment="" line="169">
-                     <scalar name="numOutputPorts" comment="" line="169" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="mexApiInt1" comment="" line="170" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numContStates" comment="" line="170" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numDWork" comment="" line="170" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numIWork" comment="" line="170" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numPWork" comment="" line="170" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numRWork" comment="" line="170" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numSFcnParams" comment="" line="170" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="numSampleTimes" comment="" line="170" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="options" comment="" line="170" base_type="uint32" complete_type="uint32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <struct name="out" comment="" line="170">
+                     <scalar name="numOutputPorts" comment="" line="170" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                   </struct>
-                  <scalar name="simStructVer" comment="" line="169" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
+                  <scalar name="simStructVer" comment="" line="170" base_type="int32" complete_type="int32" init_mode="MAIN_GENERATOR" init_modes_allowed="10" init_range="" global_assert="unsupported" assert_range="unsupported"/>
                </struct>
             </struct>
          </pointer>
-         <pointer name="arg2" comment="" line="169" complete_type="struct *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR"/>
+         <pointer name="arg2" comment="" line="170" complete_type="struct *" init_mode="MAIN_GENERATOR" init_modes_allowed="10" initialize_pointer="Not NULL" number_allocated="max" init_pointed="MAIN_GENERATOR"/>
       </function>
    </file>
    <file name="C:\\Files\\SANDBOX\\git\\ED247\\ed247_for_simulink\\libraries\\ed247\\sources\\ed247_sfun_send.c" comment="">
