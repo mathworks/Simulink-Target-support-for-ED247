@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ED247ComponentInstanceConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ComponentType="Virtual" Identifier="0" Name="ELAC2C" StandardRevision="A" xsi:noNamespaceSchemaLocation="ED247A_ECIC.xsd">
+    <Channels>
+        <Channel Name="ELAC2_A429_DGO04_MON_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3001"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="ELAC2_A429_DGO04_MON_ELAC2C" SampleMaxNumber="60" ICD="ELACe2C_CMD.xml:ELAC2_A429_DGO04_MON_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ADIRU3_A429_IR_2_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3002"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="ADIRU3_A429_IR_2_COM_ELAC2C" SampleMaxNumber="17" ICD="ELACe2C_CMD.xml:ADIRU3_A429_IR_2_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ADIRU1_A429_IR_2_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3003"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="ADIRU1_A429_IR_2_COM_ELAC2C" SampleMaxNumber="17" ICD="ELACe2C_CMD.xml:ADIRU1_A429_IR_2_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="FMGC1_A429_OWN_B_OUT_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3004"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="FMGC1_A429_OWN_B_OUT_ELAC2C" SampleMaxNumber="50" ICD="ELACe2C_CMD.xml:FMGC1_A429_OWN_B_OUT_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="FMGC2_A429_OWN_B_OUT_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3005"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="FMGC2_A429_OWN_B_OUT_ELAC2C" SampleMaxNumber="50" ICD="ELACe2C_CMD.xml:FMGC2_A429_OWN_B_OUT_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ADIRU3_A429_ADR_2_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3006"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="ADIRU3_A429_ADR_2_COM_ELAC2C" SampleMaxNumber="8" ICD="ELACe2C_CMD.xml:ADIRU3_A429_ADR_2_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ADIRU1_A429_ADR_2_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3007"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="ADIRU1_A429_ADR_2_COM_ELAC2C" SampleMaxNumber="8" ICD="ELACe2C_CMD.xml:ADIRU1_A429_ADR_2_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ADIS_TEST_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3008"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="ADIS_TEST_COM_ELAC2C" SampleMaxNumber="4" ICD="ELACe2C_CMD.xml:ADIS_TEST_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC2_A429_DGO01_MON_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3009"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="ELAC2_A429_DGO01_MON_ELAC2C" SampleMaxNumber="7" ICD="ELACe2C_CMD.xml:ELAC2_A429_DGO01_MON_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="RA1_A429_ALTITUDE_BUS_1_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3010"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="RA1_A429_ALTITUDE_BUS_1_ELAC2C" SampleMaxNumber="1" ICD="ELACe2C_CMD.xml:RA1_A429_ALTITUDE_BUS_1_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="SFCC1_A429_TL_SLATS_AC_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3011"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="SFCC1_A429_TL_SLATS_AC_ELAC2C" SampleMaxNumber="3" ICD="ELACe2C_CMD.xml:SFCC1_A429_TL_SLATS_AC_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="FCDC2_A429_DGO11_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3012"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="FCDC2_A429_DGO11_ELAC2C" SampleMaxNumber="2" ICD="ELACe2C_CMD.xml:FCDC2_A429_DGO11_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="SEC2_A429_DGO01_MON_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3013"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="SEC2_A429_DGO01_MON_ELAC2C" SampleMaxNumber="8" ICD="ELACe2C_CMD.xml:SEC2_A429_DGO01_MON_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC1_A429_DGO05_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3014"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="ELAC1_A429_DGO05_COM_ELAC2C" SampleMaxNumber="38" ICD="ELACe2C_CMD.xml:ELAC1_A429_DGO05_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC2_A429_DGO06_MON_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3015"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="ELAC2_A429_DGO06_MON_ELAC2C" SampleMaxNumber="24" ICD="ELACe2C_CMD.xml:ELAC2_A429_DGO06_MON_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC1_A429_DGO06_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3016"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="ELAC1_A429_DGO06_COM_ELAC2C" SampleMaxNumber="8" ICD="ELACe2C_CMD.xml:ELAC1_A429_DGO06_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="DGI19_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3017"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="DGI19_COM_ELAC2C" SampleMaxNumber="13" ICD="ELACe2C_CMD.xml:DGI19_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="DGI20_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3018"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="DGI20_COM_ELAC2C" SampleMaxNumber="8" ICD="ELACe2C_CMD.xml:DGI20_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="SEC2_A429_DGO08_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3019"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="SEC2_A429_DGO08_COM_ELAC2C" SampleMaxNumber="18" ICD="ELACe2C_CMD.xml:SEC2_A429_DGO08_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="SEC1_A429_DGO09_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3020"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="SEC1_A429_DGO09_COM_ELAC2C" SampleMaxNumber="17" ICD="ELACe2C_CMD.xml:SEC1_A429_DGO09_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="DGI23_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3021"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="DGI23_COM_ELAC2C" SampleMaxNumber="21" ICD="ELACe2C_CMD.xml:DGI23_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="DGI24_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3022"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="DGI24_COM_ELAC2C" SampleMaxNumber="29" ICD="ELACe2C_CMD.xml:DGI24_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="DGI25_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3023"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="DGI25_COM_ELAC2C" SampleMaxNumber="45" ICD="ELACe2C_CMD.xml:DGI25_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC1_A429_DGO06_MON_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3024"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="In" Name="ELAC1_A429_DGO06_MON_ELAC2C" SampleMaxNumber="7" ICD="ELACe2C_CMD.xml:ELAC1_A429_DGO06_MON_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC2_A429_DGO01_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="Out" DstIP="224.167.1.28" DstPort="3025"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="Out" Name="ELAC2_A429_DGO01_COM_ELAC2C" SampleMaxNumber="22" ICD="ELACe2C_CMD.xml:ELAC2_A429_DGO01_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC2_A429_DGO02_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="Out" DstIP="224.167.1.28" DstPort="3026"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="Out" Name="ELAC2_A429_DGO02_COM_ELAC2C" SampleMaxNumber="38" ICD="ELACe2C_CMD.xml:ELAC2_A429_DGO02_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC2_A429_DGO03_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="Out" DstIP="224.167.1.28" DstPort="3027"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="Out" Name="ELAC2_A429_DGO03_COM_ELAC2C" SampleMaxNumber="148" ICD="ELACe2C_CMD.xml:ELAC2_A429_DGO03_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC2_A429_DGO04_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="Out" DstIP="224.167.1.28" DstPort="3028"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="Out" Name="ELAC2_A429_DGO04_COM_ELAC2C" SampleMaxNumber="68" ICD="ELACe2C_CMD.xml:ELAC2_A429_DGO04_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC2_A429_DGO05_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="Out" DstIP="224.167.1.28" DstPort="3029"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="Out" Name="ELAC2_A429_DGO05_COM_ELAC2C" SampleMaxNumber="13" ICD="ELACe2C_CMD.xml:ELAC2_A429_DGO05_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC2_A429_DGO06_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="Out" DstIP="224.167.1.28" DstPort="3030"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="Out" Name="ELAC2_A429_DGO06_COM_ELAC2C" SampleMaxNumber="28" ICD="ELACe2C_CMD.xml:ELAC2_A429_DGO06_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC2_A429_DGO07_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="Out" DstIP="224.167.1.28" DstPort="3031"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="Out" Name="ELAC2_A429_DGO07_COM_ELAC2C" SampleMaxNumber="56" ICD="ELACe2C_CMD.xml:ELAC2_A429_DGO07_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC2_A429_DGO08_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="Out" DstIP="224.167.1.28" DstPort="3032"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="Out" Name="ELAC2_A429_DGO08_COM_ELAC2C" SampleMaxNumber="104" ICD="ELACe2C_CMD.xml:ELAC2_A429_DGO08_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ELAC2_A429_DGO09_COM_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="Out" DstIP="224.167.1.28" DstPort="3033"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <A429_Stream Direction="Out" Name="ELAC2_A429_DGO09_COM_ELAC2C" SampleMaxNumber="56" ICD="ELACe2C_CMD.xml:ELAC2_A429_DGO09_COM_ELAC2C"/>
+            </Stream>
+        </Channel>
+        <Channel Name="ANA_INPUT_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3034"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <ANA_Stream Direction="In" Name="ANA_INPUT_ELAC2C" SampleMaxSizeBytes="212">
+                    <Signals>
+                        <Signal ByteOffset="0" Name="ALDPVR_ELAC2C" ICD="ELACe2C_CMD.xml:ALDPVR_ELAC2C"/>
+                        <Signal ByteOffset="4" Name="ANI15MP_ELAC2C" ICD="ELACe2C_CMD.xml:ANI15MP_ELAC2C"/>
+                        <Signal ByteOffset="8" Name="ANI16MP_ELAC2C" ICD="ELACe2C_CMD.xml:ANI16MP_ELAC2C"/>
+                        <Signal ByteOffset="12" Name="ANI17MP_ELAC2C" ICD="ELACe2C_CMD.xml:ANI17MP_ELAC2C"/>
+                        <Signal ByteOffset="16" Name="ANI212VR_ELAC2C" ICD="ELACe2C_CMD.xml:ANI212VR_ELAC2C"/>
+                        <Signal ByteOffset="20" Name="ANI26VR_ELAC2C" ICD="ELACe2C_CMD.xml:ANI26VR_ELAC2C"/>
+                        <Signal ByteOffset="24" Name="ANI28VR_ELAC2C" ICD="ELACe2C_CMD.xml:ANI28VR_ELAC2C"/>
+                        <Signal ByteOffset="28" Name="ANI29VR_ELAC2C" ICD="ELACe2C_CMD.xml:ANI29VR_ELAC2C"/>
+                        <Signal ByteOffset="32" Name="ARDPVR_ELAC2C" ICD="ELACe2C_CMD.xml:ARDPVR_ELAC2C"/>
+                        <Signal ByteOffset="36" Name="OCANI11_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI11_ELAC2C"/>
+                        <Signal ByteOffset="40" Name="OCANI12_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI12_ELAC2C"/>
+                        <Signal ByteOffset="44" Name="OCANI13_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI13_ELAC2C"/>
+                        <Signal ByteOffset="48" Name="OCANI14_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI14_ELAC2C"/>
+                        <Signal ByteOffset="52" Name="OCANI15_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI15_ELAC2C"/>
+                        <Signal ByteOffset="56" Name="OCANI16_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI16_ELAC2C"/>
+                        <Signal ByteOffset="60" Name="OCANI17_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI17_ELAC2C"/>
+                        <Signal ByteOffset="64" Name="OCANI21_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI21_ELAC2C"/>
+                        <Signal ByteOffset="68" Name="OCANI210_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI210_ELAC2C"/>
+                        <Signal ByteOffset="72" Name="OCANI211_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI211_ELAC2C"/>
+                        <Signal ByteOffset="76" Name="OCANI212_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI212_ELAC2C"/>
+                        <Signal ByteOffset="80" Name="OCANI22_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI22_ELAC2C"/>
+                        <Signal ByteOffset="84" Name="OCANI23_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI23_ELAC2C"/>
+                        <Signal ByteOffset="88" Name="OCANI24_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI24_ELAC2C"/>
+                        <Signal ByteOffset="92" Name="OCANI25_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI25_ELAC2C"/>
+                        <Signal ByteOffset="96" Name="OCANI26_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI26_ELAC2C"/>
+                        <Signal ByteOffset="100" Name="OCANI28_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI28_ELAC2C"/>
+                        <Signal ByteOffset="104" Name="OCANI29_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI29_ELAC2C"/>
+                        <Signal ByteOffset="108" Name="OCANI41_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI41_ELAC2C"/>
+                        <Signal ByteOffset="112" Name="OCANI42_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI42_ELAC2C"/>
+                        <Signal ByteOffset="116" Name="OCANI43_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI43_ELAC2C"/>
+                        <Signal ByteOffset="120" Name="OCANI44_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI44_ELAC2C"/>
+                        <Signal ByteOffset="124" Name="OCANI45_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI45_ELAC2C"/>
+                        <Signal ByteOffset="128" Name="OCANI46_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI46_ELAC2C"/>
+                        <Signal ByteOffset="132" Name="OCANI51_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI51_ELAC2C"/>
+                        <Signal ByteOffset="136" Name="OCANI510_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI510_ELAC2C"/>
+                        <Signal ByteOffset="140" Name="OCANI511_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI511_ELAC2C"/>
+                        <Signal ByteOffset="144" Name="OCANI52_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI52_ELAC2C"/>
+                        <Signal ByteOffset="148" Name="OCANI53_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI53_ELAC2C"/>
+                        <Signal ByteOffset="152" Name="OCANI54_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI54_ELAC2C"/>
+                        <Signal ByteOffset="156" Name="OCANI55_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI55_ELAC2C"/>
+                        <Signal ByteOffset="160" Name="OCANI58_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI58_ELAC2C"/>
+                        <Signal ByteOffset="164" Name="OCANI61_ELAC2C" ICD="ELACe2C_CMD.xml:OCANI61_ELAC2C"/>
+                        <Signal ByteOffset="168" Name="PCAPMP_ELAC2C" ICD="ELACe2C_CMD.xml:PCAPMP_ELAC2C"/>
+                        <Signal ByteOffset="172" Name="PFOMP_ELAC2C" ICD="ELACe2C_CMD.xml:PFOMP_ELAC2C"/>
+                        <Signal ByteOffset="176" Name="PIHVR_ELAC2C" ICD="ELACe2C_CMD.xml:PIHVR_ELAC2C"/>
+                        <Signal ByteOffset="180" Name="PLDQVR_ELAC2C" ICD="ELACe2C_CMD.xml:PLDQVR_ELAC2C"/>
+                        <Signal ByteOffset="184" Name="PRDQVR_ELAC2C" ICD="ELACe2C_CMD.xml:PRDQVR_ELAC2C"/>
+                        <Signal ByteOffset="188" Name="RCAPMP_ELAC2C" ICD="ELACe2C_CMD.xml:RCAPMP_ELAC2C"/>
+                        <Signal ByteOffset="192" Name="RDRCVR_ELAC2C" ICD="ELACe2C_CMD.xml:RDRCVR_ELAC2C"/>
+                        <Signal ByteOffset="196" Name="RFOMP_ELAC2C" ICD="ELACe2C_CMD.xml:RFOMP_ELAC2C"/>
+                        <Signal ByteOffset="200" Name="SP1LVR_ELAC2C" ICD="ELACe2C_CMD.xml:SP1LVR_ELAC2C"/>
+                        <Signal ByteOffset="204" Name="SP1RVR_ELAC2C" ICD="ELACe2C_CMD.xml:SP1RVR_ELAC2C"/>
+                        <Signal ByteOffset="208" Name="ANI27VR_ELAC2C" ICD="ELACe2C_CMD.xml:ANI27VR_ELAC2C"/>
+                    </Signals>
+                </ANA_Stream>
+            </Stream>
+        </Channel>
+        <Channel Name="ANA_OUTPUT_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="Out" DstIP="224.167.1.28" DstPort="3035"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <ANA_Stream Direction="Out" Name="ANA_OUTPUT_ELAC2C" SampleMaxSizeBytes="32">
+                    <Signals>
+                        <Signal ByteOffset="0" Name="ALCURROUT_ELAC2C" ICD="ELACe2C_CMD.xml:ALCURROUT_ELAC2C"/>
+                        <Signal ByteOffset="4" Name="ARCURROUT_ELAC2C" ICD="ELACe2C_CMD.xml:ARCURROUT_ELAC2C"/>
+                        <Signal ByteOffset="8" Name="PIHCURROUT_ELAC2C" ICD="ELACe2C_CMD.xml:PIHCURROUT_ELAC2C"/>
+                        <Signal ByteOffset="12" Name="PLCURROUT_ELAC2C" ICD="ELACe2C_CMD.xml:PLCURROUT_ELAC2C"/>
+                        <Signal ByteOffset="16" Name="PRCURROUT_ELAC2C" ICD="ELACe2C_CMD.xml:PRCURROUT_ELAC2C"/>
+                        <Signal ByteOffset="20" Name="RUDCURROUT_ELAC2C" ICD="ELACe2C_CMD.xml:RUDCURROUT_ELAC2C"/>
+                        <Signal ByteOffset="24" Name="SP1LCUROUT_ELAC2C" ICD="ELACe2C_CMD.xml:SP1LCUROUT_ELAC2C"/>
+                        <Signal ByteOffset="28" Name="SP1RCUROUT_ELAC2C" ICD="ELACe2C_CMD.xml:SP1RCUROUT_ELAC2C"/>
+                    </Signals>
+                </ANA_Stream>
+            </Stream>
+        </Channel>
+        <Channel Name="DIS_INPUT_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3036"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <DIS_Stream Direction="In" Name="DIS_INPUT_ELAC2C" SampleMaxSizeBytes="77">
+                    <Signals>
+                        <Signal ByteOffset="0" Name="BAP1CDZ_ELAC2C" ICD="ELACe2C_CMD.xml:BAP1CDZ_ELAC2C"/>
+                        <Signal ByteOffset="1" Name="BAP1MDZ_ELAC2C" ICD="ELACe2C_CMD.xml:BAP1MDZ_ELAC2C"/>
+                        <Signal ByteOffset="2" Name="BAP2CDZ_ELAC2C" ICD="ELACe2C_CMD.xml:BAP2CDZ_ELAC2C"/>
+                        <Signal ByteOffset="3" Name="BAP2MDZ_ELAC2C" ICD="ELACe2C_CMD.xml:BAP2MDZ_ELAC2C"/>
+                        <Signal ByteOffset="4" Name="BBHYDLOZ_ELAC2C" ICD="ELACe2C_CMD.xml:BBHYDLOZ_ELAC2C"/>
+                        <Signal ByteOffset="5" Name="BBUSOKAZ_ELAC2C" ICD="ELACe2C_CMD.xml:BBUSOKAZ_ELAC2C"/>
+                        <Signal ByteOffset="6" Name="BDSI22_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI22_ELAC2C"/>
+                        <Signal ByteOffset="7" Name="BDSI23Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI23Z_ELAC2C"/>
+                        <Signal ByteOffset="8" Name="BDSI25_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI25_ELAC2C"/>
+                        <Signal ByteOffset="9" Name="BDSI27_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI27_ELAC2C"/>
+                        <Signal ByteOffset="10" Name="BDSI28_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI28_ELAC2C"/>
+                        <Signal ByteOffset="11" Name="BDSI37_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI37_ELAC2C"/>
+                        <Signal ByteOffset="12" Name="BDSI38Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI38Z_ELAC2C"/>
+                        <Signal ByteOffset="13" Name="BDSI39Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI39Z_ELAC2C"/>
+                        <Signal ByteOffset="14" Name="BDSI41Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI41Z_ELAC2C"/>
+                        <Signal ByteOffset="15" Name="BDSI43Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI43Z_ELAC2C"/>
+                        <Signal ByteOffset="16" Name="BDSI44_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI44_ELAC2C"/>
+                        <Signal ByteOffset="17" Name="BDSI45Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI45Z_ELAC2C"/>
+                        <Signal ByteOffset="18" Name="BDSI46_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI46_ELAC2C"/>
+                        <Signal ByteOffset="19" Name="BDSI47_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI47_ELAC2C"/>
+                        <Signal ByteOffset="20" Name="BDSI51_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI51_ELAC2C"/>
+                        <Signal ByteOffset="21" Name="BDSI52_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI52_ELAC2C"/>
+                        <Signal ByteOffset="22" Name="BDSI53Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI53Z_ELAC2C"/>
+                        <Signal ByteOffset="23" Name="BDSI54Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI54Z_ELAC2C"/>
+                        <Signal ByteOffset="24" Name="BDSI55_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI55_ELAC2C"/>
+                        <Signal ByteOffset="25" Name="BDSI56_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI56_ELAC2C"/>
+                        <Signal ByteOffset="26" Name="BDSI57Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI57Z_ELAC2C"/>
+                        <Signal ByteOffset="27" Name="BDSI58Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI58Z_ELAC2C"/>
+                        <Signal ByteOffset="28" Name="BDSI59Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI59Z_ELAC2C"/>
+                        <Signal ByteOffset="29" Name="BDSI60Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI60Z_ELAC2C"/>
+                        <Signal ByteOffset="30" Name="BDSI61Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI61Z_ELAC2C"/>
+                        <Signal ByteOffset="31" Name="BDSI62Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI62Z_ELAC2C"/>
+                        <Signal ByteOffset="32" Name="BDSI63_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI63_ELAC2C"/>
+                        <Signal ByteOffset="33" Name="BDSI64_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI64_ELAC2C"/>
+                        <Signal ByteOffset="34" Name="BDSI65_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI65_ELAC2C"/>
+                        <Signal ByteOffset="35" Name="BDSI66_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI66_ELAC2C"/>
+                        <Signal ByteOffset="36" Name="BDSI67_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI67_ELAC2C"/>
+                        <Signal ByteOffset="37" Name="BDSI69Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI69Z_ELAC2C"/>
+                        <Signal ByteOffset="38" Name="BDSI70Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI70Z_ELAC2C"/>
+                        <Signal ByteOffset="39" Name="BDSI71Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI71Z_ELAC2C"/>
+                        <Signal ByteOffset="40" Name="BDSI72Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI72Z_ELAC2C"/>
+                        <Signal ByteOffset="41" Name="BDSI73Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI73Z_ELAC2C"/>
+                        <Signal ByteOffset="42" Name="BDSI74_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI74_ELAC2C"/>
+                        <Signal ByteOffset="43" Name="BDSI75_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI75_ELAC2C"/>
+                        <Signal ByteOffset="44" Name="BDSI76_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI76_ELAC2C"/>
+                        <Signal ByteOffset="45" Name="BFLAILZ_ELAC2C" ICD="ELACe2C_CMD.xml:BFLAILZ_ELAC2C"/>
+                        <Signal ByteOffset="46" Name="BFPITASZ_ELAC2C" ICD="ELACe2C_CMD.xml:BFPITASZ_ELAC2C"/>
+                        <Signal ByteOffset="47" Name="BFPITAZ_ELAC2C" ICD="ELACe2C_CMD.xml:BFPITAZ_ELAC2C"/>
+                        <Signal ByteOffset="48" Name="BFPITCZ_ELAC2C" ICD="ELACe2C_CMD.xml:BFPITCZ_ELAC2C"/>
+                        <Signal ByteOffset="49" Name="BFPITMZ_ELAC2C" ICD="ELACe2C_CMD.xml:BFPITMZ_ELAC2C"/>
+                        <Signal ByteOffset="50" Name="BFRACKHZ_ELAC2C" ICD="ELACe2C_CMD.xml:BFRACKHZ_ELAC2C"/>
+                        <Signal ByteOffset="51" Name="BFRACKLZ_ELAC2C" ICD="ELACe2C_CMD.xml:BFRACKLZ_ELAC2C"/>
+                        <Signal ByteOffset="52" Name="BFRAILZ_ELAC2C" ICD="ELACe2C_CMD.xml:BFRAILZ_ELAC2C"/>
+                        <Signal ByteOffset="53" Name="BFYAW1Z_ELAC2C" ICD="ELACe2C_CMD.xml:BFYAW1Z_ELAC2C"/>
+                        <Signal ByteOffset="54" Name="BFYAW2Z_ELAC2C" ICD="ELACe2C_CMD.xml:BFYAW2Z_ELAC2C"/>
+                        <Signal ByteOffset="55" Name="BGHYDLOZ_ELAC2C" ICD="ELACe2C_CMD.xml:BGHYDLOZ_ELAC2C"/>
+                        <Signal ByteOffset="56" Name="BGSPZ_ELAC2C" ICD="ELACe2C_CMD.xml:BGSPZ_ELAC2C"/>
+                        <Signal ByteOffset="57" Name="BLAFV_ELAC2C" ICD="ELACe2C_CMD.xml:BLAFV_ELAC2C"/>
+                        <Signal ByteOffset="58" Name="BLAKOAZ_ELAC2C" ICD="ELACe2C_CMD.xml:BLAKOAZ_ELAC2C"/>
+                        <Signal ByteOffset="59" Name="BLMGDZ_ELAC2C" ICD="ELACe2C_CMD.xml:BLMGDZ_ELAC2C"/>
+                        <Signal ByteOffset="60" Name="BNGDZ_ELAC2C" ICD="ELACe2C_CMD.xml:BNGDZ_ELAC2C"/>
+                        <Signal ByteOffset="61" Name="BPBONZ_ELAC2C" ICD="ELACe2C_CMD.xml:BPBONZ_ELAC2C"/>
+                        <Signal ByteOffset="62" Name="BPRIO1Z_ELAC2C" ICD="ELACe2C_CMD.xml:BPRIO1Z_ELAC2C"/>
+                        <Signal ByteOffset="63" Name="BPRIO2Z_ELAC2C" ICD="ELACe2C_CMD.xml:BPRIO2Z_ELAC2C"/>
+                        <Signal ByteOffset="64" Name="BRAKOAZ_ELAC2C" ICD="ELACe2C_CMD.xml:BRAKOAZ_ELAC2C"/>
+                        <Signal ByteOffset="65" Name="BRMGDZ_ELAC2C" ICD="ELACe2C_CMD.xml:BRMGDZ_ELAC2C"/>
+                        <Signal ByteOffset="66" Name="BSDI1Z_ELAC2C" ICD="ELACe2C_CMD.xml:BSDI1Z_ELAC2C"/>
+                        <Signal ByteOffset="67" Name="BSDI2Z_ELAC2C" ICD="ELACe2C_CMD.xml:BSDI2Z_ELAC2C"/>
+                        <Signal ByteOffset="68" Name="BSLATSZ_ELAC2C" ICD="ELACe2C_CMD.xml:BSLATSZ_ELAC2C"/>
+                        <Signal ByteOffset="69" Name="BSPATIZ_ELAC2C" ICD="ELACe2C_CMD.xml:BSPATIZ_ELAC2C"/>
+                        <Signal ByteOffset="70" Name="BTHSACT_ELAC2C" ICD="ELACe2C_CMD.xml:BTHSACT_ELAC2C"/>
+                        <Signal ByteOffset="71" Name="BTRDNZ_ELAC2C" ICD="ELACe2C_CMD.xml:BTRDNZ_ELAC2C"/>
+                        <Signal ByteOffset="72" Name="BTSWMANZ_ELAC2C" ICD="ELACe2C_CMD.xml:BTSWMANZ_ELAC2C"/>
+                        <Signal ByteOffset="73" Name="BYHYDLOZ_ELAC2C" ICD="ELACe2C_CMD.xml:BYHYDLOZ_ELAC2C"/>
+                        <Signal ByteOffset="74" Name="BDSI25Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI25Z_ELAC2C"/>
+                        <Signal ByteOffset="75" Name="BDSI47Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI47Z_ELAC2C"/>
+                        <Signal ByteOffset="76" Name="BDSI68Z_ELAC2C" ICD="ELACe2C_CMD.xml:BDSI68Z_ELAC2C"/>
+                    </Signals>
+                </DIS_Stream>
+            </Stream>
+        </Channel>
+        <Channel Name="DIS_OUTPUT_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="Out" DstIP="224.167.1.28" DstPort="3037"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <DIS_Stream Direction="Out" Name="DIS_OUTPUT_ELAC2C" SampleMaxSizeBytes="10">
+                    <Signals>
+                        <Signal ByteOffset="0" Name="BAP1OKOUT_ELAC2C" ICD="ELACe2C_CMD.xml:BAP1OKOUT_ELAC2C"/>
+                        <Signal ByteOffset="1" Name="BAP2OKOUT_ELAC2C" ICD="ELACe2C_CMD.xml:BAP2OKOUT_ELAC2C"/>
+                        <Signal ByteOffset="2" Name="BBUSOKOUT_ELAC2C" ICD="ELACe2C_CMD.xml:BBUSOKOUT_ELAC2C"/>
+                        <Signal ByteOffset="3" Name="BDSO12OUT_ELAC2C" ICD="ELACe2C_CMD.xml:BDSO12OUT_ELAC2C"/>
+                        <Signal ByteOffset="4" Name="BDSO13OUT_ELAC2C" ICD="ELACe2C_CMD.xml:BDSO13OUT_ELAC2C"/>
+                        <Signal ByteOffset="5" Name="BDSO14OUT_ELAC2C" ICD="ELACe2C_CMD.xml:BDSO14OUT_ELAC2C"/>
+                        <Signal ByteOffset="6" Name="BPITOKEOUT_ELAC2C" ICD="ELACe2C_CMD.xml:BPITOKEOUT_ELAC2C"/>
+                        <Signal ByteOffset="7" Name="BPITOKOUT_ELAC2C" ICD="ELACe2C_CMD.xml:BPITOKOUT_ELAC2C"/>
+                        <Signal ByteOffset="8" Name="BRLAOKOUT_ELAC2C" ICD="ELACe2C_CMD.xml:BRLAOKOUT_ELAC2C"/>
+                        <Signal ByteOffset="9" Name="BRRAOKOUT_ELAC2C" ICD="ELACe2C_CMD.xml:BRRAOKOUT_ELAC2C"/>
+                    </Signals>
+                </DIS_Stream>
+            </Stream>
+        </Channel>
+        <Channel Name="NAD_INPUT_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="In" DstIP="224.167.1.30" DstPort="3038"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <NAD_Stream Direction="In" Name="NAD_INPUT_ELAC2C" SampleMaxSizeBytes="32">
+                    <Signals SamplingPeriodUs="0">
+                        <Signal ByteOffset="0" Dimensions="1" Name="BRESETUIN_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BRESETUIN_ELAC2C"/>
+						<Signal ByteOffset="4" Dimensions="1" Name="SIMSOFTDPEQUI_ELAC2C" Type="float32" ICD="ELACe2C_CMD.xml:SIMSOFTDPEQUI_ELAC2C"/>
+						<Signal ByteOffset="8" Dimensions="1" Name="SIMSOFTDQEQUI_ELAC2C" Type="float32" ICD="ELACe2C_CMD.xml:SIMSOFTDQEQUI_ELAC2C"/>
+						<Signal ByteOffset="12" Dimensions="1" Name="SIMSOFTDREQUI_ELAC2C" Type="float32" ICD="ELACe2C_CMD.xml:SIMSOFTDREQUI_ELAC2C"/>
+						<Signal ByteOffset="16" Dimensions="1" Name="SIMSOFTIHEQUI_ELAC2C" Type="float32" ICD="ELACe2C_CMD.xml:SIMSOFTIHEQUI_ELAC2C"/>
+						<Signal ByteOffset="20" Dimensions="1" Name="BSIMINITTR_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSIMINITTR_ELAC2C"/>
+						<Signal ByteOffset="24" Dimensions="1" Name="BSIMSOFTEQUI_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSIMSOFTEQUI_ELAC2C"/>
+						<Signal ByteOffset="28" Dimensions="1" Name="BPWRSPLY_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BPWRSPLY_ELAC2C"/>
+                    </Signals>
+                </NAD_Stream>
+            </Stream>
+        </Channel>
+        <Channel Name="NAD_OUTPUT_ELAC2C">
+            <FrameFormat StandardRevision="A"/>
+            <ComInterface>
+                <UDP_Sockets>
+                    <UDP_Socket Direction="Out" DstIP="224.167.1.28" DstPort="3039"/>
+                </UDP_Sockets>
+            </ComInterface>
+            <Header Enable="Yes" TransportTimestamp="Yes"/>
+            <Stream>
+                <NAD_Stream Direction="Out" Name="NAD_OUTPUT_ELAC2C" SampleMaxSizeBytes="88">
+                    <Signals SamplingPeriodUs="0">
+                        <Signal ByteOffset="0" Dimensions="1" Name="BRESETUOUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BRESETUOUT_ELAC2C"/>
+                        <Signal ByteOffset="4" Dimensions="1" Name="BOPER_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BOPER_ELAC2C"/>
+                        <Signal ByteOffset="8" Dimensions="1" Name="BSWD0OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD0OUT_ELAC2C"/>
+                        <Signal ByteOffset="12" Dimensions="1" Name="BSWD10OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD10OUT_ELAC2C"/>
+                        <Signal ByteOffset="16" Dimensions="1" Name="BSWD11OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD11OUT_ELAC2C"/>
+                        <Signal ByteOffset="20" Dimensions="1" Name="BSWD12OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD12OUT_ELAC2C"/>
+                        <Signal ByteOffset="24" Dimensions="1" Name="BSWD19OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD19OUT_ELAC2C"/>
+                        <Signal ByteOffset="28" Dimensions="1" Name="BSWD1OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD1OUT_ELAC2C"/>
+                        <Signal ByteOffset="32" Dimensions="1" Name="BSWD2OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD2OUT_ELAC2C"/>
+                        <Signal ByteOffset="36" Dimensions="1" Name="BSWD3OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD3OUT_ELAC2C"/>
+                        <Signal ByteOffset="40" Dimensions="1" Name="BSWD4OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD4OUT_ELAC2C"/>
+                        <Signal ByteOffset="44" Dimensions="1" Name="BSWD5OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD5OUT_ELAC2C"/>
+                        <Signal ByteOffset="48" Dimensions="1" Name="BSWD8OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD8OUT_ELAC2C"/>
+                        <Signal ByteOffset="52" Dimensions="1" Name="BSWD9OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD9OUT_ELAC2C"/>
+                        <Signal ByteOffset="56" Dimensions="1" Name="SWD30OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:SWD30OUT_ELAC2C"/>
+                        <Signal ByteOffset="60" Dimensions="1" Name="ALCURMOUT_ELAC2C" Type="float32" ICD="ELACe2C_CMD.xml:ALCURMOUT_ELAC2C"/>
+                        <Signal ByteOffset="64" Dimensions="1" Name="ARCURMOUT_ELAC2C" Type="float32" ICD="ELACe2C_CMD.xml:ARCURMOUT_ELAC2C"/>
+                        <Signal ByteOffset="68" Dimensions="1" Name="PIHCURMOUT_ELAC2C" Type="float32" ICD="ELACe2C_CMD.xml:PIHCURMOUT_ELAC2C"/>
+                        <Signal ByteOffset="72" Dimensions="1" Name="PLCURMOUT_ELAC2C" Type="float32" ICD="ELACe2C_CMD.xml:PLCURMOUT_ELAC2C"/>
+                        <Signal ByteOffset="76" Dimensions="1" Name="PRCURMOUT_ELAC2C" Type="float32" ICD="ELACe2C_CMD.xml:PRCURMOUT_ELAC2C"/>
+                        <Signal ByteOffset="80" Dimensions="1" Name="BSWD13OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD13OUT_ELAC2C"/>
+                        <Signal ByteOffset="84" Dimensions="1" Name="BSWD14OUT_ELAC2C" Type="int32" ICD="ELACe2C_CMD.xml:BSWD14OUT_ELAC2C"/>
+                    </Signals>
+                </NAD_Stream>
+            </Stream>
+        </Channel>
+    </Channels>
+</ED247ComponentInstanceConfiguration>
