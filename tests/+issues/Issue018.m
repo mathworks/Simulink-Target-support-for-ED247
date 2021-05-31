@@ -237,6 +237,47 @@ classdef (SharedTestFixtures={...
             
         end
         
+        function testReadELACFullWithRefresh(testCase)
+            
+            % [ SETUP ]
+            archivename = fullfile(testCase.filefolder_, 'ELAC_full.zip');
+            unzip(archivename,pwd)
+            
+            modelname = 'readfullelac';
+            new_system(modelname)
+            load_system(modelname)
+            closeModel = onCleanup(@() bdclose(modelname));
+            
+            %
+            % Add blocks in the model
+            %
+            configurationblockname = [modelname,'/Configure'];
+            configurationblock = add_block('lib_ed247/ED247_Configuration', configurationblockname);
+            
+            receiveblockname = [modelname,'/Receive'];
+            receiveblock = add_block('lib_ed247/ED247_Receive', receiveblockname);
+            
+            %
+            % Configure blocks
+            %   - configuration file
+            %   - Enable refresh
+            %
+            set(configurationblock, 'configurationFilename', '''ELACe2M_ECIC.xml''')
+            set(receiveblock, 'enable_refresh', 'on')
+            
+            % [ EXERCISE ]
+            % Run SIM to update diagram only (do not care about warnings)
+            warning('off')
+            sim(modelname,'StopTime','0');
+            warning('on')
+            
+            % [ VERIFY ]
+            receiveports = get(receiveblock,'PortHandles');
+            testCase.verifyLength(receiveports.Outport,136, ...
+                sprintf('[A429] Receive block should have %d ports (%d x2 as refresh is enabled)', 136, 68))
+            
+        end
+        
     end
     
     %% PRIVATE PROPERTIES
