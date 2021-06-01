@@ -10,10 +10,6 @@
 #define ssGetSFcnParamsCount(S) 	1
 #define ssSetSFcnParamTunable(S, i, b)
 
-#define ssSetNumInputPorts(S, n) n
-#define ssSetNumOutputPorts(S, n) n
-#define ssSetNumDWork(S, n) n
-#define ssSetNumSampleTimes(S, n)
 #define ssSetOptions(S, m)
 
 #define ssSetSampleTime(S,i,v)
@@ -56,7 +52,12 @@ typedef struct {
 	char 			logfile[512];
 	int 			refresh;
 	float 			sampletime;
+	int				ninports;
+	int				noutports;
+	int				ndworks;
+	int				nsampletimes;
 } SimStruct;
+#define INIT_SIMSTRUC(type) { type, "", "", 0, 0.2, 0, 0, 0, 0 }
 
 typedef struct {
 	int width;
@@ -75,5 +76,10 @@ void* ssGetInputPortSignal(SimStruct* S, int iport);
 void* ssGetOutputPortSignal(SimStruct* S, int iport);
 
 void* mxGetData(void* element);
+
+int ssSetNumInputPorts(SimStruct* S,int n);
+int ssSetNumOutputPorts(SimStruct* S,int n);
+int ssSetNumDWork(SimStruct* S,int n);
+int ssSetNumSampleTimes(SimStruct* S,int n);
 
 #endif
