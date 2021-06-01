@@ -41,8 +41,10 @@ configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, 
 
 	status = ed247_find_streams(io->_context,".*",&(streams));
 	if (checkStatus(status,"ed247_find_streams",2)){return FIND_STREAMS_FAILURE;}
-	
-	while(ed247_stream_list_next(streams,&stream) == ED247_STATUS_SUCCESS && stream != NULL){
+
+	status = ed247_stream_list_next(streams,&stream);
+	checkStatus(status,"ed247_stream_list_next",2);
+	while(status == ED247_STATUS_SUCCESS && stream != NULL){
 
 		status = ed247_stream_get_info(stream,&stream_info);
 		if (checkStatus(status,"ed247_stream_get_info",3)){return STREAM_GET_INFO_FAILURE;}
@@ -65,6 +67,9 @@ configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, 
 			read_status = local_signals_from_icd(io, stream, stream_info, folder);
 			if (read_status == STREAM_REACH_ARRAY_LIMIT){myprintf("WARNING: Stream array limit reached (%d), some data may be skipped\n", MAX_STREAMS);}
 		}
+		status = ed247_stream_list_next(streams,&stream);
+		checkStatus(status,"ed247_stream_list_next",2);
+		if (stream == NULL){myprintf("\t\t> No more stream\n");}
 
 	}
 

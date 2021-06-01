@@ -12,6 +12,8 @@ void sendInitialize(SimStruct *S, IO_t *io){
 
 	ssSetNumDWork(S, 0);
 
+	myprintf("\n\n=== SEND INITIALIZATION START ===\n");
+
 	isRefreshEnabled = *((int_T *)( mxGetData(ssGetSFcnParam(S,3)) ));
 	myprintf("Is refresh enabled = %d\n",isRefreshEnabled);
 
@@ -81,6 +83,8 @@ void sendInitialize(SimStruct *S, IO_t *io){
 		}
 
 	}
+
+	myprintf("\n=== SEND INITIALIZATION END ===\n\n");
 
 }
 #endif

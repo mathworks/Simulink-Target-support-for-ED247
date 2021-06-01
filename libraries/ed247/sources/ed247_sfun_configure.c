@@ -7,6 +7,8 @@ IO_t* configureInitialize(SimStruct *S){
 
 	ssSetNumDWork(S, 0);
 
+	myprintf("\n\n=== CONFIGURATION INITIALIZATION START ===\n");
+
 	io_allocate_memory(&io);
 
 	char_T *configurationFile = (char_T *)( mxGetData(ssGetSFcnParam(S,1)) );
@@ -16,10 +18,12 @@ IO_t* configureInitialize(SimStruct *S){
 		myprintf("Log file = '%s'\n", logFile);
 		read_ed247_configuration(configurationFile, io, logFile);
 
-		myprintf("%d inputs\n", io->inputs->nsignals);
-		myprintf("%d outputs\n", io->outputs->nsignals);
+		myprintf("%d input streams, %d input signals\n", io->inputs->nstreams, io->inputs->nsignals);
+		myprintf("%d output streams, %d output signals\n", io->outputs->nstreams, io->outputs->nsignals);
 	}
-	
+
+	myprintf("\n=== CONFIGURATION INITIALIZATION END ===\n\n");
+
 	return io;
 
 }
