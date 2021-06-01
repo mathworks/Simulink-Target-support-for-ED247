@@ -20,17 +20,96 @@ void main(int argc, char *argv[]){
 	printf("Filename = '%s'\n", configureBlock.configuration);
 	printf("Logfile  = '%s'\n", configureBlock.logfile);
 
-	configureBlock.ndworks = 42;
+	/*
+	 * mdlInitializeSizes()
+	 */
+	printf("[CONFIGURE] mdlInitializeSizes()\n");
 	mdlInitializeSizes(&configureBlock);
-
 	printf("Inputs : Streams = %d, Signals = %d\n", io->inputs->nstreams, io->inputs->nsignals);
 	printf("Outputs : Streams = %d, Signals = %d\n", io->outputs->nstreams, io->outputs->nsignals);
 
+	printf("[SEND] mdlInitializeSizes() ... ");
 	mdlInitializeSizes(&sendBlock);
-	printf("[SEND] Input ports = %d (Output ports = %d)\n", sendBlock.ninports, sendBlock.noutports);
+	printf("Input ports = %d (Output ports = %d)\n", sendBlock.ninports, sendBlock.noutports);
 
+	printf("[RECEIVE] mdlInitializeSizes() ... ");
 	mdlInitializeSizes(&receiveBlock);
-	printf("[RECEIVE] Output ports = %d (Input ports = %d)\n", receiveBlock.noutports, receiveBlock.ninports);
+	printf("Output ports = %d (Input ports = %d)\n", receiveBlock.noutports, receiveBlock.ninports);
+
+	/*
+	 * mdlInitializeSampleTimes()
+	 */
+	printf("[CONFIGURE] mdlInitializeSampleTimes() ... ");
+	mdlInitializeSampleTimes(&configureBlock);
+	printf("Done\n");
+
+	printf("[SEND] mdlInitializeSampleTimes() ... ");
+	mdlInitializeSampleTimes(&sendBlock);
+	printf("Done\n");
+
+	printf("[RECEIVE] mdlInitializeSampleTimes() ... ");
+	mdlInitializeSampleTimes(&receiveBlock);
+	printf("Done\n");
+
+	/*
+	 * mdlStart()
+	 */
+	printf("[CONFIGURE] mdlStart() ... ");
+	mdlStart(&configureBlock);
+	printf("Done\n");
+
+	printf("[SEND] mdlStart() ... ");
+	mdlStart(&sendBlock);
+	printf("Done\n");
+
+	printf("[RECEIVE] mdlStart() ... ");
+	mdlStart(&receiveBlock);
+	printf("Done\n");
+
+	/*
+	 * mdlOutputs()
+	 */
+	printf("[CONFIGURE] mdlOutputs() ... ");
+	mdlOutputs(&configureBlock,0);
+	printf("Done\n");
+
+	printf("[SEND] mdlOutputs() ... ");
+	mdlOutputs(&sendBlock,0);
+	printf("Done\n");
+
+	printf("[RECEIVE] mdlOutputs() ... ");
+	mdlOutputs(&receiveBlock,0);
+	printf("Done\n");
+
+	/*
+	 * mdlUpdate()
+	 */
+	printf("[CONFIGURE] mdlUpdate() ... ");
+	mdlUpdate(&configureBlock,0);
+	printf("Done\n");
+
+	printf("[SEND] mdlUpdate() ... ");
+	mdlUpdate(&sendBlock,0);
+	printf("Done\n");
+
+	printf("[RECEIVE] mdlUpdate() ... ");
+	mdlUpdate(&receiveBlock,0);
+	printf("Done\n");
+
+	/*
+	 * mdlTerminate()
+	 */
+	printf("[CONFIGURE] mdlTerminate() ... ");
+	mdlTerminate(&configureBlock);
+	printf("Done\n");
+
+	printf("[SEND] mdlTerminate() ... ");
+	mdlTerminate(&sendBlock);
+	printf("Done\n");
+
+	printf("[RECEIVE] mdlTerminate() ... ");
+	mdlTerminate(&receiveBlock);
+	printf("Done\n");
 
 }
 
@@ -100,4 +179,12 @@ int ssSetNumDWork(SimStruct* S,int n){
 int ssSetNumSampleTimes(SimStruct* S,int n){
 	S->nsampletimes = n;
 	return n;
+}
+
+int ssSetSampleTime(SimStruct* S,int i, double v){
+	return 0;
+}
+
+int ssSetOffsetTime(SimStruct* S,int i, double v){
+	return 0;
 }

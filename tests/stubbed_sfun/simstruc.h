@@ -2,6 +2,8 @@
 #ifndef SIMSTRUC__
 #define SIMSTRUC__
 
+#define INHERITED_SAMPLE_TIME	-1.0F
+
 #define ssAllowSignalsWithMoreThan2D(S)
 #define DECL_AND_INIT_DIMSINFO(d)
 
@@ -11,9 +13,6 @@
 #define ssSetSFcnParamTunable(S, i, b)
 
 #define ssSetOptions(S, m)
-
-#define ssSetSampleTime(S,i,v)
-#define ssSetOffsetTime(S,i,v)
 
 #define ssSetInputPortDimensionInfo(S, i, d) 1
 #define ssSetOutputPortDimensionInfo(S, i, d) 1
@@ -81,5 +80,8 @@ int ssSetNumInputPorts(SimStruct* S,int n);
 int ssSetNumOutputPorts(SimStruct* S,int n);
 int ssSetNumDWork(SimStruct* S,int n);
 int ssSetNumSampleTimes(SimStruct* S,int n);
+
+int ssSetSampleTime(SimStruct* S,int i, double v);
+int ssSetOffsetTime(SimStruct* S,int i, double v);
 
 #endif
