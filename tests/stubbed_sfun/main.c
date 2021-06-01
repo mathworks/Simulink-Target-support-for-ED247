@@ -20,9 +20,9 @@ void main(int argc, char *argv[]){
 	printf("Filename = '%s'\n", configureBlock.configuration);
 	printf("Logfile  = '%s'\n", configureBlock.logfile);
 
-	/*
-	 * mdlInitializeSizes()
-	 */
+	//
+	// mdlInitializeSizes()
+	//
 	printf("[CONFIGURE] mdlInitializeSizes()\n");
 	mdlInitializeSizes(&configureBlock);
 	printf("Inputs : Streams = %d, Signals = %d\n", io->inputs->nstreams, io->inputs->nsignals);
@@ -35,10 +35,10 @@ void main(int argc, char *argv[]){
 	printf("[RECEIVE] mdlInitializeSizes() ... ");
 	mdlInitializeSizes(&receiveBlock);
 	printf("Output ports = %d (Input ports = %d)\n", receiveBlock.noutports, receiveBlock.ninports);
-
-	/*
-	 * mdlInitializeSampleTimes()
-	 */
+/*
+	//
+	// mdlInitializeSampleTimes()
+	//
 	printf("[CONFIGURE] mdlInitializeSampleTimes() ... ");
 	mdlInitializeSampleTimes(&configureBlock);
 	printf("Done\n");
@@ -51,9 +51,9 @@ void main(int argc, char *argv[]){
 	mdlInitializeSampleTimes(&receiveBlock);
 	printf("Done\n");
 
-	/*
-	 * mdlStart()
-	 */
+	//
+	// mdlStart()
+	//
 	printf("[CONFIGURE] mdlStart() ... ");
 	mdlStart(&configureBlock);
 	printf("Done\n");
@@ -66,9 +66,9 @@ void main(int argc, char *argv[]){
 	mdlStart(&receiveBlock);
 	printf("Done\n");
 
-	/*
-	 * mdlOutputs()
-	 */
+	//
+	// mdlOutputs()
+	//
 	printf("[CONFIGURE] mdlOutputs() ... ");
 	mdlOutputs(&configureBlock,0);
 	printf("Done\n");
@@ -81,9 +81,9 @@ void main(int argc, char *argv[]){
 	mdlOutputs(&receiveBlock,0);
 	printf("Done\n");
 
-	/*
-	 * mdlUpdate()
-	 */
+	//
+	// mdlUpdate()
+	//
 	printf("[CONFIGURE] mdlUpdate() ... ");
 	mdlUpdate(&configureBlock,0);
 	printf("Done\n");
@@ -96,9 +96,9 @@ void main(int argc, char *argv[]){
 	mdlUpdate(&receiveBlock,0);
 	printf("Done\n");
 
-	/*
-	 * mdlTerminate()
-	 */
+	//
+	// mdlTerminate()
+	//
 	printf("[CONFIGURE] mdlTerminate() ... ");
 	mdlTerminate(&configureBlock);
 	printf("Done\n");
@@ -110,7 +110,7 @@ void main(int argc, char *argv[]){
 	printf("[RECEIVE] mdlTerminate() ... ");
 	mdlTerminate(&receiveBlock);
 	printf("Done\n");
-
+*/
 }
 
 real_T data = 0.0F;
