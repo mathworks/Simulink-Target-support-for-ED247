@@ -237,7 +237,41 @@ classdef (SharedTestFixtures={...
             
         end
         
-        function testReadELACFullWithRefresh(testCase)
+        function testReadELACFullConfigureOnly(testCase)
+            
+            % [ SETUP ]
+            archivename = fullfile(testCase.filefolder_, 'ELAC_full.zip');
+            unzip(archivename,pwd)
+            
+            modelname = 'readfullelac';
+            new_system(modelname)
+            load_system(modelname)
+            closeModel = onCleanup(@() bdclose(modelname));
+            
+            %
+            % Add blocks in the model
+            %
+            configurationblockname = [modelname,'/Configure'];
+            configurationblock = add_block('lib_ed247/ED247_Configuration', configurationblockname);
+                        
+            %
+            % Configure blocks
+            %   - configuration file
+            %   - Enable refresh
+            %
+            set(configurationblock, 'configurationFilename', '''ELACe2M_ECIC.xml''')
+            
+            % [ EXERCISE ]                        
+            f = @() sim(modelname,'StopTime','0');            
+            
+            % [ VERIFY ]
+            warning('off') % Run SIM to update diagram only (do not care about warnings)
+            testCase.verifyWarningFree(f)
+            warning('on')
+            
+        end
+        
+        function testReadELACFullReceive(testCase)
             
             % [ SETUP ]
             archivename = fullfile(testCase.filefolder_, 'ELAC_full.zip');
