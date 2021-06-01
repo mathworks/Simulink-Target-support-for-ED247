@@ -11,9 +11,9 @@ void main(int argc, char *argv[]){
 	char filename[512];
 	char logfile[512];
 
-	SimStruct configureBlock 	= INIT_SIMSTRUC(0); //{ 0, "", "", 0, 0.2, 0, 0, 0, 0 };
-	SimStruct receiveBlock 		= INIT_SIMSTRUC(1); //{ 1, "", "", 0, 0.2, 0, 0, 0, 0 };
-	SimStruct sendBlock 		= INIT_SIMSTRUC(2); //{ 2, "", "", 0, 0.2, 0, 0, 0, 0 };
+	SimStruct configureBlock 	= INIT_SIMSTRUC(0); 
+	SimStruct receiveBlock 		= INIT_SIMSTRUC(1); 
+	SimStruct sendBlock 		= INIT_SIMSTRUC(2); 
 
 	if (argc > 1){strcpy(configureBlock.configuration,argv[1]);}
 	if (argc > 2){strcpy(configureBlock.logfile,argv[2]);}
@@ -25,10 +25,13 @@ void main(int argc, char *argv[]){
 
 	printf("Inputs : Streams = %d, Signals = %d\n", io->inputs->nstreams, io->inputs->nsignals);
 	printf("Outputs : Streams = %d, Signals = %d\n", io->outputs->nstreams, io->outputs->nsignals);
-/*
+
+	mdlInitializeSizes(&sendBlock);
+	printf("[SEND] Input ports = %d (Output ports = %d)\n", sendBlock.ninports, sendBlock.noutports);
+
 	mdlInitializeSizes(&receiveBlock);
-	printf("");
-*/
+	printf("[RECEIVE] Output ports = %d (Input ports = %d)\n", receiveBlock.noutports, receiveBlock.ninports);
+
 }
 
 real_T data = 0.0F;
