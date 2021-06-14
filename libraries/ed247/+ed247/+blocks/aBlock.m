@@ -11,6 +11,8 @@ classdef (Abstract) aBlock < matlab.mixin.SetGet
     %% DEPENDENT PROPERTIES
     properties (Dependent)        
         Configuration
+        ECICFile
+        ICDFiles
     end
     
     %% IMMUTABLE PROPERTIES
@@ -41,13 +43,46 @@ classdef (Abstract) aBlock < matlab.mixin.SetGet
        
         function configuration = get.Configuration(obj)
            
+            configuration = struct.empty;
+            
             modelname   = bdroot(obj.block_);
             mdlwrksp    = get_param(modelname,'ModelWorkspace');
             
             if ~isempty(mdlwrksp) && mdlwrksp.hasVariable('ED247Configuration')
-                configuration = mdlwrksp.getVariable('ED247Configuration');
+                
+                ecic = ed247.ECIC.fromStruct(mdlwrksp.getVariable('ED247Configuration'));
+                if ~isempty(ecic)
+                    configuration = ecic.Configuration;
+                end
+                
+            end
+            
+        end
+        
+        function ecicfile = get.ECICFile(obj)
+           
+            modelname   = bdroot(obj.block_);
+            mdlwrksp    = get_param(modelname,'ModelWorkspace');
+            
+            if ~isempty(mdlwrksp) && mdlwrksp.hasVariable('ED247Configuration')
+                ecic = ed247.ECIC.fromStruct(mdlwrksp.getVariable('ED247Configuration'));
+                ecicfile = ecic.ECICFile;
             else
-                configuration = struct.empty;
+                ecicfile = '';
+            end
+            
+        end
+        
+        function icdfiles = get.ICDFiles(obj)
+           
+            modelname   = bdroot(obj.block_);
+            mdlwrksp    = get_param(modelname,'ModelWorkspace');
+            
+            if ~isempty(mdlwrksp) && mdlwrksp.hasVariable('ED247Configuration')
+                ecic = ed247.ECIC.fromStruct(mdlwrksp.getVariable('ED247Configuration'));
+                icdfiles = ecic.ICDFiles;
+            else
+                icdfiles = {};
             end
             
         end
