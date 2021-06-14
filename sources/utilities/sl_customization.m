@@ -5,9 +5,36 @@ function sl_customization(cm)
 
 initialize()
 
-% Put ED247 library at the top of LIbrary Browser
+% Put ED247 library at the top of Library Browser
 cm.LibraryBrowserCustomizer.applyNodePreference({'lib_ed247',-42}); 
   
+cm.addCustomMenuFcn('Simulink:ContextMenu', @getMyMenuItems);
+
+function schemaFcns = getMyMenuItems(~)
+
+refblock = get(gcbh,'ReferenceBlock');
+switch refblock
+    case 'lib_ed247/ED247_Receive'
+        obj = ed247.blocks.Receive(gcbh);
+    otherwise
+        obj = [];
+end
+
+if ~isempty(obj)
+    schemaFcns = { ...
+        @(~) getCreateBus(obj); ...
+        };
+else
+    schemaFcns = {};
+end
+
+function schema = getCreateBus(obj)
+
+schema = sl_action_schema;
+schema.label = 'Create Bus';
+schema.userdata = 'create_bus';
+schema.callback = @(varargin) createBus(obj);
+            
 function initialize
 
 if isdir(ed247.Folder.WORK.Path) %#ok<ISDIR>
