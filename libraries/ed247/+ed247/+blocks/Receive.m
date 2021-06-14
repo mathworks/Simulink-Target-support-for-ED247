@@ -113,7 +113,7 @@ classdef Receive < ed247.blocks.aBlock
             
             outputports     = get(obj.block_,'PortHandles');
             outputports     = outputports.Outport;
-            for iout = 1:numel(outputports)
+            for iout = 1:min([height(portlabels),numel(outputports)])
                 set(outputports(iout), 'Name', portlabels.Label{iout})
             end
             
