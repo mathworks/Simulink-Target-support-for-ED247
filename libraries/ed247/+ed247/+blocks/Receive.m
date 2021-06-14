@@ -48,21 +48,23 @@ classdef Receive < ed247.blocks.aBlock
         
         function portlabel = get.PortLabel(obj)
             
-            outputports     = get(obj.block_,'PortHandles');
-            outputports     = outputports.Outport;
-            
-            portlabel = table(repmat({'output'},numel(outputports),1), (1:numel(outputports))', repmat({''},numel(outputports),1), ...
-                'VariableNames', {'Type','Number','Label'});
-            
             configuration   = obj.Configuration;
-            
+            refresh_factor = str2double(get(obj.block_,'refresh_factor'));
+            isrefresh = refresh_factor > 0;
+                
             if ~isempty(configuration) && strcmp(get(obj.block_,'show_port_labels'),'on')
                 
-                outputsignals   = configuration(ismember({configuration.direction},{'IN','INOUT'}));
+                outputsignals = configuration(ismember({configuration.direction},{'IN','INOUT'}));
                 
-                refresh_factor = str2double(get(obj.block_,'refresh_factor'));
-                isrefresh = refresh_factor > 0;
+                if isrefresh
+                    nports = numel(outputsignals) * 2;
+                else
+                    nports = numel(outputsignals);
+                end
                 
+                portlabel = table(repmat({'output'},nports,1), (1:nports)', repmat({''},nports,1), ...
+                    'VariableNames', {'Type','Number','Label'});
+                                                
                 iport = 1;
                 for isig = 1:numel(outputsignals)
                     
@@ -73,13 +75,19 @@ classdef Receive < ed247.blocks.aBlock
                     iport = iport + 1;
                     
                     % Refresh port
-                    if isrefresh && height(portlabel) > numel(outputsignals)
+                    if isrefresh
                         portlabel.Label{iport} = sprintf('%s_refresh',basename);
                         iport = iport + 1;
                     end
                     
                 end
                 
+            else
+                outports = get(obj.block_,'PortHandles');
+                outports = outports.Outport;
+                nports = numel(outports);
+                portlabel = table(repmat({'output'},nports,1), (1:nports)', repmat({''},nports,1), ...
+                    'VariableNames', {'Type','Number','Label'});
             end
             
         end
@@ -166,7 +174,7 @@ classdef Receive < ed247.blocks.aBlock
             
             sigbusnames = strcat(elementnames,'_receive');
             if isrefresh
-                sigbus = cellfun(@(x) add_block('simulink/Signal Routing/Bus Creator', sprintf('%s/%s', parent, x)),sigbusnames);
+                sigbus = cellfun(@(x) add_block('simulink/Signal Routing/Bus Creator', sprintf('%s/%s', parent, x),'MakeNameUnique','on'),sigbusnames);
                 allbus = [mainbus,sigbus];
             else
                 allbus = mainbus;
