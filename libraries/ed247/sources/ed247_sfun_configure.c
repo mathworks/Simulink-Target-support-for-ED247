@@ -4,6 +4,7 @@
 IO_t* configureInitialize(SimStruct *S){
 
 	IO_t *io;
+	configuration_status_t status;
 
 	ssSetNumDWork(S, 0);
 
@@ -16,7 +17,8 @@ IO_t* configureInitialize(SimStruct *S){
 	if (configurationFile != NULL){
 		myprintf("Configuration file = '%s'\n", configurationFile);
 		myprintf("Log file = '%s'\n", logFile);
-		read_ed247_configuration(configurationFile, io, logFile);
+		status = read_ed247_configuration(configurationFile, io, logFile);
+		myprintf("Read status = %d\n", status);
 
 		myprintf("%d input streams, %d input signals\n", io->inputs->nstreams, io->inputs->nsignals);
 		myprintf("%d output streams, %d output signals\n", io->outputs->nstreams, io->outputs->nsignals);
