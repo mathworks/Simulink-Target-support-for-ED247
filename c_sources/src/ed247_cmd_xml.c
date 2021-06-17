@@ -19,6 +19,7 @@
 
 	// Check that file exist
 	if (fileexists(filename) != 0){
+		myprintf("Cannot find file : %s\n",filename);
 		return CMD_READ_INVALID_FILE;
 	}
 
@@ -44,17 +45,41 @@
 	for (xml_node_iter = xmlRootNode->children; xml_node_iter != NULL; xml_node_iter = xml_node_iter->next){
 
 		if (strcmp(xml_node_iter->name, "A429_Bus") == 0){
-			fillA429(xml_node_iter, (data->a429 + data->counter.a429));
-			data->counter.a429++;
+
+			if (data->counter.a429 < MAX_A429_BUS){
+				fillA429(xml_node_iter, (data->a429 + data->counter.a429));
+				data->counter.a429++;
+			} else {
+				myprintf("[%s] Too many A429 buses, skip after %d\n", "cmd_read_data", data->counter.a429+1);
+			}
+
 		} else if (strcmp(xml_node_iter->name, "A664_SamplingMessage") == 0){
-			fillA664(xml_node_iter, (data->a664 + data->counter.a664));
-			data->counter.a664++;
+
+			if (data->counter.a664 < MAX_A664_MESSAGES){
+				fillA664(xml_node_iter, (data->a664 + data->counter.a664));
+				data->counter.a664++;
+			} else {
+				myprintf("[%s] Too many A664 messages, skip after %d\n", "cmd_read_data", data->counter.a664+1);
+			}
+
 		} else if (strcmp(xml_node_iter->name, "A825_SamplingMessage") == 0){
-			fillA825(xml_node_iter, (data->a825 + data->counter.a825));
-			data->counter.a825++;
+
+			if (data->counter.a825 < MAX_A825_MESSAGES){
+				fillA825(xml_node_iter, (data->a825 + data->counter.a825));
+				data->counter.a825++;
+			} else {
+				myprintf("[%s] Too many A825 messages, skip after %d\n", "cmd_read_data", data->counter.a825+1);
+			}
+
 		} else if (strcmp(xml_node_iter->name, "NAD_Variable") == 0){
-			fillNAD(xml_node_iter, (data->nad + data->counter.nad));
-			data->counter.nad++;
+
+			if (data->counter.nad < MAX_NAD_MESSAGES){
+				fillNAD(xml_node_iter, (data->nad + data->counter.nad));
+				data->counter.nad++;
+			} else {
+				myprintf("[%s] Too many NAD messages, skip after %d\n", "cmd_read_data", data->counter.nad+1);
+			}
+
 		}
 
 	}
@@ -68,72 +93,6 @@
 	}
 
 	return CMD_READ_OK;
-
- }
-
-/*
- * MEMORY ALLOCATION
- */
- LIBED247_EXPORT cmd_allocate_memory_status_t cmd_allocate_memory(cmd_data_t **data){
-
-	int i;
-
-	if (((*data)=(cmd_data_t*)malloc(sizeof(cmd_data_t))) == NULL) {
-		return CMD_MALLOC_FAILURE;
-	}
-
-	if (((*data)->a429=(cmd_data_a429_t*)malloc(sizeof(cmd_data_a429_t) * MAX_A429_BUS)) == NULL) {
-		return CMD_A429_MALLOC_FAILURE;
-	}
-	for (i = 0; i<MAX_A429_BUS; i++){
-		if (((*data)->a429[i].messages=(cmd_data_a429_message_t*)malloc(sizeof(cmd_data_a429_message_t) * MAX_A429_MSG_PER_BUS)) == NULL) {
-			return CMD_A429_MESSAGE_MALLOC_FAILURE;
-		}
-	}
-
-	if (((*data)->a664=(cmd_data_a664_t*)malloc(sizeof(cmd_data_a664_t) * MAX_A664_MESSAGES)) == NULL) {
-		return CMD_A664_MALLOC_FAILURE;
-	}
-
-	if (((*data)->a825=(cmd_data_a825_t*)malloc(sizeof(cmd_data_a825_t) * MAX_A825_MESSAGES)) == NULL) {
-		return CMD_A825_MALLOC_FAILURE;
-	}
-
-	if (((*data)->nad=(cmd_data_nad_t*)malloc(sizeof(cmd_data_nad_t) * MAX_NAD_MESSAGES)) == NULL) {
-		return CMD_NAD_MALLOC_FAILURE;
-	}
-
-	return CMD_ALLOCATION_OK;
-
- }
- 
- LIBED247_EXPORT cmd_free_memory_status_t cmd_free_memory(cmd_data_t *data){
-
-	int i;
-
-	if (data->a664 != NULL) {
-		free(data->a664);
-	}
-/*
-	for (i = 0; i<data->counter.a429 && i<MAX_A429_BUS; i++){
-		if (data->a429[i].messages != NULL) {
-			free(data->a429[i].messages);
-		}
-	}
-*/
-	if (data->a429 != NULL) {
-		free(data->a429);
-	}
-
-	if (data->nad != NULL) {
-		free(data->nad);
-	}
-
-	if (data != NULL) {/* polyspace RTE:UNR [Justified:Low] Robustness */
-		free(data);
-	}
-
-	return CMD_FREE_OK;
 
  }
  
@@ -158,7 +117,7 @@
 
 	// Node children (messages)
 	data->n_messages = 0;
-	for (xml_node_iter = node->children; xml_node_iter != NULL; xml_node_iter = xml_node_iter->next){
+	for (xml_node_iter = node->children; xml_node_iter != NULL && data->n_messages < MAX_A429_MSG_PER_BUS; xml_node_iter = xml_node_iter->next){
 
 		if (xml_node_iter->type == XML_NODE_ELEMENT){
 			fillA429Message(xml_node_iter, (data->messages + data->n_messages));
