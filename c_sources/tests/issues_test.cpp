@@ -30,7 +30,7 @@
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
 
 	EXPECT_EQ(data->inputs->nstreams, 12);
-	EXPECT_EQ(data->inputs->nsignals, 573);
+	EXPECT_EQ(data->inputs->nsignals, 553);
 
 	EXPECT_EQ(data->outputs->nstreams, 27);
 	EXPECT_EQ(data->outputs->nsignals, 599);
