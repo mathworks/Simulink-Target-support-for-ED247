@@ -2,12 +2,16 @@
 #
 # Syntax
 #	./runTests.sh
+#	./runTests.sh TestName
+#	./runTests.sh TestName 10
+#	DEBUG=1 ./runTests.sh
 #
 # Copyright 2020 The MathWorks, Inc.
 #
 
 # Inputs
 TEST_FILTER=${1:-""}
+MAX_ITERATIONS=${2:-"1"}
 
 # Environment variables
 CC_OPTS=""
@@ -59,8 +63,12 @@ else
 fi
 
 # Execute tests
-FILEFOLDER=${TESTFILEFOLDER} ${BUILD_FOLDER}/ed247SimulinkAdapter.exe ${OPTS}
-TEST_STATUS=$?
+for (( ITERATION=1; ITERATION<=${MAX_ITERATIONS}; ITERATION++ ))
+do
+	echo "#${ITERATION}/${MAX_ITERATIONS}"
+	FILEFOLDER=${TESTFILEFOLDER} ${BUILD_FOLDER}/ed247SimulinkAdapter.exe ${OPTS}
+	TEST_STATUS=$?
+done
 
 popd
 
