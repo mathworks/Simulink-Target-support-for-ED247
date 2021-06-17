@@ -122,7 +122,13 @@ classdef Pipeline < matlab.mixin.SetGet
             quit(status, 'force')
         end
         
-        function varargout = run(obj)
+        function varargout = run(obj,varargin)
+            
+            p = inputParser();
+            p.addParameter('SkipCompile',false,@(x) validateattributes(x,{'logical'},{'scalar'}))
+            p.addParameter('SkipPackage',false,@(x) validateattributes(x,{'logical'},{'scalar'}))
+            p.addParameter('SkipTests',false,@(x) validateattributes(x,{'logical'},{'scalar'}))
+            parse(p,varargin{:})
             
             obj.status_ = 0;
             obj.results_ = matlab.unittest.TestResult.empty;
@@ -133,12 +139,20 @@ classdef Pipeline < matlab.mixin.SetGet
                 
                 openProject(obj,'force')
                 
-                compile(obj)
-                package(obj)
-                obj.results_ = test(obj);
+                if ~p.Results.SkipCompile
+                    compile(obj)
+                end
                 
-                obj.status_ = nnz([obj.results_.Failed]);
-                obj.show(obj.results_)
+                if ~p.Results.SkipPackage
+                    package(obj)
+                end
+                
+                if ~p.Results.SkipTests
+                    obj.results_ = test(obj);
+                    
+                    obj.status_ = nnz([obj.results_.Failed]);
+                    obj.show(obj.results_)
+                end
                 
             catch me
                 obj.show(me.getReport())

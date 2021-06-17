@@ -1,5 +1,7 @@
 archives/
+analysis/
 c_sources/build/
+c_sources/debugDev.sh
 *.log
 *.mex*
 CoverageResults-*.xml

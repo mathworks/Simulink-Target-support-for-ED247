@@ -91,6 +91,33 @@ classdef ECIC < matlab.mixin.SetGet
             
         end
         
+        function S = struct(obj)
+            
+            S = struct( ...
+                'ECICFile',         {obj.filename_}, ...
+                'ICDFiles',         {obj.icdfiles_}, ...
+                'Configuration',    {obj.configuration_} ...
+                );
+            
+        end
+        
+    end
+    
+    %% STATIC METHODS
+    methods (Static)
+       
+        function obj = fromStruct(S)
+            
+            if exist(S.ECICFile,'file') == 2
+                obj = ed247.ECIC(S.ECICFile);
+                obj.icdfiles_ = S.ICDFiles;
+                obj.configuration_ = S.Configuration;
+            else
+                obj = ed247.ECIC.empty;
+            end
+            
+        end
+        
     end
     
     %% PROTECTED HELPERS

@@ -26,7 +26,7 @@
  #define LIBED247_EXPORT
  #endif
  
- #define MAX_A429_BUS			64
+ #define MAX_A429_BUS			128
  #define MAX_A429_MSG_PER_BUS	128
  #define MAX_A664_MESSAGES		64
  #define MAX_A825_MESSAGES		64
@@ -110,7 +110,7 @@
  typedef struct {
 	 char 						name[STRING_MAX_LENGTH];
 	 int 						n_messages;
-	 cmd_data_a429_message_t	*messages;
+	 cmd_data_a429_message_t	messages[MAX_A429_MSG_PER_BUS];
  } cmd_data_a429_t;
 
  typedef struct {
@@ -146,10 +146,10 @@
  
  typedef struct {
 	 cmd_counter_t 				counter;
-	 cmd_data_a429_t 			*a429;
-	 cmd_data_a664_t 			*a664;
-	 cmd_data_a825_t 			*a825;
-	 cmd_data_nad_t  			*nad;
+	 cmd_data_a429_t 			a429[MAX_A429_BUS];
+	 cmd_data_a664_t 			a664[MAX_A664_MESSAGES];
+	 cmd_data_a825_t 			a825[MAX_A825_MESSAGES];
+	 cmd_data_nad_t  			nad[MAX_NAD_MESSAGES];
  } cmd_data_t;
  
  
@@ -162,9 +162,6 @@ extern "C" {
     
  extern LIBED247_EXPORT cmd_read_status_t cmd_read_data(const char *filename, cmd_data_t *data);
  
- extern LIBED247_EXPORT cmd_allocate_memory_status_t cmd_allocate_memory(cmd_data_t **config);
- extern LIBED247_EXPORT cmd_free_memory_status_t cmd_free_memory(cmd_data_t *config);
-
  static void fillA429(xmlNodePtr node, cmd_data_a429_t *data); 
  static void fillA429Message(xmlNodePtr node, cmd_data_a429_message_t *data);
  static void fillNAD(xmlNodePtr node, cmd_data_nad_t *data);

@@ -18,6 +18,7 @@
  class A664Test : public FileFolderTest {};
  class A825Test : public FileFolderTest {};
  class NADTest : public FileFolderTest {};
+ class IssuesTest : public FileFolderTest {};
 
  class ConfigurationTest : public FileFolderTest {};
  class ToolsTest : public FileFolderTest {};

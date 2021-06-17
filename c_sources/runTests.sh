@@ -2,12 +2,16 @@
 #
 # Syntax
 #	./runTests.sh
+#	./runTests.sh TestName
+#	./runTests.sh TestName 10
+#	DEBUG=1 ./runTests.sh
 #
 # Copyright 2020 The MathWorks, Inc.
 #
 
 # Inputs
 TEST_FILTER=${1:-""}
+MAX_ITERATIONS=${2:-"1"}
 
 # Environment variables
 CC_OPTS=""
@@ -20,7 +24,7 @@ fi
 #CMAKE_FOLDER=/c/Files/SANDBOX/git/P11222-AirbusOperationsSAS-ED247/ED247_LIBRARY/deps/new_dependencies/CMAKE/mingw4.9.2/x64
 
 MINGW_FOLDER=/c/Files/PROGRAMS/ThirdParty/MinGW64/4.9.2-airbus/bin
-CMAKE_FOLDER=/c/Files/PROGRAMS/ThirdParty/cmake
+CMAKE_FOLDER=/c/Files/PROGRAMS/ThirdParty/cmake/3.20.2
 
 # Application
 ROOT_FOLDER=$(cd `dirname $0` && pwd)
@@ -31,7 +35,7 @@ export CC=${MINGW_FOLDER}/gcc.exe
 export CXX=${MINGW_FOLDER}/g++.exe
 export AR=${MINGW_FOLDER}/ar.exe
 
-export PATH=${ROOT_FOLDER}/../ed247/windows/mingw4.9.2/x64/lib:${PATH}
+export PATH=${ROOT_FOLDER}/../../ED247_LIBRARY/_install/lib:${PATH}
 
 pushd ${BUILD_FOLDER}
 
@@ -59,8 +63,12 @@ else
 fi
 
 # Execute tests
-FILEFOLDER=${TESTFILEFOLDER} ${BUILD_FOLDER}/ed247SimulinkAdapter.exe ${OPTS}
-TEST_STATUS=$?
+for (( ITERATION=1; ITERATION<=${MAX_ITERATIONS}; ITERATION++ ))
+do
+	echo "#${ITERATION}/${MAX_ITERATIONS}"
+	FILEFOLDER=${TESTFILEFOLDER} ${BUILD_FOLDER}/ed247SimulinkAdapter.exe ${OPTS}
+	TEST_STATUS=$?
+done
 
 popd
 

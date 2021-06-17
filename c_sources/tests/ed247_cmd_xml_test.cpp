@@ -36,10 +36,7 @@
 	cmd_read_status_t status;
 	cmd_data_t *data;
 	std::string filename = filefolder_ + "/bridge_messages_description.xml";
-		
-	/* [ SETUP ] */
-	cmd_allocate_memory(&data);
-	
+
 	/* [ EXERCISE ] */
 	cmd_read_data(filename.c_str(), data);
 	
@@ -163,7 +160,7 @@
 	EXPECT_STREQ(	data->a429[3].messages[1].sdi,			"10");
 	EXPECT_EQ(		data->a429[3].messages[1].period_us,	0);
 	EXPECT_STREQ(	data->a429[3].messages[1].comment,		"T11_T11_PART1");
-	
+
 	// NAD details
 	// ------------
 	//
@@ -191,8 +188,5 @@
 	EXPECT_EQ(		data->nad[4].direction,					ED247_DIRECTION_IN);
 	EXPECT_EQ(		data->nad[4].type,						ED247_NAD_TYPE_UINT8);
 	EXPECT_STREQ(	data->nad[4].comment,					"T1");
-	
-	/* [ TEARDOWN ] */
-	cmd_free_memory(data);	
-	
+
  }

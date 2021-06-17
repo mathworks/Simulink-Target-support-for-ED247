@@ -25,10 +25,13 @@
  int fileexists(const char * filename){
     /* try to open file to read */
     FILE *file;
+	myprintf("Does file \"%s\" exist ?", filename);
     if (file = fopen(filename, "r")){
         fclose(file);
+		myprintf("\tYES\n");
         return 0;
     }
+	myprintf("\tNO\n");
     return 1;
  }
 
@@ -43,5 +46,10 @@
 			return;
 		}
 	}
+
+	if (strcmp(folder,path) == 0){
+		strcpy(folder,"");
+	}
+
  }
 

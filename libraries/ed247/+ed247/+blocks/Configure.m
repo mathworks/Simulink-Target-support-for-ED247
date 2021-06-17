@@ -66,8 +66,20 @@ classdef Configure < ed247.blocks.aBlock
             if isempty(filename)
                 displaytext = 'ED247';
             else
+                
+                configuration = obj.Configuration;
+                
+                if ~isempty(configuration)
+                    receivedsignals = nnz(strcmp({configuration.direction},'IN'));
+                    sendsignals = nnz(strcmp({configuration.direction},'OUT'));
+                    iotext = sprintf('\n\nReceived = %d\nSend = %d', receivedsignals, sendsignals);
+                else
+                    iotext = '';
+                end
+                
                 [~,file,ext] = fileparts(filename);
-                displaytext = [file,ext];
+                displaytext = [file,ext,iotext];
+                
             end
             
         end
@@ -212,10 +224,10 @@ classdef Configure < ed247.blocks.aBlock
             mdlwrksp    = get_param(modelname,'ModelWorkspace');
             
             filename = obj.ConfigurationFile;
-            if ~isempty(filename)
+            if ~isempty(filename) && ~strcmp(filename, obj.ECICFile)
                 ecic = ed247.ECIC(filename);
                 read(ecic)
-                assignin(mdlwrksp, 'ED247Configuration', ecic.Configuration)
+                assignin(mdlwrksp, 'ED247Configuration', struct(ecic))
             end
             
         end

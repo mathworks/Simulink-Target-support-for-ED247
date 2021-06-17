@@ -22,9 +22,6 @@
 	cmd_data_t *data;
 	std::string filename = filefolder_ + "/a825_cmd_simple01.xml";
 
-	/* [ SETUP ] */
-	cmd_allocate_memory(&data);
-
 	/* [ EXERCISE ] */
 	cmd_read_data(filename.c_str(), data);
 

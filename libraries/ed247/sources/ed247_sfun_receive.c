@@ -11,6 +11,8 @@ void receiveInitialize(SimStruct *S, IO_t *io) {
 	ssAllowSignalsWithMoreThan2D(S);
 	DECL_AND_INIT_DIMSINFO(di);
 
+	myprintf("\n\n=== RECEIVE INITIALIZATION START ===\n");
+
 	refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(S,3)) );
 	myprintf("Refresh factor = %d\n",*refreshFactor);
 
@@ -85,6 +87,8 @@ void receiveInitialize(SimStruct *S, IO_t *io) {
 		ssSetDWorkDataType(S, isig, SS_UINT32);
 
 	}
+
+	myprintf("\n=== RECEIVE INITIALIZATION END ===\n\n");
 
 }
 #endif

@@ -48,38 +48,46 @@ classdef Receive < ed247.blocks.aBlock
         
         function portlabel = get.PortLabel(obj)
             
-            outputports     = get(obj.block_,'PortHandles');
-            outputports     = outputports.Outport;
-            
-            portlabel = table(repmat({'output'},numel(outputports),1), (1:numel(outputports))', repmat({''},numel(outputports),1), ...
-                'VariableNames', {'Type','Number','Label'});
-            
             configuration   = obj.Configuration;
-            
+            refresh_factor = str2double(get(obj.block_,'refresh_factor'));
+            isrefresh = refresh_factor > 0;
+                
             if ~isempty(configuration) && strcmp(get(obj.block_,'show_port_labels'),'on')
                 
-                outputsignals   = configuration(ismember({configuration.direction},{'IN','INOUT'}));
+                outputsignals = configuration(ismember({configuration.direction},{'IN','INOUT'}));
                 
-                refresh_factor = str2double(get(obj.block_,'refresh_factor'));
-                isrefresh = refresh_factor > 0;
+                if isrefresh
+                    nports = numel(outputsignals) * 2;
+                else
+                    nports = numel(outputsignals);
+                end
                 
+                portlabel = table(repmat({'output'},nports,1), (1:nports)', repmat({''},nports,1), ...
+                    'VariableNames', {'Type','Number','Label'});
+                                                
                 iport = 1;
                 for isig = 1:numel(outputsignals)
                     
                     basename = outputsignals(isig).name;
                     
-                    % Data port                    
+                    % Data port
                     portlabel.Label{iport} = basename;
                     iport = iport + 1;
                     
                     % Refresh port
-                    if isrefresh && height(portlabel) > numel(outputsignals)
+                    if isrefresh
                         portlabel.Label{iport} = sprintf('%s_refresh',basename);
                         iport = iport + 1;
                     end
                     
                 end
                 
+            else
+                outports = get(obj.block_,'PortHandles');
+                outports = outports.Outport;
+                nports = numel(outports);
+                portlabel = table(repmat({'output'},nports,1), (1:nports)', repmat({''},nports,1), ...
+                    'VariableNames', {'Type','Number','Label'});
             end
             
         end
@@ -105,7 +113,7 @@ classdef Receive < ed247.blocks.aBlock
             
             outputports     = get(obj.block_,'PortHandles');
             outputports     = outputports.Outport;
-            for iout = 1:numel(outputports)
+            for iout = 1:min([height(portlabels),numel(outputports)])
                 set(outputports(iout), 'Name', portlabels.Label{iout})
             end
             
@@ -143,7 +151,72 @@ classdef Receive < ed247.blocks.aBlock
                 set(obj.block_,'enable_refresh','off')
             end
         end
+        
+        function createBus(obj)
+            
+            parent = get(obj.block_,'Parent');
+            blockname = get(obj.block_,'Name');
+            position = get(obj.block_,'Position');
+            
+            configuration   = obj.Configuration;
+            
+            refresh_factor = str2double(get(obj.block_,'refresh_factor'));
+            isrefresh = refresh_factor > 0;
+            
+            mainbusname = 'ReceiveOutputs';
+            mainbus = add_block('simulink/Signal Routing/Bus Creator', sprintf('%s/%s', parent, mainbusname));
+            set(mainbus, ...
+                'Position',     [position(3)+100,position(2),position(3)+110,position(4)], ...
+                'Inputs',       num2str(numel(configuration)), ...
+                'ShowName',     'off')
+            
+            elementnames = {configuration.name};
+            
+            sigbusnames = strcat(elementnames,'_receive');
+            if isrefresh
+                sigbus = cellfun(@(x) add_block('simulink/Signal Routing/Bus Creator', sprintf('%s/%s', parent, x),'MakeNameUnique','on'),sigbusnames);
+                allbus = [mainbus,sigbus];
+            else
+                allbus = mainbus;
+            end
+            
+            height = (position(4)-position(2))/numel(sigbusnames);
+            y = [position(2),position(2)+height];
+            for i_sig = 1:numel(sigbusnames)
                 
+                if isrefresh
+                    
+                    set(sigbus(i_sig), ...
+                        'Position',     [position(3)+45,y(1),position(3)+55,y(2)], ...
+                        'Inputs',       '2', ...
+                        'ShowName',     'off')
+                    y = [y(2),y(2)+height];
+                    
+                    data = add_line(parent, ...
+                        sprintf('%s/%d', blockname, 1+(i_sig-1)*2), sprintf('%s/1',sigbusnames{i_sig}));
+                    set(data,'Name','data')
+                    refresh = add_line(parent, ...
+                        sprintf('%s/%d', blockname, i_sig*2), sprintf('%s/2',sigbusnames{i_sig}));
+                    set(refresh,'Name','refresh')
+                    
+                    source = sprintf('%s/1',sigbusnames{i_sig});
+                    
+                else
+                    source = sprintf('%s/%d', blockname, i_sig);
+                end
+                
+                sig = add_line(parent, source, sprintf('%s/%d',mainbusname,i_sig));
+                set(sig,'Name',configuration(i_sig).name)
+                
+            end
+            
+            subname = sprintf('%s_bus',blockname);
+            Simulink.BlockDiagram.createSubsystem(allbus, 'Name', subname)
+            position = get_param([parent,'/',subname], 'Position');
+            set_param([parent,'/',subname], 'Position', [position(1)+50,position(2),position(1)+55,position(4)], 'ShowName','off')
+            
+        end
+        
     end
     
     %% STATIC METHODS

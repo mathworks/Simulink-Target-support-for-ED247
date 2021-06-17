@@ -66,6 +66,8 @@ static void mdlInitializeSizes(SimStruct *S)
 			return;
 		}
 		sendInitialize(S, io);
+		#else
+		myprintf("SEND : No initialize function\n");
 		#endif
 
 	} else if (*blockType == RECEIVE){
@@ -77,12 +79,16 @@ static void mdlInitializeSizes(SimStruct *S)
 			return;
 		}
 		receiveInitialize(S, io);
+		#else
+		myprintf("RECEIVE : No initialize function\n");
 		#endif
 
 	} else {
 		#if defined(ED247_CONFIGURE_INITIALIZE)
 		myprintf("CONFIGURATION block (%d)\n", (int_T) *blockType);
 		io = configureInitialize(S);
+		#else
+		myprintf("CONFIGURATION : No initialize function\n");
 		#endif
 	}
 
