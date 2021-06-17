@@ -43,7 +43,7 @@ export AR=${MINGW_FOLDER}/ar.exe
 export PATH=${ROOT_FOLDER}/../ED247_LIBRARY/_install/lib:${PATH}
 
 echo "## Delete previous build folder : ${BUILD_FOLDER}"
-rm -f ${BUILD_FOLDER}
+rm -Rf ${BUILD_FOLDER}
 mkdir -p ${BUILD_FOLDER}
 
 pushd ${BUILD_FOLDER}
