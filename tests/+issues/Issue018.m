@@ -296,8 +296,8 @@ classdef (SharedTestFixtures={...
             %   - configuration file
             %   - Enable refresh
             %
-            set(configurationblock, 'configurationFilename', '''ELACe2M_ECIC.xml''')
-            set(receiveblock, 'enable_refresh', 'on')
+            set(configurationblock, 'configurationFilename', '''ELACe2C_ECIC.xml''')
+            set(receiveblock, 'enable_refresh', 'on', 'show_port_labels', 'on')
             
             % [ EXERCISE ]
             % Run SIM to update diagram only (do not care about warnings)
@@ -307,8 +307,8 @@ classdef (SharedTestFixtures={...
             
             % [ VERIFY ]
             receiveports = get(receiveblock,'PortHandles');
-            testCase.verifyLength(receiveports.Outport,136, ...
-                sprintf('[A429] Receive block should have %d ports (%d x2 as refresh is enabled)', 136, 68))
+            testCase.verifyLength(receiveports.Outport,1198, ...
+                sprintf('[A429] Receive block should have %d ports (%d x2 as refresh is enabled)', 1198, 599))
             
         end
         
