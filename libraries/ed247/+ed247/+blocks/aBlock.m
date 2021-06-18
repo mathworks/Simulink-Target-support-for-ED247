@@ -64,7 +64,7 @@ classdef (Abstract) aBlock < matlab.mixin.SetGet
             modelname   = bdroot(obj.block_);
             mdlwrksp    = get_param(modelname,'ModelWorkspace');
             
-            if ~isempty(mdlwrksp) && mdlwrksp.hasVariable('ED247Configuration')
+            if ~isempty(mdlwrksp) && mdlwrksp.hasVariable('ED247Configuration') && numel(mdlwrksp.getVariable('ED247Configuration')) == 1
                 ecic = ed247.ECIC.fromStruct(mdlwrksp.getVariable('ED247Configuration'));
                 ecicfile = ecic.ECICFile;
             else
