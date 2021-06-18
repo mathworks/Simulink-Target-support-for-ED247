@@ -123,7 +123,7 @@ classdef (SharedTestFixtures={ ...
             testCase.assertEqual(exist(cfile,'file'),2, sprintf('Source file does not exist ("%s")', cfile))
             
             hcontent = fileread(hfile);
-            pattern = regexptranslate('escape','extern char configurationFile[256];');
+            pattern = regexptranslate('escape','extern char *configurationFile;');
             testCase.verifyMatches(hcontent, pattern, ...
                 sprintf('Header file ("%s") should contains configurationFile declaration', hfile))
             
@@ -194,6 +194,7 @@ classdef (SharedTestFixtures={ ...
         function recv = readDump(testCase, dumpfilename)
            
             fid = fopen(fullfile(testCase.workfolder_,dumpfilename),'rt');
+            testCase.assertGreaterThan(fid,0,'Unable to open dump file')
             headers = textscan(fid,repmat('%s',1,9),1,'Delimiter',';'); %#ok<NASGU>
             data = textscan(fid,'%*d%*d%*d%*d%*s%*d%*d%*d%*d%s', 'Delimiter', ';');
             fclose(fid);
