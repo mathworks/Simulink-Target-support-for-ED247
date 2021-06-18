@@ -18,8 +18,10 @@ classdef Receive < ed247.blocks.aBlock
     %% CONSTRUCTOR
     methods
         
-        function obj = Receive(block,varargin)
-            obj@ed247.blocks.aBlock(block,varargin{:})
+        function obj = Receive(block,varargin)            
+            obj@ed247.blocks.aBlock(block,varargin{:})            
+            obj.assert(strcmp(get(obj.block_,'ReferenceBlock'),'lib_ed247/ED247_Receive'), ...
+                'Block shall be a ED247 Receive block')
         end
         
     end
