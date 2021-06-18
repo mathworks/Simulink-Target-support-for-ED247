@@ -50,39 +50,11 @@ classdef Receive < ed247.blocks.aBlock
         
         function portlabel = get.PortLabel(obj)
             
-            configuration   = obj.Configuration;
-            refresh_factor = str2double(get(obj.block_,'refresh_factor'));
-            isrefresh = refresh_factor > 0;
+            ports = getPorts(obj);
                 
-            if ~isempty(configuration) && strcmp(get(obj.block_,'show_port_labels'),'on')
-                
-                outputsignals = configuration(ismember({configuration.direction},{'IN','INOUT'}));
-                
-                if isrefresh
-                    nports = numel(outputsignals) * 2;
-                else
-                    nports = numel(outputsignals);
-                end
-                
-                portlabel = table(repmat({'output'},nports,1), (1:nports)', repmat({''},nports,1), ...
-                    'VariableNames', {'Type','Number','Label'});
-                                                
-                iport = 1;
-                for isig = 1:numel(outputsignals)
-                    
-                    basename = outputsignals(isig).name;
-                    
-                    % Data port
-                    portlabel.Label{iport} = basename;
-                    iport = iport + 1;
-                    
-                    % Refresh port
-                    if isrefresh
-                        portlabel.Label{iport} = sprintf('%s_refresh',basename);
-                        iport = iport + 1;
-                    end
-                    
-                end
+            if ~isempty(ports) && strcmp(get(obj.block_,'show_port_labels'),'on')
+                                
+                portlabel = ports;
                 
             else
                 outports = get(obj.block_,'PortHandles');
@@ -159,63 +131,98 @@ classdef Receive < ed247.blocks.aBlock
             parent = get(obj.block_,'Parent');
             blockname = get(obj.block_,'Name');
             position = get(obj.block_,'Position');
-            
-            configuration   = obj.Configuration;
-            
+                        
             refresh_factor = str2double(get(obj.block_,'refresh_factor'));
             isrefresh = refresh_factor > 0;
-            
+                        
+            configuration = obj.Configuration;
+            outputsignals = configuration(ismember({configuration.direction},{'IN','INOUT'}));
+            ports = getPorts(obj);
+                        
             mainbusname = 'ReceiveOutputs';
             mainbus = add_block('simulink/Signal Routing/Bus Creator', sprintf('%s/%s', parent, mainbusname));
             set(mainbus, ...
                 'Position',     [position(3)+100,position(2),position(3)+110,position(4)], ...
-                'Inputs',       num2str(numel(configuration)), ...
+                'Inputs',       num2str(height(ports)), ...
                 'ShowName',     'off')
             
-            elementnames = {configuration.name};
+            elementnames = {outputsignals.name};            
+                           
+            source = arrayfun(@(x) sprintf('%s/%d',blockname,x), 1:numel(elementnames), 'UniformOutput', false);
             
-            sigbusnames = strcat(elementnames,'_receive');
-            if isrefresh
+            if any(isrefresh)
+                
+                refreshmask = ismember({outputsignals.signal_type},obj.TYPES_FOR_REFRESH);
+                
+                sigbusnames = strcat(elementnames(refreshmask),'_receive');
                 sigbus = cellfun(@(x) add_block('simulink/Signal Routing/Bus Creator', sprintf('%s/%s', parent, x),'MakeNameUnique','on'),sigbusnames);
+                
+                h = (position(4)-position(2))/numel(elementnames);
+                y1 = position(2)+h * (1:numel(elementnames));
+                y2 = y1 + h;
+                
+                arrayfun(@(b,x1,x2) set(b, ...
+                    'Position',     [position(3)+45,x1,position(3)+55,x2], ...
+                    'Inputs',       '2', ...
+                    'ShowName',     'off'), sigbus, y1(refreshmask), y2(refreshmask))
+                
+                portrefreshmask = ismember(ports.Label,elementnames(refreshmask));
+                
+                arrayfun(@(i,b) add_line(parent, ...
+                    sprintf('%s/%d', blockname, i), sprintf('%s/1',get(b,'Name')), ...
+                    'Name','data'), ports.Number(portrefreshmask), sigbus)
+                arrayfun(@(i,b) add_line(parent, ...
+                    sprintf('%s/%d', blockname, i), sprintf('%s/2',get(b,'Name')), ...
+                    'Name','refresh'), ports.Number(portrefreshmask)+1, sigbus)
+                
+                source(refreshmask) = cellfun(@(x) sprintf('%s/1', x), sigbusnames, 'UniformOutput', false);
+                                
                 allbus = [mainbus,sigbus];
+                
             else
                 allbus = mainbus;
             end
             
-            height = (position(4)-position(2))/numel(sigbusnames);
-            y = [position(2),position(2)+height];
-            for i_sig = 1:numel(sigbusnames)
-                
-                if isrefresh
-                    
-                    set(sigbus(i_sig), ...
-                        'Position',     [position(3)+45,y(1),position(3)+55,y(2)], ...
-                        'Inputs',       '2', ...
-                        'ShowName',     'off')
-                    y = [y(2),y(2)+height];
-                    
-                    data = add_line(parent, ...
-                        sprintf('%s/%d', blockname, 1+(i_sig-1)*2), sprintf('%s/1',sigbusnames{i_sig}));
-                    set(data,'Name','data')
-                    refresh = add_line(parent, ...
-                        sprintf('%s/%d', blockname, i_sig*2), sprintf('%s/2',sigbusnames{i_sig}));
-                    set(refresh,'Name','refresh')
-                    
-                    source = sprintf('%s/1',sigbusnames{i_sig});
-                    
-                else
-                    source = sprintf('%s/%d', blockname, i_sig);
-                end
-                
-                sig = add_line(parent, source, sprintf('%s/%d',mainbusname,i_sig));
-                set(sig,'Name',configuration(i_sig).name)
-                
-            end
-            
+            arrayfun(@(s,i) add_line(parent, char(s), sprintf('%s/%d',mainbusname,i), ...
+                    'Name',configuration(i).name), source, 1:numel(elementnames)) 
+                                   
             subname = sprintf('%s_bus',blockname);
             Simulink.BlockDiagram.createSubsystem(allbus, 'Name', subname)
             position = get_param([parent,'/',subname], 'Position');
             set_param([parent,'/',subname], 'Position', [position(1)+50,position(2),position(1)+55,position(4)], 'ShowName','off')
+            
+        end
+        
+    end
+    
+    %% PROTECTED METHODS
+    methods (Access = protected)
+       
+        function ports = getPorts(obj)
+            
+            configuration   = obj.Configuration;
+            refresh_factor = str2double(get(obj.block_,'refresh_factor'));
+            isrefresh = refresh_factor > 0;
+            
+            if ~isempty(configuration)
+                
+                outputsignals = configuration(ismember({configuration.direction},{'IN','INOUT'}));
+                
+                names = {outputsignals.name};
+                
+                if isrefresh
+                    names(2,:) = strcat({outputsignals.name},'_refresh');
+                    names(2,~ismember({outputsignals.signal_type},obj.TYPES_FOR_REFRESH)) = {''};
+                end
+                
+                names = names(~cellfun(@isempty,names));
+                
+                ports = table(repmat({'output'},size(names)), (1:length(names))', names, ...
+                    'VariableNames', {'Type','Number','Label'});
+                
+            else
+                ports = table();
+            end
             
         end
         
