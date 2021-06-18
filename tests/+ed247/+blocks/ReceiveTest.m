@@ -67,6 +67,49 @@ classdef (SharedTestFixtures={...
             
         end
         
+        function testDisplayMixedRefresh(testCase)
+            
+            % [ SETUP ]
+            archivename = fullfile(testCase.filefolder_, 'ELAC_full.zip');
+            unzip(archivename,pwd)
+            
+            modelname = 'receivesimplea429';
+            new_system(modelname)
+            load_system(modelname)
+            closeModel = onCleanup(@() bdclose(modelname));
+            
+             %
+            % Add blocks in the model
+            %
+            configurationblockname = [modelname,'/Configure'];
+            configurationblock = add_block('lib_ed247/ED247_Configuration', configurationblockname);
+            
+            receiveblockname = [modelname,'/Receive'];
+            receiveblock = add_block('lib_ed247/ED247_Receive', receiveblockname);
+            
+            %
+            % Configure blocks
+            %   - configuration file
+            %   - Enable refresh
+            %
+            set(configurationblock, 'configurationFilename', '''ELACe2C_ECIC.xml''')
+            set(receiveblock, 'enable_refresh', 'on', 'show_port_labels', 'on')
+            
+            % [ EXERCISE ]
+            % Run SIM to update diagram only (do not care about warnings)
+            warning('off')
+            sim(modelname,'StopTime','0');
+            warning('on')
+                        
+            % [ VERIFY ]
+            b = ed247.blocks.Receive(receiveblock);
+            labels = b.PortLabel;
+            ports = get(receiveblock,'PortHandles');
+            testCase.verifyEqual(height(labels),numel(ports.Outport), ...
+                'Number of labels should match the number of ports')
+            
+        end
+        
     end
     
     %% PRIVATE PROPERTIES
