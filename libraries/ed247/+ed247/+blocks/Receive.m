@@ -18,8 +18,8 @@ classdef Receive < ed247.blocks.aBlock
     %% CONSTRUCTOR
     methods
         
-        function obj = Receive(block,varargin)            
-            obj@ed247.blocks.aBlock(block,varargin{:})            
+        function obj = Receive(block,varargin)
+            obj@ed247.blocks.aBlock(block,varargin{:})
             obj.assert(strcmp(get(obj.block_,'ReferenceBlock'),'lib_ed247/ED247_Receive'), ...
                 'Block shall be a ED247 Receive block')
         end
@@ -51,9 +51,9 @@ classdef Receive < ed247.blocks.aBlock
         function portlabel = get.PortLabel(obj)
             
             ports = getPorts(obj);
-                
+            
             if ~isempty(ports) && strcmp(get(obj.block_,'show_port_labels'),'on')
-                                
+                
                 portlabel = ports;
                 
             else
@@ -128,68 +128,100 @@ classdef Receive < ed247.blocks.aBlock
         
         function createBus(obj)
             
-            parent = get(obj.block_,'Parent');
-            blockname = get(obj.block_,'Name');
-            position = get(obj.block_,'Position');
-                        
-            refresh_factor = str2double(get(obj.block_,'refresh_factor'));
-            isrefresh = refresh_factor > 0;
-                        
-            configuration = obj.Configuration;
-            outputsignals = configuration(ismember({configuration.direction},{'IN','INOUT'}));
-            ports = getPorts(obj);
-                        
-            mainbusname = 'ReceiveOutputs';
-            mainbus = add_block('simulink/Signal Routing/Bus Creator', sprintf('%s/%s', parent, mainbusname));
-            set(mainbus, ...
-                'Position',     [position(3)+100,position(2),position(3)+110,position(4)], ...
-                'Inputs',       num2str(height(ports)), ...
-                'ShowName',     'off')
-            
-            elementnames = {outputsignals.name};            
-                           
-            source = arrayfun(@(x) sprintf('%s/%d',blockname,x), 1:numel(elementnames), 'UniformOutput', false);
-            
-            if any(isrefresh)
+            try
                 
-                refreshmask = ismember({outputsignals.signal_type},obj.TYPES_FOR_REFRESH);
+                hWait = waitbar(0, sprintf('Create bus for block %s', get(obj.block_,'Name')));
+                hAx = findobj(hWait,'Type','Axes');
+                hAx.Title.Interpreter = 'none';
+                pause(0.1)
                 
-                sigbusnames = strcat(elementnames(refreshmask),'_receive');
-                sigbus = cellfun(@(x) add_block('simulink/Signal Routing/Bus Creator', sprintf('%s/%s', parent, x),'MakeNameUnique','on'),sigbusnames);
+                parent = get(obj.block_,'Parent');
+                blockname = get(obj.block_,'Name');
+                position = get(obj.block_,'Position');
                 
-                h = (position(4)-position(2))/numel(elementnames);
-                y1 = position(2)+h * (1:numel(elementnames));
-                y2 = y1 + h;
+                refresh_factor = str2double(get(obj.block_,'refresh_factor'));
+                isrefresh = refresh_factor > 0;
                 
-                arrayfun(@(b,x1,x2) set(b, ...
-                    'Position',     [position(3)+45,x1,position(3)+55,x2], ...
-                    'Inputs',       '2', ...
-                    'ShowName',     'off'), sigbus, y1(refreshmask), y2(refreshmask))
+                configuration = obj.Configuration;
+                outputsignals = configuration(ismember({configuration.direction},{'IN','INOUT'}));
+                ports = getPorts(obj);
                 
-                portrefreshmask = ismember(ports.Label,elementnames(refreshmask));
+                waitbar(0.2, hWait, sprintf('Create main bus to regroup all received signals'))
                 
-                arrayfun(@(i,b) add_line(parent, ...
-                    sprintf('%s/%d', blockname, i), sprintf('%s/1',get(b,'Name')), ...
-                    'Name','data'), ports.Number(portrefreshmask), sigbus)
-                arrayfun(@(i,b) add_line(parent, ...
-                    sprintf('%s/%d', blockname, i), sprintf('%s/2',get(b,'Name')), ...
-                    'Name','refresh'), ports.Number(portrefreshmask)+1, sigbus)
+                mainbusname = 'ReceiveOutputs';
+                mainbus = add_block('simulink/Signal Routing/Bus Creator', sprintf('%s/%s', parent, mainbusname));
+                set(mainbus, ...
+                    'Position',     [position(3)+100,position(2),position(3)+110,position(4)], ...
+                    'Inputs',       num2str(height(ports)), ...
+                    'ShowName',     'off')
                 
-                source(refreshmask) = cellfun(@(x) sprintf('%s/1', x), sigbusnames, 'UniformOutput', false);
+                elementnames = {outputsignals.name};
+                                                
+                if any(isrefresh)
+                    
+                    refreshmask = ismember({outputsignals.signal_type},obj.TYPES_FOR_REFRESH);
+                    
+                    waitbar(0.4, hWait, sprintf('Create intermediate bus for signal with refresh (%d/%d)', nnz(refreshmask), numel(refreshmask)))
+                    
+                    sigbusnames = strcat(elementnames(refreshmask),'_receive');
+                    sigbus = cellfun(@(x) add_block('simulink/Signal Routing/Bus Creator', sprintf('%s/%s', parent, x),'MakeNameUnique','on'),sigbusnames);
+                    
+                    h = (position(4)-position(2))/numel(elementnames);
+                    y1 = position(2)+h * (1:numel(elementnames));
+                    y2 = y1 + h;
+                    
+                    arrayfun(@(b,x1,x2) set(b, ...
+                        'Position',     [position(3)+45,x1,position(3)+55,x2], ...
+                        'Inputs',       '2', ...
+                        'ShowName',     'off'), sigbus, y1(refreshmask), y2(refreshmask))
+                    
+                    portrefreshmask = ismember(ports.Label,elementnames(refreshmask));
+                    
+                    waitbar(0.5, hWait, sprintf('Connect signals to intermediate buses'))
+                    
+                    l = arrayfun(@(i,b) add_line(parent, ...
+                        sprintf('%s/%d', blockname, i), sprintf('%s/1',get(b,'Name'))), ...
+                        ports.Number(portrefreshmask), sigbus(:));
+                    set(l,'Name','data')
+                    l = arrayfun(@(i,b) add_line(parent, ...
+                        sprintf('%s/%d', blockname, i), sprintf('%s/2',get(b,'Name'))), ...
+                        ports.Number(portrefreshmask)+1, sigbus(:));
+                    set(l,'Name','refresh')
+                    
+                    source = arrayfun(@(x) sprintf('%s/%d',blockname,x), 1:height(ports), 'UniformOutput', false);
+                    source(find(refreshmask)+1) = [];
+                    source(refreshmask) = cellfun(@(x) sprintf('%s/1', x), sigbusnames, 'UniformOutput', false);
+                    
+                    allblocks = [obj.block_,mainbus,sigbus];
+                    
+                else
+                    source = arrayfun(@(x) sprintf('%s/%d',blockname,x), 1:numel(elementnames), 'UniformOutput', false);
+                    allblocks = [obj.block_,mainbus];
+                end
+                
+                set(mainbus, 'Inputs', num2str(numel(elementnames)))
+                
+                waitbar(0.7, hWait, sprintf('Connect all signals to main bus'))
+                
+                l = arrayfun(@(s,i) add_line(parent, char(s), sprintf('%s/%d',mainbusname,i)), source, 1:numel(elementnames));
+                arrayfun(@(x,y) set(x,'Name',char(y)), l, {outputsignals.name})
+                
+                waitbar(0.9, hWait, sprintf('Create subsystem for received signals'))
+                
+                tmpname = 'tmp_ed247_receive_with_bus';
+                Simulink.BlockDiagram.createSubsystem(allblocks, 'Name', tmpname)
+                set_param([parent,'/',tmpname],'Name',blockname)
+                
+                waitbar(1, hWait, sprintf('Bus and subsystem created successfully for block "%s"', blockname))
+                pause(0.5)
+                close(hWait)
+                
+            catch me
+                
+                delete(hWait)
+                obj.error("Error while creating bus (%s):\n%s", me.identifier, me.message)
                                 
-                allbus = [mainbus,sigbus];
-                
-            else
-                allbus = mainbus;
             end
-            
-            arrayfun(@(s,i) add_line(parent, char(s), sprintf('%s/%d',mainbusname,i), ...
-                    'Name',configuration(i).name), source, 1:numel(elementnames)) 
-                                   
-            subname = sprintf('%s_bus',blockname);
-            Simulink.BlockDiagram.createSubsystem(allbus, 'Name', subname)
-            position = get_param([parent,'/',subname], 'Position');
-            set_param([parent,'/',subname], 'Position', [position(1)+50,position(2),position(1)+55,position(4)], 'ShowName','off')
             
         end
         
@@ -197,7 +229,7 @@ classdef Receive < ed247.blocks.aBlock
     
     %% PROTECTED METHODS
     methods (Access = protected)
-       
+        
         function ports = getPorts(obj)
             
             configuration   = obj.Configuration;
@@ -216,6 +248,7 @@ classdef Receive < ed247.blocks.aBlock
                 end
                 
                 names = names(~cellfun(@isempty,names));
+                names = names(:);
                 
                 ports = table(repmat({'output'},size(names)), (1:length(names))', names, ...
                     'VariableNames', {'Type','Number','Label'});
