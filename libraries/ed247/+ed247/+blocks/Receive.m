@@ -49,12 +49,10 @@ classdef Receive < ed247.blocks.aBlock
         end
         
         function portlabel = get.PortLabel(obj)
-            
-            ports = getPorts(obj);
-            
-            if ~isempty(ports) && strcmp(get(obj.block_,'show_port_labels'),'on')
+                        
+            if strcmp(get(obj.block_,'show_port_labels'),'on')
                 
-                portlabel = ports;
+                portlabel = getPorts(obj);
                 
             else
                 outports = get(obj.block_,'PortHandles');
@@ -235,6 +233,17 @@ classdef Receive < ed247.blocks.aBlock
     methods (Access = protected)
         
         function ports = getPorts(obj)
+            %
+            % Create a table with port information
+            %   - Name
+            %   - Type (input/output)
+            %   - Number = port number
+            %
+            % If refresh is disabled the port list is the list of block
+            % input signals (signals direction =OUT)
+            % When refresh is enabled, some signals will be associated with
+            % a refresh port (will be the following port)
+            %
             
             configuration  = obj.Configuration;
             refresh_factor = str2double(get(obj.block_,'refresh_factor'));
@@ -247,10 +256,15 @@ classdef Receive < ed247.blocks.aBlock
                 names = {outputsignals.name};
                 
                 if isrefresh
+                    % If refresh is enabled, add signal name with
+                    % "_refresh" suffix as 2nd row
                     names(2,:) = strcat({outputsignals.name},'_refresh');
                     names(2,~ismember({outputsignals.signal_type},obj.TYPES_FOR_REFRESH)) = {''};
                 end
                 
+                % Remove empty signal names from array -> will be the
+                % non-refreshed signals and make sure that names vector is
+                % a column-vector
                 names = names(~cellfun(@isempty,names));
                 names = names(:);
                 

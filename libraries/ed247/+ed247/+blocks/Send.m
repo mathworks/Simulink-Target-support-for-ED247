@@ -20,6 +20,8 @@ classdef Send < ed247.blocks.aBlock
         
         function obj = Send(block,varargin)
             obj@ed247.blocks.aBlock(block,varargin{:})
+            obj.assert(bdIsLibrary(bdroot(obj.block_)) || strcmp(get(obj.block_,'ReferenceBlock'),'lib_ed247/ED247_Send'), ...
+                'Block shall be a ED247 Send block')
         end
         
     end
@@ -47,38 +49,15 @@ classdef Send < ed247.blocks.aBlock
         end
         
         function portlabel = get.PortLabel(obj)
-            
-            inputports     = get(obj.block_,'PortHandles');
-            inputports     = inputports.Inport;
-            
-            portlabel = table(repmat({'input'},numel(inputports),1), (1:numel(inputports))', repmat({''},numel(inputports),1), ...
-                'VariableNames', {'Type','Number','Label'});
-            
-            configuration   = obj.Configuration;
-            
-            if ~isempty(configuration) && strcmp(get(obj.block_,'show_port_labels'),'on')
-                
-                inputsignals   = configuration(ismember({configuration.direction},{'OUT','INOUT'}));
-                
-                isrefresh = obj.IsRefresh && strcmp(get(obj.block_,'enable_refresh'),'on');
-                
-                iport = 1;
-                for isig = 1:numel(inputsignals)
-                    
-                    basename = inputsignals(isig).name;
-                                  
-                    % Data port
-                    portlabel.Label{iport} = basename;
-                    iport = iport + 1;
-                    
-                    % Refresh port
-                    if isrefresh && height(portlabel) > numel(inputsignals)
-                        portlabel.Label{iport} = sprintf('%s_refresh',basename);
-                        iport = iport + 1;
-                    end
-                    
-                end
-                
+                        
+            if strcmp(get(obj.block_,'show_port_labels'),'on')                
+                portlabel = getPorts(obj);
+            else
+                inports = get(obj.block_,'PortHandles');
+                inports = inports.Inport;
+                nports = numel(inports);
+                portlabel = table(repmat({'input'},nports,1), (1:nports)', repmat({''},nports,1), ...
+                    'VariableNames', {'Type','Number','Label'});
             end
             
         end
@@ -92,6 +71,55 @@ classdef Send < ed247.blocks.aBlock
             
         end
                 
+    end
+    
+    %% PROTECTED METHODS
+    methods (Access = protected)
+       
+        function ports = getPorts(obj)
+            %
+            % Create a table with port information
+            %   - Name
+            %   - Type (input/output)
+            %   - Number = port number
+            %
+            % If refresh is disabled the port list is the list of block
+            % input signals (signals direction =OUT)
+            % When refresh is enabled, some signals will be associated with
+            % a refresh port (will be the following port)
+            %
+            
+            configuration  = obj.Configuration;
+            isrefresh = obj.IsRefresh && strcmp(get(obj.block_,'enable_refresh'),'on');
+                        
+            if ~isempty(configuration)
+                
+                inputsignals   = configuration(ismember({configuration.direction},{'OUT','INOUT'}));
+                
+                names = {inputsignals.name};
+                
+                if isrefresh
+                    % If refresh is enabled, add signal name with
+                    % "_refresh" suffix as 2nd row
+                    names(2,:) = strcat({inputsignals.name},'_refresh');
+                    names(2,~ismember({inputsignals.signal_type},obj.TYPES_FOR_REFRESH)) = {''};
+                end
+                
+                % Remove empty signal names from array -> will be the
+                % non-refreshed signals and make sure that names vector is
+                % a column-vector
+                names = names(~cellfun(@isempty,names));
+                names = names(:);
+                
+                ports = table(repmat({'input'},size(names)), (1:length(names))', names, ...
+                    'VariableNames', {'Type','Number','Label'});
+                
+            else
+                ports = table();
+            end
+            
+        end
+        
     end
     
     %% STATIC METHODS

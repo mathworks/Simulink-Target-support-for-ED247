@@ -5,6 +5,9 @@ classdef (SharedTestFixtures={...
     %
     % Failed to read XML configuration files (ECIC/CMD)
     %
+    % Extend tests to Configure/Receive/Send blocks configuration and
+    % display with "big" XML file (Full ELAC)
+    %
     
     %% CLASS SETUP
     methods (TestClassSetup)
@@ -155,7 +158,7 @@ classdef (SharedTestFixtures={...
             
         end
         
-        function testReadELACSimplifiedWithRefresh(testCase)
+        function testReadELACSimplifiedReceiveWithRefresh(testCase)
             
             % [ SETUP ]
             archivename = fullfile(testCase.filefolder_, 'ELAC_simplified.zip');
@@ -195,8 +198,8 @@ classdef (SharedTestFixtures={...
                 sprintf('[A429] Receive block should have %d ports (%d x2 as refresh is enabled)', 136, 68))
             
         end
-        
-        function testReadELACSimplifiedWithoutRefresh(testCase)
+                
+        function testReadELACSimplifiedReceiveWithoutRefresh(testCase)
             
             % [ SETUP ]
             archivename = fullfile(testCase.filefolder_, 'ELAC_simplified.zip');
@@ -275,9 +278,9 @@ classdef (SharedTestFixtures={...
             
             % [ SETUP ]
             % Load expected signals table
-            expecteddatafile = fullfile(testCase.filefolder_, 'ELACe2C_ECIC_ReceivedSignals.mat');
+            expecteddatafile = fullfile(testCase.filefolder_, 'ELACe2C_ECIC.mat');
             expecteddata = load(expecteddatafile);
-            expecteddata = expecteddata.ELACe2C_ECIC_ReceivedSignals;
+            expecteddata = expecteddata.Receive;
             
             archivename = fullfile(testCase.filefolder_, 'ELAC_full.zip');
             unzip(archivename,pwd)
@@ -330,9 +333,9 @@ classdef (SharedTestFixtures={...
             
             % [ SETUP ]
             % Load expected signals table
-            expecteddatafile = fullfile(testCase.filefolder_, 'ELACe2C_ECIC_ReceivedSignals.mat');
+            expecteddatafile = fullfile(testCase.filefolder_, 'ELACe2C_ECIC.mat');
             expecteddata = load(expecteddatafile);
-            expecteddata = expecteddata.ELACe2C_ECIC_ReceivedSignals;
+            expecteddata = expecteddata.Receive;
             
             archivename = fullfile(testCase.filefolder_, 'ELAC_full.zip');
             unzip(archivename,pwd)
@@ -374,6 +377,112 @@ classdef (SharedTestFixtures={...
             testCase.verifyTrue(all(ismember(expecteddata.SignalName,receiveportnames)), ...
                 sprintf('[Full ELAC] All Received signals should appear as a block outport'))
                         
+        end
+        
+        function testReadELACFullSendWithRefresh(testCase)
+            
+            % [ SETUP ]
+            % Load expected signals table
+            expecteddatafile = fullfile(testCase.filefolder_, 'ELACe2C_ECIC.mat');
+            expecteddata = load(expecteddatafile);
+            expecteddata = expecteddata.Send;
+            
+            archivename = fullfile(testCase.filefolder_, 'ELAC_full.zip');
+            unzip(archivename,pwd)
+            
+            modelname = 'readfullelac';
+            new_system(modelname)
+            load_system(modelname)
+            closeModel = onCleanup(@() bdclose(modelname));
+            
+            %
+            % Add blocks in the model
+            %
+            configurationblockname = [modelname,'/Configure'];
+            configurationblock = add_block('lib_ed247/ED247_Configuration', configurationblockname);
+            
+            sendblockname = [modelname,'/Send'];
+            sendblock = add_block('lib_ed247/ED247_Send', sendblockname);
+            
+            %
+            % Configure blocks
+            %   - Configuration file
+            %   - Enable refresh
+            %
+            set(configurationblock, 'configurationFilename', '''ELACe2C_ECIC.xml''')
+            set(sendblock, 'enable_refresh', 'on', 'show_port_labels', 'on')
+            
+            % [ EXERCISE ]
+            % Run SIM to update diagram only (do not care about warnings)
+            warning('off')
+            sim(modelname,'StopTime','0');
+            warning('on')
+            
+            % [ VERIFY ]
+            sendports = get(sendblock,'PortHandles');
+            testCase.verifyLength(sendports.Inport,1066, ...
+                sprintf('[Full ELAC] Send block should have %d ports (%d signals with %d refresh)', 1066, 553, 513))
+                      
+            sendobj = ed247.blocks.Send(sendblock);
+            sendportnames = sendobj.PortLabel.Label;
+            testCase.verifyTrue(all(ismember(expecteddata.SignalName,sendportnames)), ...
+                sprintf('[Full ELAC] All Sent signals should appear as a block inport'))
+            
+            refreshsignals = expecteddata.SignalName(expecteddata.IsRefresh) + "_refresh";
+            testCase.verifyTrue(all(ismember(refreshsignals,sendportnames)), ...
+                sprintf('[Full ELAC] All refreshed signals should appear as a block inport'))
+            
+        end
+        
+        function testReadELACFullSendWithoutRefresh(testCase)
+            
+            % [ SETUP ]
+            % Load expected signals table
+            expecteddatafile = fullfile(testCase.filefolder_, 'ELACe2C_ECIC.mat');
+            expecteddata = load(expecteddatafile);
+            expecteddata = expecteddata.Send;
+            
+            archivename = fullfile(testCase.filefolder_, 'ELAC_full.zip');
+            unzip(archivename,pwd)
+            
+            modelname = 'readfullelac';
+            new_system(modelname)
+            load_system(modelname)
+            closeModel = onCleanup(@() bdclose(modelname));
+            
+            %
+            % Add blocks in the model
+            %
+            configurationblockname = [modelname,'/Configure'];
+            configurationblock = add_block('lib_ed247/ED247_Configuration', configurationblockname);
+            
+            sendblockname = [modelname,'/Send'];
+            sendblock = add_block('lib_ed247/ED247_Send', sendblockname);
+            
+            %
+            % Configure blocks
+            %   - Configuration file
+            %   - Enable refresh
+            %
+            set(configurationblock, 'configurationFilename', '''ELACe2C_ECIC.xml''')
+            set(sendblock, 'enable_refresh', 'off', 'show_port_labels', 'on')
+            
+            % [ EXERCISE ]
+            % Run SIM to update diagram only (do not care about warnings)
+            warning('off')
+            sim(modelname,'StopTime','0');
+            warning('on')
+            
+            % [ VERIFY ]
+            sendports = get(sendblock,'PortHandles');
+            testCase.verifyLength(sendports.Inport,553, ...
+                sprintf('[Full ELAC] Send block should have %d ports', 553))
+                      
+            sendobj = ed247.blocks.Send(sendblock);
+            sendportnames = sendobj.PortLabel.Label;
+            testCase.verifyTrue(all(ismember(expecteddata.SignalName,sendportnames)), ...
+                sprintf('[Full ELAC] All Sent signals should appear as a block inport'))
+            
         end
         
     end
