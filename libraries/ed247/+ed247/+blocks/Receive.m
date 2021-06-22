@@ -20,7 +20,7 @@ classdef Receive < ed247.blocks.aBlock
         
         function obj = Receive(block,varargin)
             obj@ed247.blocks.aBlock(block,varargin{:})
-            obj.assert(strcmp(get(obj.block_,'ReferenceBlock'),'lib_ed247/ED247_Receive'), ...
+            obj.assert(bdIsLibrary(bdroot(obj.block_)) || strcmp(get(obj.block_,'ReferenceBlock'),'lib_ed247/ED247_Receive'), ...
                 'Block shall be a ED247 Receive block')
         end
         
@@ -83,12 +83,16 @@ classdef Receive < ed247.blocks.aBlock
                 set(obj.block_,'refresh_factor','0')
             end
             
-            portlabels = obj.PortLabel;
+            portlabels = getPorts(obj);
             
-            outputports     = get(obj.block_,'PortHandles');
-            outputports     = outputports.Outport;
-            for iout = 1:min([height(portlabels),numel(outputports)])
-                set(outputports(iout), 'Name', portlabels.Label{iout})
+            if ~isempty(portlabels)
+                
+                outputports     = get(obj.block_,'PortHandles');
+                outputports     = outputports.Outport;
+                for iout = 1:min([height(portlabels),numel(outputports)])
+                    set(outputports(iout), 'Name', portlabels.Label{iout})
+                end
+                
             end
             
         end
@@ -232,7 +236,7 @@ classdef Receive < ed247.blocks.aBlock
         
         function ports = getPorts(obj)
             
-            configuration   = obj.Configuration;
+            configuration  = obj.Configuration;
             refresh_factor = str2double(get(obj.block_,'refresh_factor'));
             isrefresh = refresh_factor > 0;
             
