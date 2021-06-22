@@ -47,7 +47,7 @@ classdef (SharedTestFixtures={...
             %   - Enable refresh
             %
             set(configurationblock, 'configurationFilename', '''a429_01_ecic_in.xml''')
-            set(receiveblock, 'enable_refresh', 'on')
+            set(receiveblock, 'enable_refresh', 'on', 'show_port_labels', 'on')
             
             % [ EXERCISE ]
             % Run SIM to update diagram only (do not care about warnings)
