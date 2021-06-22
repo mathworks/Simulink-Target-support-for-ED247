@@ -8,6 +8,11 @@ classdef Receive < ed247.blocks.aBlock
         TYPES_FOR_REFRESH = {'A429','A664','A825'};
     end
     
+    %% HIDDEN PROPERTIES
+    properties (Hidden)
+        fWaitbar = @(varargin) waitbar(varargin{:});
+    end
+    
     %% DEPENDENT PROPERTIES
     properties (Dependent)
         DisplayText
@@ -132,9 +137,11 @@ classdef Receive < ed247.blocks.aBlock
             
             try
                 
-                hWait = waitbar(0, sprintf('Create bus for block %s', get(obj.block_,'Name')));
+                hWait = obj.fWaitbar(0, sprintf('Create bus for block %s', get(obj.block_,'Name')));
                 hAx = findobj(hWait,'Type','Axes');
-                hAx.Title.Interpreter = 'none';
+                if ~isempty(hAx)
+                    hAx.Title.Interpreter = 'none';
+                end
                 pause(0.1)
                 
                 parent = get(obj.block_,'Parent');
@@ -148,7 +155,7 @@ classdef Receive < ed247.blocks.aBlock
                 outputsignals = configuration(ismember({configuration.direction},{'IN','INOUT'}));
                 ports = getPorts(obj);
                 
-                waitbar(0.2, hWait, sprintf('Create main bus to regroup all received signals'))
+                obj.fWaitbar(0.2, hWait, sprintf('Create main bus to regroup all received signals'))
                 
                 mainbusname = 'ReceiveOutputs';
                 mainbus = add_block('simulink/Signal Routing/Bus Creator', sprintf('%s/%s', parent, mainbusname));
@@ -163,7 +170,7 @@ classdef Receive < ed247.blocks.aBlock
                     
                     refreshmask = ismember({outputsignals.signal_type},obj.TYPES_FOR_REFRESH);
                     
-                    waitbar(0.4, hWait, sprintf('Create intermediate bus for signal with refresh (%d/%d)', nnz(refreshmask), numel(refreshmask)))
+                    obj.fWaitbar(0.4, hWait, sprintf('Create intermediate bus for signal with refresh (%d/%d)', nnz(refreshmask), numel(refreshmask)))
                     
                     sigbusnames = strcat(elementnames(refreshmask),'_receive');
                     sigbus = cellfun(@(x) add_block('simulink/Signal Routing/Bus Creator', sprintf('%s/%s', parent, x),'MakeNameUnique','on'),sigbusnames);
@@ -179,7 +186,7 @@ classdef Receive < ed247.blocks.aBlock
                     
                     portrefreshmask = ismember(ports.Label,elementnames(refreshmask));
                     
-                    waitbar(0.5, hWait, sprintf('Connect signals to intermediate buses'))
+                    obj.fWaitbar(0.5, hWait, sprintf('Connect signals to intermediate buses'))
                     
                     l = arrayfun(@(i,b) add_line(parent, ...
                         sprintf('%s/%d', blockname, i), sprintf('%s/1',get(b,'Name'))), ...
@@ -203,18 +210,18 @@ classdef Receive < ed247.blocks.aBlock
                 
                 set(mainbus, 'Inputs', num2str(numel(elementnames)))
                 
-                waitbar(0.7, hWait, sprintf('Connect all signals to main bus'))
+                obj.fWaitbar(0.7, hWait, sprintf('Connect all signals to main bus'))
                 
                 l = arrayfun(@(s,i) add_line(parent, char(s), sprintf('%s/%d',mainbusname,i)), source, 1:numel(elementnames));
                 arrayfun(@(x,y) set(x,'Name',char(y)), l, {outputsignals.name})
                 
-                waitbar(0.9, hWait, sprintf('Create subsystem for received signals'))
+                obj.fWaitbar(0.9, hWait, sprintf('Create subsystem for received signals'))
                 
                 tmpname = 'tmp_ed247_receive_with_bus';
                 Simulink.BlockDiagram.createSubsystem(allblocks, 'Name', tmpname)
                 set_param([parent,'/',tmpname],'Name',blockname)
                 
-                waitbar(1, hWait, sprintf('Bus and subsystem created successfully for block "%s"', blockname))
+                obj.fWaitbar(1, hWait, sprintf('Bus and subsystem created successfully for block "%s"', blockname))
                 pause(0.5)
                 close(hWait)
                 

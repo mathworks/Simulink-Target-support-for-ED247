@@ -8,6 +8,11 @@ classdef Send < ed247.blocks.aBlock
         TYPES_FOR_REFRESH = {'A429','A664','A825'};
     end
     
+    %% HIDDEN PROPERTIES
+    properties (Hidden)
+        fListDlg = @(varargin) listdlg(varargin{:});
+    end
+    
     %% DEPENDENT PROPERTIES
     properties (Dependent)
         DisplayText
@@ -68,6 +73,83 @@ classdef Send < ed247.blocks.aBlock
     methods
         
         function initialize(obj) %#ok<MANU> Called by block callback
+            
+        end
+        
+        function connectLine(obj,source)
+            
+            if ischar(source)
+                source = get_param(source,'Handle');
+            end
+            
+            % Get list of port for source block
+            srcports = get(source,'PortHandles');
+            srclines = get(source,'LineHandles');
+            srcports = srcports.Outport(srclines.Outport == -1);
+            obj.assert(~isempty(srcports), 'ED247:Send:invalidPorts', ...
+                'Source block should have at least 1 unconnected outport')
+            
+            % Get list of port for Send block
+            ports = getPorts(obj);
+            
+            dstports = get(obj.block_, 'LineHandles');
+            dstports = find(dstports.Inport == -1);
+            dstports = ports(ismember(ports.Number,dstports),:);
+            
+            %
+            % Ask user to select the source ports to connect
+            %
+            if numel(srcports) > 1
+                
+                portnames = get(srcports,'Name');
+                noname = cellfun(@isempty,portnames);
+                portnumber = get(srcports,'PortNumber');
+                if iscell(portnumber)
+                    portnumber = [portnumber{:}];
+                end
+                portnames(noname) = arrayfun(@(x) sprintf('#%d', x), portnumber(noname), 'UniformOutput', false);
+                
+                [sel,isselection] = obj.fListDlg( ...
+                    'ListString',       portnames, ...
+                    'PromptString',     sprintf('Select source (%s) ports to connect', get(source,'Name')), ...
+                    'SelectionMode',    'multiple', ...
+                    'Name',             'Source port selection');
+                if ~isselection
+                    return
+                end
+                srcports = srcports(sel);                
+                                
+            end
+            
+            %
+            % Ask user to select the destination ports to connect
+            %
+            if numel(srcports) > 1
+                selectionmode = 'multiple';
+            else
+                selectionmode = 'single';
+            end
+            
+            [sel,isselection] = obj.fListDlg( ...
+                'ListString',       dstports.Label, ...
+                'PromptString',     sprintf('Select destination (%s) ports to connect', get(obj.block_,'Name')), ...
+                'SelectionMode',    selectionmode, ...
+                'Name',             'Destination port selection');
+            if ~isselection
+                return
+            end
+            dstports = dstports(sel,:);
+            
+            obj.assert(length(srcports) == height(dstports), 'ED247:Send:invalidPortConnection', ...
+                'The number of source ports (%d) should match the number of destination ports (%d)', length(srcports), height(dstports))
+            
+            
+            for i_port = 1:length(srcports)
+                src = sprintf('%s/%d',get(source,'Name'),get(srcports(i_port),'PortNumber'));
+                dst = sprintf('%s/%d',get(obj.block_,'Name'),dstports.Number(i_port));
+                l = add_line(get(obj.block_,'Parent'), src, dst);
+                set(l, 'Name', dstports.Label{i_port})
+            end
             
         end
                 
