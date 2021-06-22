@@ -12,28 +12,39 @@ cm.addCustomMenuFcn('Simulink:ContextMenu', @getMyMenuItems);
 
 function schemaFcns = getMyMenuItems(~)
 
-refblock = get(gcbh,'ReferenceBlock');
-switch refblock
-    case 'lib_ed247/ED247_Receive'
-        obj = ed247.blocks.Receive(gcbh);
-    otherwise
-        obj = [];
-end
+schemaFcns = {};
 
-if ~isempty(obj)
+if strcmp(get(gcbh,'ReferenceBlock'),'lib_ed247/ED247_Receive')
+    
+    obj = ed247.blocks.Receive(gcbh);
     schemaFcns = { ...
         @(~) getCreateBus(obj); ...
         };
-else
-    schemaFcns = {};
+    
+elseif ~isempty(getfield(get(gcbh,'PortHandles'),'Outport')) && ...
+        numel(find_system(bdroot(gcbh), 'SearchDepth', 1, 'ReferenceBlock', 'lib_ed247/ED247_Send')) == 1
+    
+    block = find_system(bdroot(gcbh), 'SearchDepth', 1, 'ReferenceBlock', 'lib_ed247/ED247_Send');
+    obj = ed247.blocks.Send(block);
+    schemaFcns = { ...
+        @(~) getConnectLine(obj, gcbh); ...
+        };
+    
 end
 
 function schema = getCreateBus(obj)
 
 schema = sl_action_schema;
-schema.label = 'Create Bus';
-schema.userdata = 'create_bus';
+schema.label = '[ED247] Create Bus and subsystem';
+schema.userdata = 'ed247_create_bus';
 schema.callback = @(varargin) createBus(obj);
+
+function schema = getConnectLine(obj,source)
+
+schema = sl_action_schema;
+schema.label = '[ED247] Connect line to Send block';
+schema.userdata = 'ed247_connect_line';
+schema.callback = @(varargin) connectLine(obj,source);
             
 function initialize
 
