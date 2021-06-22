@@ -90,7 +90,7 @@ classdef WorkFolderFixture < matlab.unittest.fixtures.Fixture
             end
             
             if isdir(fixture.workfolder_) %#ok<ISDIR> Backward compatibility
-                rmdir(fixture.workfolder_,'s')
+                try rmdir(fixture.workfolder_,'s'); end %#ok<TRYNC>
             end
             
         end
