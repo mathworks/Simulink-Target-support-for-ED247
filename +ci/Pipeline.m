@@ -155,7 +155,7 @@ classdef Pipeline < matlab.mixin.SetGet
                 end
                 
             catch me
-                obj.show(me.getReport())
+                disp(me.getReport())
                 obj.status_ = -1;
             end
             
