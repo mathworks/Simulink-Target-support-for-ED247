@@ -206,8 +206,8 @@ classdef (SharedTestFixtures={ ...
             
             ds = Simulink.SimulationData.Dataset();
                         
-            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)), (0:0.1:10)', 'Name', 'T11MX_19492_WAIT_STEP_I'),         'Name', 'T11MX_19492_WAIT_STEP_I');
             ds = ds.addElement(timeseries(true(2,1),                [0;10],     'Name', 'T11MX_19492_WAIT_STEP_refresh'),   'Name', 'T11MX_19492_WAIT_STEP_refresh');
+            ds = ds.addElement(timeseries(uint8((0:100)' + (1:4)), (0:0.1:10)', 'Name', 'T11MX_19492_WAIT_STEP_I'),         'Name', 'T11MX_19492_WAIT_STEP_I');
             in(1) = in(1).setExternalInput(ds);
             
             % [ EXERCISE ]
