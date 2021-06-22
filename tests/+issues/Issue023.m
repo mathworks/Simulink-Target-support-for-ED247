@@ -20,7 +20,7 @@ classdef (SharedTestFixtures={...
     %% TESTS
     methods (Test)
         
-        function testSimpleA429ReceiveWithoutRefresh(testCase)
+        function testCreateBusSimpleA429ReceiveWithoutRefresh(testCase)
             
             % [ SETUP ]
             archivename = fullfile(testCase.filefolder_, 'A429_simple01.zip');
@@ -81,7 +81,7 @@ classdef (SharedTestFixtures={...
             
         end
         
-        function testSimpleA429ReceiveWithRefresh(testCase)
+        function testCreateBusSimpleA429ReceiveWithRefresh(testCase)
             
             % [ SETUP ]
             archivename = fullfile(testCase.filefolder_, 'A429_simple01.zip');
@@ -148,7 +148,7 @@ classdef (SharedTestFixtures={...
             
         end
         
-        function testFullELACReceiveWithoutRefresh(testCase)
+        function testCreateBusFullELACReceiveWithoutRefresh(testCase)
             
             % [ SETUP ]
             % Load expected signals table
@@ -214,7 +214,7 @@ classdef (SharedTestFixtures={...
             
         end
         
-        function testFullELACReceiveWithRefresh(testCase)
+        function testCreateBusFullELACReceiveWithRefresh(testCase)
             
             % [ SETUP ]
             % Load expected signals table
@@ -288,6 +288,297 @@ classdef (SharedTestFixtures={...
             content = [content{:}];
             expected = repmat({'data';'refresh'},1,461);
             testCase.verifyEqual(content,expected, 'Each signal should contain data and refresh fields')
+            
+        end
+        
+        function testConnectLineGainSimpleA429Send(testCase)
+            
+            % [ SETUP ]
+            archivename = fullfile(testCase.filefolder_, 'A429_simple01.zip');
+            unzip(archivename,pwd)
+            
+            modelname = 'readsimplea429';
+            new_system(modelname)
+            load_system(modelname)
+            closeModel = onCleanup(@() bdclose(modelname));
+            
+            %
+            % Add blocks in the model
+            %
+            configurationblockname = [modelname,'/Configure'];
+            configurationblock = add_block('lib_ed247/ED247_Configuration', configurationblockname);
+            
+            sendblockname = [modelname,'/Send'];
+            sendblock = add_block('lib_ed247/ED247_Send', sendblockname);
+                        
+            %
+            % Configure blocks
+            %   - configuration file
+            %   - Disable refresh
+            %
+            set(configurationblock, 'configurationFilename', '''a429_01_ecic_in.xml''')
+            set(sendblock, 'enable_refresh', 'off')
+            
+            siggenblock = add_block('simulink/Math Operations/Gain', [modelname,'/testGain']);
+            
+            % Run SIM to update diagram only (do not care about warnings)
+            warning('off')
+            sim(modelname,'StopTime','0');
+            warning('on')
+            
+            idxSrc = 1;
+            idxDst = 1;
+            
+            sendobj = ed247.blocks.Send(sendblock);
+            mockListDlg = MockListDlg(idxDst);
+            sendobj.fListDlg = @(varargin) mockListDlg.listdlg(varargin{:});
+            
+            % [ EXERCISE ]
+            connectLine(sendobj, siggenblock)
+            
+            % [ VERIFY ]
+            srcline = get(siggenblock,'LineHandles');
+            srcline = srcline.Outport(idxSrc);
+            
+            dstline = get(sendblock,'LineHandles');
+            dstline = dstline.Inport(idxDst);
+            testCase.verifyEqual(srcline,dstline, 'Source and destination lines should match')
+            
+        end
+        
+        function testConnectLineSubsystemSimpleA429Send(testCase)
+            
+            % [ SETUP ]
+            archivename = fullfile(testCase.filefolder_, 'A429_simple01.zip');
+            unzip(archivename,pwd)
+            
+            modelname = 'readsimplea429';
+            new_system(modelname)
+            load_system(modelname)
+            closeModel = onCleanup(@() bdclose(modelname));
+            
+            %
+            % Add blocks in the model
+            %
+            configurationblockname = [modelname,'/Configure'];
+            configurationblock = add_block('lib_ed247/ED247_Configuration', configurationblockname);
+            
+            sendblockname = [modelname,'/Send'];
+            sendblock = add_block('lib_ed247/ED247_Send', sendblockname);
+                        
+            %
+            % Configure blocks
+            %   - configuration file
+            %   - Disable refresh
+            %
+            set(configurationblock, 'configurationFilename', '''a429_01_ecic_in.xml''')
+            set(sendblock, 'enable_refresh', 'off', 'Position', [505,195,690,275])
+            
+            nports = 10;
+            siggenblock = add_block('simulink/Ports & Subsystems/Subsystem', [modelname,'/testSub']);            
+            Simulink.SubSystem.deleteContents(siggenblock)
+            arrayfun(@(x) add_block('simulink/Ports & Subsystems/Out1', sprintf('%s/testSub/sig%03d', modelname, x)), 1:nports)
+            set(siggenblock, 'Position', [140,200,255, 300 + 12*nports])
+            
+            % Run SIM to update diagram only (do not care about warnings)
+            warning('off')
+            sim(modelname,'StopTime','0');
+            warning('on')
+            
+            idxSrc = [4,8];
+            idxDst = [1,2];
+            
+            sendobj = ed247.blocks.Send(sendblock);
+            mockListDlg = MockListDlg(idxSrc,idxDst);
+            sendobj.fListDlg = @(varargin) mockListDlg.listdlg(varargin{:});
+            
+            % [ EXERCISE ]
+            connectLine(sendobj, siggenblock)
+            
+            % [ VERIFY ]
+            srcline = get(siggenblock,'LineHandles');
+            srcline = srcline.Outport(idxSrc);
+            
+            dstline = get(sendblock,'LineHandles');
+            dstline = dstline.Inport(idxDst);
+            testCase.verifyEqual(srcline,dstline, 'Source and destination lines should match')
+            
+        end
+        
+        function testConnectLineSubsystemSimpleA429Send2Times(testCase)
+            
+            % [ SETUP ]
+            archivename = fullfile(testCase.filefolder_, 'A429_simple01.zip');
+            unzip(archivename,pwd)
+            
+            modelname = 'readsimplea429';
+            new_system(modelname)
+            load_system(modelname)
+            closeModel = onCleanup(@() bdclose(modelname));
+            
+            %
+            % Add blocks in the model
+            %
+            configurationblockname = [modelname,'/Configure'];
+            configurationblock = add_block('lib_ed247/ED247_Configuration', configurationblockname);
+            
+            sendblockname = [modelname,'/Send'];
+            sendblock = add_block('lib_ed247/ED247_Send', sendblockname);
+                        
+            %
+            % Configure blocks
+            %   - configuration file
+            %   - Disable refresh
+            %
+            set(configurationblock, 'configurationFilename', '''a429_01_ecic_in.xml''')
+            set(sendblock, 'enable_refresh', 'off', 'Position', [505,195,690,275])
+            
+            nports = 10;
+            siggenblock = add_block('simulink/Ports & Subsystems/Subsystem', [modelname,'/testSub']);            
+            Simulink.SubSystem.deleteContents(siggenblock)
+            arrayfun(@(x) add_block('simulink/Ports & Subsystems/Out1', sprintf('%s/testSub/sig%03d', modelname, x)), 1:nports)
+            set(siggenblock, 'Position', [140,200,255, 300 + 12*nports])
+            
+            % Run SIM to update diagram only (do not care about warnings)
+            warning('off')
+            sim(modelname,'StopTime','0');
+            warning('on')
+            
+            idxSrc = [4,8];
+            idxDst = [1,2];
+                        
+            % [ EXERCISE ]
+            sendobj = ed247.blocks.Send(sendblock);
+            mockListDlg = MockListDlg(idxSrc(2),idxDst(2));
+            sendobj.fListDlg = @(varargin) mockListDlg.listdlg(varargin{:});
+            connectLine(sendobj, siggenblock)
+            
+            sendobj = ed247.blocks.Send(sendblock);
+            mockListDlg = MockListDlg(idxSrc(1),idxDst(1));
+            sendobj.fListDlg = @(varargin) mockListDlg.listdlg(varargin{:});
+            connectLine(sendobj, siggenblock)
+            
+            % [ VERIFY ]
+            srcline = get(siggenblock,'LineHandles');
+            srcline = srcline.Outport(idxSrc);
+            
+            dstline = get(sendblock,'LineHandles');
+            dstline = dstline.Inport(idxDst);
+            testCase.verifyEqual(srcline,dstline, 'Source and destination lines should match')
+            
+        end
+        
+        function testConnectLineGainFullELACSend(testCase)
+            
+            % [ SETUP ]
+            archivename = fullfile(testCase.filefolder_, 'ELAC_full.zip');
+            unzip(archivename,pwd)
+            
+            modelname = 'readfullelac';
+            new_system(modelname)
+            load_system(modelname)
+            closeModel = onCleanup(@() bdclose(modelname));
+            
+            %
+            % Add blocks in the model
+            %
+            configurationblockname = [modelname,'/Configure'];
+            configurationblock = add_block('lib_ed247/ED247_Configuration', configurationblockname);
+            
+            sendblockname = [modelname,'/Send'];
+            sendblock = add_block('lib_ed247/ED247_Send', sendblockname);
+                        
+            %
+            % Configure blocks
+            %   - configuration file
+            %   - Disable refresh
+            %
+            set(configurationblock, 'configurationFilename', '''ELACe2C_ECIC.xml''')
+            set(sendblock, 'enable_refresh', 'off')
+            
+            siggenblock = add_block('simulink/Math Operations/Gain', [modelname,'/testGain']);
+            
+            % Run SIM to update diagram only (do not care about warnings)
+            warning('off')
+            sim(modelname,'StopTime','0');
+            warning('on')
+            
+            idxSrc = 1;
+            idxDst = 150;
+            
+            sendobj = ed247.blocks.Send(sendblock);
+            mockListDlg = MockListDlg(idxDst);
+            sendobj.fListDlg = @(varargin) mockListDlg.listdlg(varargin{:});
+            
+            % [ EXERCISE ]
+            connectLine(sendobj, siggenblock)
+            
+            % [ VERIFY ]
+            srcline = get(siggenblock,'LineHandles');
+            srcline = srcline.Outport(idxSrc);
+            
+            dstline = get(sendblock,'LineHandles');
+            dstline = dstline.Inport(idxDst);
+            testCase.verifyEqual(srcline,dstline, 'Source and destination lines should match')
+            
+        end
+        
+        function testConnectLineSubsystemFullELACSend(testCase)
+            
+            % [ SETUP ]
+            archivename = fullfile(testCase.filefolder_, 'ELAC_full.zip');
+            unzip(archivename,pwd)
+            
+            modelname = 'readfullelac';
+            new_system(modelname)
+            load_system(modelname)
+            closeModel = onCleanup(@() bdclose(modelname));
+            
+            %
+            % Add blocks in the model
+            %
+            configurationblockname = [modelname,'/Configure'];
+            configurationblock = add_block('lib_ed247/ED247_Configuration', configurationblockname);
+            
+            sendblockname = [modelname,'/Send'];
+            sendblock = add_block('lib_ed247/ED247_Send', sendblockname);
+                        
+            %
+            % Configure blocks
+            %   - configuration file
+            %   - Disable refresh
+            %
+            set(configurationblock, 'configurationFilename', '''ELACe2C_ECIC.xml''')
+            set(sendblock, 'enable_refresh', 'off', 'Position', [505,195,690,275])
+            
+            nports = 100;
+            siggenblock = add_block('simulink/Ports & Subsystems/Subsystem', [modelname,'/testSub']);            
+            Simulink.SubSystem.deleteContents(siggenblock)
+            arrayfun(@(x) add_block('simulink/Ports & Subsystems/Out1', sprintf('%s/testSub/sig%03d', modelname, x)), 1:nports)
+            set(siggenblock, 'Position', [140,200,255, 300 + 12*nports])
+            
+            % Run SIM to update diagram only (do not care about warnings)
+            warning('off')
+            sim(modelname,'StopTime','0');
+            warning('on')
+            
+            idxSrc = [5,42,84];
+            idxDst = [250,326,444];
+            
+            sendobj = ed247.blocks.Send(sendblock);
+            mockListDlg = MockListDlg(idxSrc,idxDst);
+            sendobj.fListDlg = @(varargin) mockListDlg.listdlg(varargin{:});
+            
+            % [ EXERCISE ]
+            connectLine(sendobj, siggenblock)
+            
+            % [ VERIFY ]
+            srcline = get(siggenblock,'LineHandles');
+            srcline = srcline.Outport(idxSrc);
+            
+            dstline = get(sendblock,'LineHandles');
+            dstline = dstline.Inport(idxDst);
+            testCase.verifyEqual(srcline,dstline, 'Source and destination lines should match')
             
         end
         
