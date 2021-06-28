@@ -2,6 +2,15 @@
 
 ## Ongoing
 
+### Fixed
+
+- Increase maximum A429 messages in a stream to 512 (was 128)
+
+
+## v2.0.0-RC5 - 2021/06/24 - R2020b
+
+
+
 ## v2.0.0-RC3 - 2021/05/27 - R2020b
 
 ### Changed
