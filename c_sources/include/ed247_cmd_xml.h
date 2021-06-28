@@ -26,11 +26,11 @@
  #define LIBED247_EXPORT
  #endif
  
- #define MAX_A429_BUS			128
- #define MAX_A429_MSG_PER_BUS	128
- #define MAX_A664_MESSAGES		64
- #define MAX_A825_MESSAGES		64
- #define MAX_NAD_MESSAGES		64
+ #define MAX_A429_BUS			512
+ #define MAX_A429_MSG_PER_BUS	512
+ #define MAX_A664_MESSAGES		512
+ #define MAX_A825_MESSAGES		512
+ #define MAX_NAD_MESSAGES		512
 
  #define A429_DATA_TYPE			SS_UINT8 // = 2
  #define A429_DATA_SIZE 		4
