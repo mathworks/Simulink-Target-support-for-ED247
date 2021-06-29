@@ -235,8 +235,8 @@ static void mdlRTW(SimStruct *S)
 	real_T  blockTypeID;
 	BLOCK_TYPE_T *blockType;
 
-	real_T portIndex[100];
-	real_T refreshIndex[100];
+	real_T portIndex[MAX_SIGNALS];
+	real_T refreshIndex[MAX_SIGNALS];
 	int_T nSignals;
 
 	blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
