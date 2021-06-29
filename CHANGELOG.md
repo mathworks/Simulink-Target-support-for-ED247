@@ -5,6 +5,7 @@
 ### Fixed
 
 - Increase maximum A429 messages in a stream to 512 (was 128)
+- MATLAB crash during code generation with SLREALTIME.tlc
 
 
 ## v2.0.0-RC5 - 2021/06/24 - R2020b
