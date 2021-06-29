@@ -262,7 +262,7 @@ classdef (SharedTestFixtures={...
             %   - configuration file
             %   - Enable refresh
             %
-            set(configurationblock, 'configurationFilename', '''ELACe2M_ECIC.xml''')
+            set(configurationblock, 'configurationFilename', '''ELACe2C_ECIC.xml''')
             
             % [ EXERCISE ]                        
             f = @() sim(modelname,'StopTime','0');            
@@ -421,7 +421,7 @@ classdef (SharedTestFixtures={...
             % [ VERIFY ]
             sendports = get(sendblock,'PortHandles');
             testCase.verifyLength(sendports.Inport,1066, ...
-                sprintf('[Full ELAC] Send block should have %d ports (%d signals with %d refresh)', 1066, 553, 513))
+                sprintf('[Full ELAC] Send block should have %d ports (%d signals with %d refresh)', 1066, 573, 513))
                       
             sendobj = ed247.blocks.Send(sendblock);
             sendportnames = sendobj.PortLabel.Label;
@@ -476,7 +476,7 @@ classdef (SharedTestFixtures={...
             % [ VERIFY ]
             sendports = get(sendblock,'PortHandles');
             testCase.verifyLength(sendports.Inport,553, ...
-                sprintf('[Full ELAC] Send block should have %d ports', 553))
+                sprintf('[Full ELAC] Send block should have %d ports', 573))
                       
             sendobj = ed247.blocks.Send(sendblock);
             sendportnames = sendobj.PortLabel.Label;
