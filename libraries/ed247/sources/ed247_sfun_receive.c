@@ -119,6 +119,8 @@ void receiveOutputs(SimStruct *S, IO_t* io){
 	int_T *refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(S,3)) );
 	time_T sampleTime = ssGetSampleTime(S, 0);
 
+	myprintf("\n\n=== RECEIVE OUTPUTS START ===\n");
+
 	//
 	// Prepare output (assign pointer to block output)
 	//
@@ -131,9 +133,9 @@ void receiveOutputs(SimStruct *S, IO_t* io){
 	//
 	// Receive data
 	//
-	myprintf("Receive data\t");
+	myprintf("Receive data");
 	status = (int)receive_ed247_to_simulink(io,&ndata);
-	myprintf("\tstatus = %d", status);
+	myprintf(" with status = %d", status);
 
 	if (*refreshFactor > 0){
 
@@ -162,9 +164,12 @@ void receiveOutputs(SimStruct *S, IO_t* io){
 			}
 
 		}
+
 	} else {
 		myprintf("\tNo refresh");
 	}
+
+	myprintf("\n\n=== RECEIVE OUTPUTS END ===\n");
 
 }
 #endif
@@ -174,6 +179,8 @@ void receiveUpdate(SimStruct *S, IO_t* io){
 
 	int isig;
 	uint32_T *last_update;
+
+	myprintf("\n\n=== RECEIVE UPDATE START ===\n");
 
 	myprintf("Update receive block:\n");
 	for (isig = 0; isig < io->outputs->nsignals && isig < MAX_SIGNALS; isig++){
@@ -195,6 +202,8 @@ void receiveUpdate(SimStruct *S, IO_t* io){
 		myprintf("\n");
 
 	}
+
+	myprintf("\n\n=== RECEIVE OUTPUTS END ===\n");
 
 }
 #endif
