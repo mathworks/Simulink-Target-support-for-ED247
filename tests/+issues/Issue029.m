@@ -13,8 +13,6 @@ classdef (SharedTestFixtures={...
         function configurationPrerequisites(testCase)
             testCase.assumeFalse(verLessThan('MATLAB','9.9'), ...
                 'MATLAB release should be greater or equal to R2020b')
-            testCase.assumeNotEmpty(getenv('SLREALTIME_QNX_SP_ROOT'), ...
-                'QNX support should be installed')
         end
         
         function setFileFolder(testCase)
@@ -73,6 +71,10 @@ classdef (SharedTestFixtures={...
             exefile = fullfile(codegenfolder, [modelname,'.mldatx']);
             if exist(exefile,'file') == 2
                 delete(exefile)
+            end
+            cachefile = fullfile(codegenfolder, [modelname,'.slxc']);
+            if exist(cachefile,'file') == 2
+                delete(cachefile)
             end
             
             %
