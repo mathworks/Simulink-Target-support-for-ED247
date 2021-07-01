@@ -22,6 +22,29 @@ classdef (SharedTestFixtures={...
             testCase.filefolder_ = fullfile(proj.RootFolder,'tests','_files');
         end
         
+        function installLibXML2Airbus(testCase)
+            
+            libxml2archive = fullfile(testCase.filefolder_, "LIBXML2_V2_9_3-1_airbus.zip");
+            unzip(libxml2archive,pwd)
+            
+            config = ed247.Configuration.default();
+            testCase.libxml2_ = config.LibXML2;
+            config.LibXML2 = fullfile(pwd, "V2.9.3-1", "BINARIES", "Win64");
+            save(config)
+            
+        end
+        
+    end
+    
+    %% CLASS TEARDOWN
+    methods (TestClassTeardown)
+       
+        function uninstallLibXML2Airbus(testCase)
+            config = ed247.Configuration.default();
+            config.LibXML2 = testCase.libxml2_;            
+            save(config)
+        end
+        
     end
     
     %% TESTS
@@ -84,6 +107,7 @@ classdef (SharedTestFixtures={...
     %% PRIVATE PROPERTIES
     properties (Access = private)
         filefolder_
+        libxml2_
     end
     
 end
