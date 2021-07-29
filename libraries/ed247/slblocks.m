@@ -5,6 +5,6 @@ function blkStruct = slblocks
 
 Browser.Library = 'lib_ed247';
 
-Browser.Name = 'Airbus ED247';
+Browser.Name = 'ED247';
 
 blkStruct.Browser = Browser;
