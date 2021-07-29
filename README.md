@@ -8,13 +8,21 @@ It provides Simulink blocks in a library to send and receive data in various for
 1. Open project in MATLAB
 1. Configure dependencies
 	1. Create configuration variable
->> config = ed247.Configuration.default()
+```
+config = ed247.Configuration.default()
+```
 	1. Set ED247 library installation folder
->> config.ED247 = "<ed247_installation folder>";
+```
+config.ED247 = "<ed247_installation folder>";
+```
 	1. (Windows) Set MinGW64 installation folder
->> config.MinGW = "<mingw64_installation_root_folder>";
+```
+config.MinGW = "<mingw64_installation_root_folder>";
+```
 	1. Save configuration
->> save(config)
+```
+save(config)
+```
 
 Additional information about set up
 
@@ -40,7 +48,9 @@ Before proceeding, ensure that the below products are installed:
 
 S-Function can be compiled using the following command:
 
->> ed247.compile()
+```
+ed247.compile()
+```
 
 ## Deployment Steps
 
@@ -50,10 +60,14 @@ S-Function can be compiled using the following command:
 	- Set solver type to Fixed-Step (Configuration Parameters -> Solver -> Solver Type)
 	- Select slrealtime.tlc (Configuration Parameters -> Code Generation -> System Target File)
 1. Compile executable
-	>> ed247.Speedgoat.deployModel(<modelname>)
+```
+ed247.Speedgoat.deployModel(<modelname>)
+```
 1. Download and execute
 	1. Open Simulink Real-Time Explorer
->> slrtExplorer
+```
+slrtExplorer
+```
 	1. Connect development computer (host) to Speedgoat target
 	1. Load application (<modelname>.mldatx)
 	1. Run application
