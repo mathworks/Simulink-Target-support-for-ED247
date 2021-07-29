@@ -8,21 +8,17 @@ It provides Simulink blocks in a library to send and receive data in various for
 1. Open project in MATLAB
 1. Configure dependencies
 	1. Create configuration variable
-```
-config = ed247.Configuration.default()
-```
 	1. Set ED247 library installation folder
-```
-config.ED247 = "<ed247_installation folder>";
-```
 	1. (Windows) Set MinGW64 installation folder
-```
-config.MinGW = "<mingw64_installation_root_folder>";
-```
 	1. Save configuration
+
 ```
+config = ed247.Configuration.default();
+config.ED247 = "<ed247_installation folder>";
+config.MinGW = "<mingw64_installation_root_folder>";
 save(config)
 ```
+
 
 Additional information about set up
 
@@ -65,12 +61,13 @@ ed247.Speedgoat.deployModel(<modelname>)
 ```
 1. Download and execute
 	1. Open Simulink Real-Time Explorer
-```
-slrtExplorer
-```
 	1. Connect development computer (host) to Speedgoat target
 	1. Load application (<modelname>.mldatx)
 	1. Run application
+
+```
+slrtExplorer
+```
 
 ### Custom toolbox
 
@@ -85,9 +82,8 @@ run(p)
 Information about Getting Started
 
 1. Create a Simulink model
-1. Add ED247 configuration block to model
+1. Add ED247 configuration block to model by either:
 	- Type "ED247 Configuration" in the model
-OR
 	- Open Simulink Library Browser and navigate to library "ED247"
 
 ## Unit tests
