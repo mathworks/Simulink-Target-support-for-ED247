@@ -1,7 +1,10 @@
 # Simulink ​support for ED247 communication standard
 
 The "Simulink ​support for ED247 communication standard" enables ED247 communication inside a Simulink models.
+
 It provides Simulink blocks in a library to send and receive data in various formats (A429, A664, A825, NAD, VNAD, Analogic, Discrete).
+
+It allows ED247 communication in Simulink models both in simulation and real-time with Speedgoat test bench.
 
 ## Setup 
 
