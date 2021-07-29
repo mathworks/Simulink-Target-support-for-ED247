@@ -8,13 +8,13 @@ It provides Simulink blocks in a library to send and receive data in various for
 1. Open project in MATLAB
 1. Configure dependencies
 	1. Create configuration variable
-		>> config = ed247.Configuration.default()
+>> config = ed247.Configuration.default()
 	1. Set ED247 library installation folder
-		>> config.ED247 = "<ed247_installation folder>";
+>> config.ED247 = "<ed247_installation folder>";
 	1. (Windows) Set MinGW64 installation folder
-		>> config.MinGW = "<mingw64_installation_root_folder>";
+>> config.MinGW = "<mingw64_installation_root_folder>";
 	1. Save configuration
-		>> save(config)
+>> save(config)
 
 Additional information about set up
 
@@ -53,7 +53,7 @@ S-Function can be compiled using the following command:
 	>> ed247.Speedgoat.deployModel(<modelname>)
 1. Download and execute
 	1. Open Simulink Real-Time Explorer
-		>> slrtExplorer
+>> slrtExplorer
 	1. Connect development computer (host) to Speedgoat target
 	1. Load application (<modelname>.mldatx)
 	1. Run application
@@ -62,8 +62,10 @@ S-Function can be compiled using the following command:
 
 Following commands will test, compile and package source code into a MATLAB custom toolbox which allows an easy sharing of Simulink ​support for ED247 communication standard
 
->> p = ci.Pipeline.forFolder();
->> run(p)
+```
+p = ci.Pipeline.forFolder();
+run(p)
+```
 
 ## Getting Started 
 Information about Getting Started
@@ -79,8 +81,10 @@ OR
 Unit tests are located in tests/ folder.
 Unit tests can be run using following command:
 
->> p = ci.Pipeline.forFolder();
->> test(p) 
+```
+p = ci.Pipeline.forFolder();
+test(p)
+```
 
 ### Note
 
