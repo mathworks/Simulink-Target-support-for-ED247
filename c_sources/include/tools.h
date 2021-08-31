@@ -1,4 +1,9 @@
-
+/******************************************************************************
+ *
+ * Copyright (c) 2021 The MathWorks Inc.
+ *
+ */
+ 
  #ifndef __ED247SLADAPTERTOOLS__
  #define __ED247SLADAPTERTOOLS__
  
@@ -20,6 +25,19 @@
 	#define FILESEP "/" 
  #endif
 
+namespace ed247simulink {
+
+	class Tools {
+
+		public:
+			static void myprintf(const char *fmt, ...);
+			static int fileexists(const char * filename);
+			static void fileparts(const char* path, char* folder);
+
+	};
+
+}
+/*
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -31,6 +49,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
- #endif
- 
+*/
+#endif

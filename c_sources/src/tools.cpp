@@ -1,7 +1,9 @@
 
 #include "tools.h"
 
- void myprintf(const char *fmt, ...) {
+namespace ed247simulink {
+
+ void Tools::myprintf(const char *fmt, ...) {
 
 	int (*printfcn)(const char *, ...);
 	char str[1024] = "";
@@ -22,7 +24,7 @@
 
  }
 
- int fileexists(const char * filename){
+ int Tools::fileexists(const char * filename){
     /* try to open file to read */
     FILE *file;
 	myprintf("Does file \"%s\" exist ?", filename);
@@ -35,7 +37,7 @@
     return 1;
  }
 
- void fileparts(const char* path, char* folder) {
+ void Tools::fileparts(const char* path, char* folder) {
 	 
 	size_t i;
 	
@@ -52,4 +54,6 @@
 	}
 
  }
+
+}
 
