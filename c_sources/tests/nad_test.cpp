@@ -10,11 +10,9 @@
  #include <iostream>
  #include <cstdlib>
  #include <string>
-   
- extern "C" {
+
 	 #include "ed247_interface.h"
- }
- 
+
   TEST_F(NADTest, NADConfiguration1)
  {
 
@@ -22,11 +20,14 @@
 	IO_t *data;
 	std::string filename = filefolder_ + "/nad_mc_1.xml";
 
+	ed247simulink::Tools tools;
+	ed247simulink::Interface interface = ed247simulink::Interface(tools);
+
 	// [ SETUP ]
-	io_allocate_memory(&data);
+	interface.ioAllocateMemory(&data);
 
 	// [ EXERCISE ]
-	status = read_ed247_configuration(filename.c_str(),data,NULL);
+	status = interface.readED247Configuration(filename.c_str(),data,NULL);
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
 
 	// [ VERIFY ]
@@ -91,7 +92,7 @@
 	EXPECT_EQ(data->outputs->nsignals,0);
 
 	// [ TEARDOWN ]
-	io_free_memory(data);
+	interface.ioFreeMemory(data);
 
  }
  
@@ -102,11 +103,14 @@
 	IO_t *data;
 	std::string filename = filefolder_ + "/nad_mc_2.xml";
 
+	ed247simulink::Tools tools;
+	ed247simulink::Interface interface = ed247simulink::Interface(tools);
+
 	// [ SETUP ]
-	io_allocate_memory(&data);
+	interface.ioAllocateMemory(&data);
 
 	// [ EXERCISE ]
-	status = read_ed247_configuration(filename.c_str(),data,NULL);
+	status = interface.readED247Configuration(filename.c_str(),data,NULL);
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
 
 	// [ VERIFY ]
@@ -162,7 +166,7 @@
 	EXPECT_EQ(		data->outputs->signals[2].signal_type,	ED247_SIGNAL_TYPE_NAD);
 
 	// [ TEARDOWN ]
-	io_free_memory(data);
+	interface.ioFreeMemory(data);
 
  }
  
@@ -173,11 +177,14 @@
 	IO_t *data;
 	std::string filename = filefolder_ + "/nad_mc_4.xml";
 
+	ed247simulink::Tools tools;
+	ed247simulink::Interface interface = ed247simulink::Interface(tools);
+
 	// [ SETUP ]
-	io_allocate_memory(&data);
+	interface.ioAllocateMemory(&data);
 
 	// [ EXERCISE ]
-	status = read_ed247_configuration(filename.c_str(),data,NULL);
+	status = interface.readED247Configuration(filename.c_str(),data,NULL);
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
 
 	// [ VERIFY ]
@@ -235,7 +242,7 @@
 	EXPECT_EQ(		data->outputs->signals[2].signal_type,	ED247_SIGNAL_TYPE_NAD);
 
 	// [ TEARDOWN ]
-	io_free_memory(data);
+	interface.ioFreeMemory(data);
 
  }
  
@@ -254,13 +261,16 @@
 	std::string sendconfiguration = filefolder_ + "/nad_mc_1.xml";
 	std::string recvconfiguration = filefolder_ + "/nad_mc_2.xml";
 
-	// [ SETUP ]
-	io_allocate_memory(&senddata);
-	io_allocate_memory(&recvdata);
+	ed247simulink::Tools tools;
+	ed247simulink::Interface interface = ed247simulink::Interface(tools);
 
-	cstatus = read_ed247_configuration(sendconfiguration.c_str(),senddata,NULL);
+	// [ SETUP ]
+	interface.ioAllocateMemory(&senddata);
+	interface.ioAllocateMemory(&recvdata);
+
+	cstatus = interface.readED247Configuration(sendconfiguration.c_str(),senddata,NULL);
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
-	cstatus = read_ed247_configuration(recvconfiguration.c_str(),recvdata,NULL);
+	cstatus = interface.readED247Configuration(recvconfiguration.c_str(),recvdata,NULL);
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
 
 	for (i = 0; i < senddata->inputs->nsignals; i++){
@@ -274,8 +284,8 @@
 	// [ EXERCISE ]
 	sendvalues[0] = 1;sendvalues[1] = 2;sendvalues[2] = 3;sendvalues[3] = 4;
 
-	sstatus = send_simulink_to_ed247(senddata);
-	rstatus = receive_ed247_to_simulink(recvdata, &nrecv);
+	sstatus = interface.sendSimulinkToED247(senddata);
+	rstatus = interface.receiveED247ToSimulink(recvdata, &nrecv);
 
 	ASSERT_EQ(sstatus, SEND_OK);
 	ASSERT_EQ(rstatus, RECEIVE_OK);
@@ -287,8 +297,8 @@
 	EXPECT_EQ(*((unsigned char *)recvdata->outputs->signals[2].valuePtr), sendvalues[3]);
 
 	// [ TEARDOWN ]
-	io_free_memory(senddata);
-	io_free_memory(recvdata);
+	interface.ioFreeMemory(senddata);
+	interface.ioFreeMemory(recvdata);
 
  }
  
@@ -318,13 +328,16 @@
 	std::string sendconfiguration = filefolder_ + "/nad_mc_3.xml";
 	std::string recvconfiguration = filefolder_ + "/nad_mc_4.xml";
 
-	// [ SETUP ]
-	io_allocate_memory(&senddata);
-	io_allocate_memory(&recvdata);
+	ed247simulink::Tools tools;
+	ed247simulink::Interface interface = ed247simulink::Interface(tools);
 
-	cstatus = read_ed247_configuration(sendconfiguration.c_str(),senddata,NULL);
+	// [ SETUP ]
+	interface.ioAllocateMemory(&senddata);
+	interface.ioAllocateMemory(&recvdata);
+
+	cstatus = interface.readED247Configuration(sendconfiguration.c_str(),senddata,NULL);
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
-	cstatus = read_ed247_configuration(recvconfiguration.c_str(),recvdata,NULL);
+	cstatus = interface.readED247Configuration(recvconfiguration.c_str(),recvdata,NULL);
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
 
 	senddata->inputs->signals[0].valuePtr = (void*) sendvalues01;
@@ -375,8 +388,8 @@
 	sendvalues04[1][2][2]	= 34;
 	sendvalues04[1][2][3]	= 35;
 
-	sstatus = send_simulink_to_ed247(senddata);
-	rstatus = receive_ed247_to_simulink(recvdata, &nrecv);
+	sstatus = interface.sendSimulinkToED247(senddata);
+	rstatus = interface.receiveED247ToSimulink(recvdata, &nrecv);
 
 	ASSERT_EQ(sstatus, SEND_OK);
 	ASSERT_EQ(rstatus, RECEIVE_OK);
@@ -419,8 +432,8 @@
 	EXPECT_EQ(*((unsigned char *)recvdata->outputs->signals[2].valuePtr) + 23, sendvalues04[1][2][3]);
 
 	// [ TEARDOWN ]
-	io_free_memory(senddata);
-	io_free_memory(recvdata);
+	interface.ioFreeMemory(senddata);
+	interface.ioFreeMemory(recvdata);
 
  }
  
