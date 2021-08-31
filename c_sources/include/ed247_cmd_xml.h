@@ -156,26 +156,36 @@
 /**********
  * Common *
  **********/ 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    
- extern LIBED247_EXPORT cmd_read_status_t cmd_read_data(const char *filename, cmd_data_t *data);
- 
- static void fillA429(xmlNodePtr node, cmd_data_a429_t *data); 
- static void fillA429Message(xmlNodePtr node, cmd_data_a429_message_t *data);
- static void fillNAD(xmlNodePtr node, cmd_data_nad_t *data);
- static void fillA664(xmlNodePtr node, cmd_data_a664_t *data);
- static void fillA825(xmlNodePtr node, cmd_data_a825_t *data);
+namespace ed247simulink {
 
- // TODO : Replace by ed247_* functions
- static ed247_direction_t local_direction_from_string(const char *direction);
- static ed247_nad_type_t local_nad_type_from_string(const char *type);
- // END TODO
- static a429_message_type_t local_a429_message_type_from_string(const char *type);
+	class Cmd {
 
-#ifdef __cplusplus
+		private:
+			Tools _tools;
+
+		public:
+			Cmd();
+			Cmd(Tools tools);
+
+		public:
+			cmd_read_status_t readData(const char *filename, cmd_data_t *data);
+
+		protected:
+			void fillA429(xmlNodePtr node, cmd_data_a429_t *data); 
+			void fillA429Message(xmlNodePtr node, cmd_data_a429_message_t *data);
+			void fillNAD(xmlNodePtr node, cmd_data_nad_t *data);
+			void fillA664(xmlNodePtr node, cmd_data_a664_t *data);
+			void fillA825(xmlNodePtr node, cmd_data_a825_t *data);
+
+		private:
+			// TODO : Replace by ed247_* functions
+			ed247_direction_t local_direction_from_string(const char *direction);
+			ed247_nad_type_t local_nad_type_from_string(const char *type);
+			// END TODO
+			a429_message_type_t local_a429_message_type_from_string(const char *type);
+
+	};
+
 }
-#endif
-    
+
  #endif
