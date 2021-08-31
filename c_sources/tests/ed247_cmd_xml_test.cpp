@@ -17,14 +17,17 @@
 
 	/* [ SETUP ] */
 	cmd_read_status_t status;
-	static cmd_data_t data;
 	const char *filename = "";
+
+	cmd_data_t *data;
+	data = (cmd_data_t*)malloc(sizeof(cmd_data_t));
+	EXPECT_TRUE(data != NULL);
 
 	ed247simulink::Tools tools;
 	ed247simulink::Cmd cmd = ed247simulink::Cmd(tools);
 
 	/* [ EXERCISE ] */
-	status = cmd.readData(filename,&data);
+	status = cmd.readData(filename,data);
 
 	/* [ VERIFY ] */
 	EXPECT_EQ(status, CMD_READ_INVALID_FILE);
