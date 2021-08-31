@@ -10,27 +10,33 @@
  #include <iostream>
  #include <cstdlib>
  #include <string>
-   
- extern "C" {
-	 #include "ed247_interface.h"
- }
+
+ #include "ed247_interface.h"
 
  TEST_F(A429Test, A429ICD)
  {
 
 	cmd_read_status_t status;
-	cmd_data_t *data;
 	std::string filename = filefolder_ + "/a429_cmd_simple01.xml";
 
+	cmd_data_t *data;
+	data = (cmd_data_t*)malloc(sizeof(cmd_data_t));
+	EXPECT_TRUE(data != NULL);
+
+	ed247simulink::Tools tools;
+	ed247simulink::Cmd cmd = ed247simulink::Cmd(tools);
+
 	/* [ EXERCISE ] */
-	cmd_read_data(filename.c_str(), data);
+	status = cmd.readData(filename.c_str(), data);
 
 	/* [ VERIFY ] */
+	EXPECT_EQ(status,CMD_READ_OK);
+
 	// Number of elements
 	EXPECT_EQ(data->counter.a429, 2);
 
 	// Details
-	// ------------
+	// -------
 	//
 	EXPECT_STREQ(	data->a429[0].name,						"T11M4_A429_SIMU2SWIM_BUS_1_I");
 	EXPECT_EQ(		data->a429[0].n_messages,				3);
@@ -73,6 +79,9 @@
 	EXPECT_EQ(		data->a429[1].messages[1].period_us,	1000000);
 	EXPECT_STREQ(	data->a429[1].messages[1].comment,		"T11_T11_PART1");
 
+	// [ TEARDOWN ]
+	free(data);
+
  }
 
  TEST_F(A429Test, A429Configuration)
@@ -82,11 +91,14 @@
 	IO_t *data;
 	std::string filename = filefolder_ + "/a429_mc_simple01.xml";
 
+	ed247simulink::Tools tools;
+	ed247simulink::Interface interface = ed247simulink::Interface(tools);
+
 	// [ SETUP ]
-	io_allocate_memory(&data);
+	interface.ioAllocateMemory(&data);
 
 	// [ EXERCISE ]
-	status = read_ed247_configuration(filename.c_str(),data,NULL);
+	status = interface.readED247Configuration(filename.c_str(),data,NULL);
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
 
 	// [ VERIFY ]
@@ -154,7 +166,7 @@
 	EXPECT_EQ(		data->outputs->nstreams,				0);
 
 	// [ TEARDOWN ]
-	io_free_memory(data);
+	interface.ioFreeMemory(data);
 
  }
  
@@ -175,13 +187,16 @@
 	std::string sendconfiguration = filefolder_ + "/a429_mc_simple01.xml";
 	std::string recvconfiguration = filefolder_ + "/a429_mc_simple02.xml";
 
-	// [ SETUP ]
-	io_allocate_memory(&senddata);
-	io_allocate_memory(&recvdata);
+	ed247simulink::Tools tools;
+	ed247simulink::Interface interface = ed247simulink::Interface(tools);
 
-	cstatus = read_ed247_configuration(sendconfiguration.c_str(),senddata,NULL);
+	// [ SETUP ]
+	interface.ioAllocateMemory(&senddata);
+	interface.ioAllocateMemory(&recvdata);
+
+	cstatus = interface.readED247Configuration(sendconfiguration.c_str(),senddata,NULL);
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
-	cstatus = read_ed247_configuration(recvconfiguration.c_str(),recvdata,NULL);
+	cstatus = interface.readED247Configuration(recvconfiguration.c_str(),recvdata,NULL);
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
 
 	for (i = 0; i < senddata->inputs->nsignals; i++){
@@ -215,8 +230,8 @@
 	sendvalues[4][2] = 19;
 	sendvalues[4][3] = 20;
 
-	sstatus = send_simulink_to_ed247(senddata);
-	rstatus = receive_ed247_to_simulink(recvdata, &nrecv);
+	sstatus = interface.sendSimulinkToED247(senddata);
+	rstatus = interface.receiveED247ToSimulink(recvdata, &nrecv);
 
 	ASSERT_EQ(sstatus, SEND_OK);
 	ASSERT_EQ(rstatus, RECEIVE_OK);
@@ -245,8 +260,7 @@
 	EXPECT_EQ(*((char *)recvdata->outputs->signals[4].valuePtr + 3), sendvalues[4][3]);
 
 	// [ TEARDOWN ]
-	io_free_memory(senddata);
-	io_free_memory(recvdata);
+	interface.ioFreeMemory(senddata);
+	interface.ioFreeMemory(recvdata);
 
  }
- 
