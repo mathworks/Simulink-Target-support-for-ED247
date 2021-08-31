@@ -4,10 +4,22 @@
 
 #include "ed247_interface.h"
 
+namespace ed247simulink {
+
+/*
+ * CONSTRUCTORS
+ */
+Interface::Interface(){
+	_tools = Tools();
+}
+Interface::Interface(Tools tools){
+	_tools = tools;
+}
+
 /*
  * ED247 INTERFACE
  */
-configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, const char* logfilename){
+configuration_status_t Interface::readED247Configuration(const char* filename, IO_t *io, const char* logfilename){
 
 	int i,streamidx;
 	char folder[STRING_MAX_LENGTH];
@@ -24,10 +36,10 @@ configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, 
 	io->outputs->nsignals 	= 0;
 	io->outputs->nstreams 	= 0;
 
-	if (fileexists(filename) != 0){
+	if (_tools.fileexists(filename) != 0){
 		return INVALID_FILE;
 	}
-	fileparts(filename,folder);
+	_tools.fileparts(filename,folder);
 
     #ifndef DISABLE_LOG // Dependending on ED247 version, the log structure contains these additional fields or not 
     if (logfilename != NULL){
@@ -55,8 +67,8 @@ configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, 
 			stream_info->type == ED247_STREAM_TYPE_NAD ||
 			stream_info->type == ED247_STREAM_TYPE_VNAD)
 		{
-			read_status = local_signals_from_ecic(io, stream, stream_info);
-			if (read_status == STREAM_REACH_ARRAY_LIMIT){myprintf("WARNING: Stream array limit reached (%d), some data may be skipped\n", MAX_STREAMS);}
+			read_status = localSignalsFromECIC(io, stream, stream_info);
+			if (read_status == STREAM_REACH_ARRAY_LIMIT){_tools.myprintf("WARNING: Stream array limit reached (%d), some data may be skipped\n", MAX_STREAMS);}
 		}
 
 		// ICD is defined only for A429, A664 and A825
@@ -64,14 +76,14 @@ configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, 
 			stream_info->type == ED247_STREAM_TYPE_A664 || 
 			stream_info->type == ED247_STREAM_TYPE_A825)
 		{
-			read_status = local_signals_from_icd(io, stream, stream_info, folder);
+			read_status = localSignalsFromICD(io, stream, stream_info, folder);
 			if (read_status == STREAM_REACH_ARRAY_LIMIT){
-				myprintf("WARNING: Stream array limit reached (%d), some data may be skipped\n", MAX_STREAMS);
+				_tools.myprintf("WARNING: Stream array limit reached (%d), some data may be skipped\n", MAX_STREAMS);
 			}
 		}
 		status = ed247_stream_list_next(streams,&stream);
 		checkStatus(status,"ed247_stream_list_next",2);
-		if (stream == NULL){myprintf("\t\t> No more stream\n");}
+		if (stream == NULL){_tools.myprintf("\t\t> No more stream\n");}
 
 	}
 
@@ -82,13 +94,13 @@ configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, 
 
 }
 
-send_status_t send_simulink_to_ed247(IO_t *io){
+send_status_t Interface::sendSimulinkToED247(IO_t *io){
 
 	int i, j;
-	int status;
+	ed247_status_t status;
 
 	if (io->inputs->nsignals == 0){
-		myprintf("\t\t- %s : No inputs\n", "SimulinkToED247");
+		_tools.myprintf("\t\t- %s : No inputs\n", "SimulinkToED247");
 		return NO_DATA_TO_SEND;
 	}
 
@@ -123,9 +135,9 @@ send_status_t send_simulink_to_ed247(IO_t *io){
 
 				for (j=0;j < io->inputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
                     
-                    myprintf("Refresh value for signal #%d = %d\n", j, io->inputs->streams[i].signals[j]->do_refresh);
+                    _tools.myprintf("Refresh value for signal #%d = %d\n", j, io->inputs->streams[i].signals[j]->do_refresh);
                     if (io->inputs->streams[i].signals[j]->do_refresh == 1){
-                        myprintf("Push sample for signal #%d\n", j);
+                        _tools.myprintf("Push sample for signal #%d\n", j);
                         status = ed247_stream_push_sample(io->inputs->streams[i].stream, io->inputs->streams[i].signals[j]->valuePtr,io->inputs->streams[i].signals[j]->sample_size, NULL, NULL);
                     } else {
                         status = ED247_STATUS_SUCCESS;
@@ -153,17 +165,17 @@ send_status_t send_simulink_to_ed247(IO_t *io){
 
 }
 
-receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
+receive_status_t Interface::receiveED247ToSimulink(IO_t *io, int *n){
 
 	int i,j;
-	int status;
+	ed247_status_t status;
 	ed247_stream_list_t	streams;
 	bool empty;
 	size_t sample_size;
 	const void* sample_data;
 
 	if (io->outputs->nsignals == 0){
-		myprintf("\t- %s : No outputs\n", "ED247ToSimulink");
+		_tools.myprintf("\t- %s : No outputs\n", "ED247ToSimulink");
 		return NO_DATA_TO_RECEIVE;
 	}
 
@@ -172,7 +184,7 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 	status = ed247_wait_frame(io->_context, &(streams), WAIT_FRAME_TIMEOUT_US);	
 	if (ED247_STATUS_SUCCESS == status){
 
-		myprintf("\t> %s OK\n", "ed247_wait_frame");
+		_tools.myprintf("\t> %s OK\n", "ed247_wait_frame");
 
 		for (i=0;i < io->outputs->nstreams && i < MAX_STREAMS; i++){
 
@@ -188,7 +200,7 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 					status = ed247_stream_assistant_pop_sample(io->outputs->streams[i].assistant, NULL, NULL, NULL, &empty);
 					if (status == ED247_STATUS_SUCCESS){
 
-						myprintf("\t> %s OK\n", "ed247_stream_assistant_pop_sample");
+						_tools.myprintf("\t> %s OK\n", "ed247_stream_assistant_pop_sample");
 
 						for (j=0;j < io->outputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
 
@@ -217,12 +229,12 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 
 					for (j=0;j < io->outputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
 
-						myprintf("\t> signal #%d/#%d", j+1, io->outputs->streams[i].nsignals);
+						_tools.myprintf("\t> signal #%d/#%d", j+1, io->outputs->streams[i].nsignals);
 
 						status = ed247_stream_pop_sample(io->outputs->streams[i].stream,&sample_data,&sample_size, NULL, NULL, NULL, &empty);
 						if (status == ED247_STATUS_SUCCESS && io->outputs->streams[i].signals[j]->valuePtr != NULL && sample_data != NULL){
 
-							myprintf("\t> %s OK\n", "ed247_stream_pop_sample");
+							_tools.myprintf("\t> %s OK\n", "ed247_stream_pop_sample");
 
 							memcpy(io->outputs->streams[i].signals[j]->valuePtr,(void*)sample_data,io->outputs->streams[i].signals[j]->sample_size);
 							if (n != NULL){(*n)++;}/* polyspace DEFECT:USELESS_IF RTE:UNR [Justified:Low] Robustness */
@@ -230,7 +242,7 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 							io->outputs->streams[i].signals[j]->do_refresh = 1;
 
 						} else {
-							myprintf("\t> %s NOK\n", "ed247_stream_pop_sample");
+							_tools.myprintf("\t> %s NOK\n", "ed247_stream_pop_sample");
 							io->outputs->streams[i].signals[j]->do_refresh = 0;
 						}
 
@@ -239,7 +251,7 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 					break;
 
 				default:
-					return UNKNOWN_STREAM_TYPE;
+					return UNKNOWN_RECEIVE_STREAM_TYPE;
 
 			}
 		}
@@ -266,7 +278,7 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 			}
 		}
 
-		myprintf("\t\t - No data received before timeout\n");
+		_tools.myprintf("\t\t - No data received before timeout\n");
 		return NO_DATA_BEFORE_TIMEOUT;
 	}
 	else {
@@ -277,7 +289,7 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 			}
 		}
 
-		myprintf("\t\t!! %s returns invalid status\n", "ed247_wait_frame");
+		_tools.myprintf("\t\t!! %s returns invalid status\n", "ed247_wait_frame");
 		return WAIT_FRAME_FAILURE;
 	}
 
@@ -288,7 +300,7 @@ receive_status_t receive_ed247_to_simulink(IO_t *io, int *n){
 /*
  * MEMORY MANAGEMENT
  */
-io_allocation_status_t io_allocate_memory(IO_t ** io){
+io_allocation_status_t Interface::ioAllocateMemory(IO_t ** io){
 
 	if (((*io)=(IO_t*)malloc(sizeof(IO_t))) == NULL) {
 		return IO_MALLOC_FAILURE;
@@ -307,10 +319,10 @@ io_allocation_status_t io_allocate_memory(IO_t ** io){
 
 }
 
-io_free_status_t io_free_memory(IO_t *io){
+io_free_status_t Interface::ioFreeMemory(IO_t *io){
 
 	int i;
-	int status;
+	ed247_status_t status;
 
 	if (io->_context != NULL){/* polyspace RTE:UNR [Justified:Low] Robustness */
 		status = ed247_unload(io->_context);
@@ -335,7 +347,7 @@ io_free_status_t io_free_memory(IO_t *io){
 /*
  * LOCAL FUNCTIONS
  */
-  configuration_status_t local_signals_from_ecic(IO_t* io, ed247_stream_t stream, const ed247_stream_info_t*	stream_info){
+  configuration_status_t Interface::localSignalsFromECIC(IO_t* io, ed247_stream_t stream, const ed247_stream_info_t*	stream_info){
 
 	int i, streamidx;
 
@@ -353,8 +365,8 @@ io_free_status_t io_free_memory(IO_t *io){
 	} else if (stream_info->direction == ED247_DIRECTION_OUT) {
 		current_io = io->inputs;
 	} else {
-		myprintf("!!! Stream direction unknown %s, skip\n", ed247_direction_string(stream_info->direction));
-		return -1;
+		_tools.myprintf("!!! Stream direction unknown %s, skip\n", ed247_direction_string(stream_info->direction));
+		return INVALID_DIRECTION;
 	}
 
 	streamidx = current_io->nstreams;
@@ -462,7 +474,7 @@ io_free_status_t io_free_memory(IO_t *io){
 		current_io->nsignals++;
 
 	}
-	if (current_io->nsignals == MAX_SIGNALS){myprintf("WARNING: Limit of maximum signal number reached (%d), some signals may be missing\n", MAX_SIGNALS);}
+	if (current_io->nsignals == MAX_SIGNALS){_tools.myprintf("WARNING: Limit of maximum signal number reached (%d), some signals may be missing\n", MAX_SIGNALS);}
 
 	status = ed247_signal_list_free(signals);
 	if (checkStatus(status,"ed247_signal_list_free",4)){return SIGNAL_LIST_FREE_FAILURE;}
@@ -471,7 +483,7 @@ io_free_status_t io_free_memory(IO_t *io){
 
  }
  
- configuration_status_t local_signals_from_icd(IO_t* io, ed247_stream_t stream, const ed247_stream_info_t*	stream_info, char* folder){
+ configuration_status_t Interface::localSignalsFromICD(IO_t* io, ed247_stream_t stream, const ed247_stream_info_t*	stream_info, char* folder){
 
 	int i,j,streamidx;
 	char tmpstr[STRING_MAX_LENGTH];
@@ -483,6 +495,8 @@ io_free_status_t io_free_memory(IO_t *io){
 
 	cmd_read_status_t 			status;
 	static cmd_data_t			data;
+
+	Cmd cmd = Cmd(_tools);
 
 	data_characteristics_t* 	current_io;
 	stream_characteristics_t*	current_stream_in;
@@ -505,7 +519,7 @@ io_free_status_t io_free_memory(IO_t *io){
 	sprintf(icdfullpath, "%s%s%s", folder, FILESEP, icdname);
 
 	// Read CMD file
-	status = cmd_read_data(icdfullpath, &data);
+	status = cmd.readData(icdfullpath, &data);
 	if (status != CMD_READ_OK){return LOAD_FAILURE;}
 
 	switch (stream_info->type){
@@ -562,13 +576,13 @@ io_free_status_t io_free_memory(IO_t *io){
 
 						if (current_io->nsignals < MAX_SIGNALS && current_stream->nsignals < MAX_SIGNALS){
 
-							myprintf("[A429] Store signal information #%d/#%d\n", current_io->nsignals+1, data.a429[i].n_messages);
+							_tools.myprintf("[A429] Store signal information #%d/#%d\n", current_io->nsignals+1, data.a429[i].n_messages);
 							current_signal = &(current_io->signals[current_io->nsignals]);
 
 							strcpy(current_signal->name,data.a429[i].messages[j].name);
 							current_signal->direction			= data.a429[i].messages[j].direction;
 							current_signal->is_refresh			= 1;
-							current_signal->signal_type 		= data.a429[i].messages[j].type;
+							current_signal->signal_type 		= (ed247_signal_type_t) data.a429[i].messages[j].type;
 							current_signal->stream_type			= stream_info->type;
 							current_signal->type 				= A429_DATA_TYPE;
 							current_signal->dimensions			= 1;
@@ -583,7 +597,7 @@ io_free_status_t io_free_memory(IO_t *io){
 							current_io->nsignals++;
 
 						} else {
-							myprintf("[A429] Cannot store signal #%d/#%d (array max size = %d)\n", current_io->nsignals+1, data.a429[i].n_messages, MAX_SIGNALS);
+							_tools.myprintf("[A429] Cannot store signal #%d/#%d (array max size = %d)\n", current_io->nsignals+1, data.a429[i].n_messages, MAX_SIGNALS);
 						}
 
 					}
@@ -607,7 +621,7 @@ io_free_status_t io_free_memory(IO_t *io){
 					break;
 
 				default:
-					return -1;
+					return INVALID_DIRECTION;
 
 			}
 
@@ -630,7 +644,7 @@ io_free_status_t io_free_memory(IO_t *io){
 
 					if (current_io->nsignals < MAX_SIGNALS && current_stream->nsignals < MAX_SIGNALS){
 
-						myprintf("[A664] Store signal information #%d/#%d\n", current_io->nsignals+1, data.counter.a664);
+						_tools.myprintf("[A664] Store signal information #%d/#%d\n", current_io->nsignals+1, data.counter.a664);
 						current_signal = &(current_io->signals[current_io->nsignals]);
 
 						strcpy(current_signal->name,data.a664[i].name);
@@ -649,7 +663,7 @@ io_free_status_t io_free_memory(IO_t *io){
 						current_stream->nsignals++;
 						current_io->nsignals++;
 					} else {
-						myprintf("[A664] Cannot store signal #%d/#%d (array max size = %d)\n", current_io->nsignals+1, data.counter.a664, MAX_SIGNALS);
+						_tools.myprintf("[A664] Cannot store signal #%d/#%d (array max size = %d)\n", current_io->nsignals+1, data.counter.a664, MAX_SIGNALS);
 					}
 
 				}
@@ -699,7 +713,7 @@ io_free_status_t io_free_memory(IO_t *io){
 
 					if (io->inputs->nsignals < MAX_SIGNALS && input_stream->nsignals < MAX_SIGNALS){
 
-						myprintf("[A825] Store signal information #%d/#%d\n", io->inputs->nsignals+1, data.counter.a825);
+						_tools.myprintf("[A825] Store signal information #%d/#%d\n", io->inputs->nsignals+1, data.counter.a825);
 						current_signal = &(io->inputs->signals[io->inputs->nsignals]);
 
 						strcpy(current_signal->name,data.a825[i].name);
@@ -719,12 +733,12 @@ io_free_status_t io_free_memory(IO_t *io){
 						io->inputs->nsignals++;
 
 					} else {
-						myprintf("[A825] Cannot store signal #%d/#%d (array max size = %d)\n", io->inputs->nsignals+1, data.counter.a825, MAX_SIGNALS);
+						_tools.myprintf("[A825] Cannot store signal #%d/#%d (array max size = %d)\n", io->inputs->nsignals+1, data.counter.a825, MAX_SIGNALS);
 					}
 
 					if (io->outputs->nsignals < MAX_SIGNALS && output_stream->nsignals < MAX_SIGNALS){
 
-						myprintf("[A825] Store signal information #%d/#%d\n", io->outputs->nsignals+1, data.counter.a825);
+						_tools.myprintf("[A825] Store signal information #%d/#%d\n", io->outputs->nsignals+1, data.counter.a825);
 						current_signal = &(io->outputs->signals[io->outputs->nsignals]);
 
 						strcpy(current_signal->name,data.a825[i].name);
@@ -744,7 +758,7 @@ io_free_status_t io_free_memory(IO_t *io){
 						io->outputs->nsignals++;
 
 					} else {
-						myprintf("[A825] Cannot store signal #%d/#%d (array max size = %d)\n", io->outputs->nsignals+1, data.counter.a825, MAX_SIGNALS);
+						_tools.myprintf("[A825] Cannot store signal #%d/#%d (array max size = %d)\n", io->outputs->nsignals+1, data.counter.a825, MAX_SIGNALS);
 					}
 
 				}
@@ -754,7 +768,7 @@ io_free_status_t io_free_memory(IO_t *io){
 			break;
 
 		default:/* polyspace RTE:UNR [Justified:Low] Defensive code */
-			return -1;
+			return INVALID_TYPE;
 
 	}
 
@@ -765,7 +779,7 @@ io_free_status_t io_free_memory(IO_t *io){
 /*
  * DEBUG / HELPERS
  */
-BuiltInDTypeId NAD2SimulinkDataType(ed247_nad_type_t type){
+BuiltInDTypeId Interface::NAD2SimulinkDataType(ed247_nad_type_t type){
 
 	switch (type){
 		case ED247_NAD_TYPE_INT8:
@@ -794,7 +808,7 @@ BuiltInDTypeId NAD2SimulinkDataType(ed247_nad_type_t type){
 
 }
 
-int sizeofNADDataType(ed247_nad_type_t type){
+int Interface::sizeofNADDataType(ed247_nad_type_t type){
 
 	switch (type){
 		case ED247_NAD_TYPE_INT8:
@@ -823,7 +837,7 @@ int sizeofNADDataType(ed247_nad_type_t type){
 
 }
 
-char checkStatus(ed247_status_t status, char* fcnname, int level){
+char Interface::checkStatus(ed247_status_t status, char* fcnname, int level){
 
 	int i;
 	char format[1024] = "";
@@ -833,12 +847,14 @@ char checkStatus(ed247_status_t status, char* fcnname, int level){
 
 	if (ED247_STATUS_SUCCESS != status){
 		strcat(format,"!! %s returns invalid status (%d / %d)\n");
-		myprintf(format, fcnname, status, ED247_STATUS_SUCCESS);
+		_tools.myprintf(format, fcnname, status, ED247_STATUS_SUCCESS);
 		return 1;
 	} else {
 		strcat(format,"> %s OK\n");
-		myprintf(format, fcnname);
+		_tools.myprintf(format, fcnname);
 		return 0;
 	}
+
+}
 
 }

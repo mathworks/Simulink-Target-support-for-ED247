@@ -11,31 +11,32 @@
  #include <cstdlib>
  #include <string>
    
- extern "C" {
-	 #include "ed247_interface.h"
- }
+ #include "ed247_interface.h"
  
  TEST_F(ConfigurationTest, InvalidECICFile)
  {
-	
+
 	configuration_status_t status;
 	IO_t *data;
 	const char *filename = "";
-	
-	// [ SETUP ]
-	io_allocate_memory(&data);
-	
-	// [ EXERCISE ]
-	status = read_ed247_configuration(filename,data,NULL);
-	
-	// [ VERIFY ]
-    EXPECT_EQ(status, INVALID_FILE);
-	
-	// [ TEARDOWN ]
-	io_free_memory(data);
-	
- }
 
+	ed247simulink::Tools tools;
+	ed247simulink::Interface interface = ed247simulink::Interface(tools);
+
+	// [ SETUP ]
+	interface.ioAllocateMemory(&data);
+
+	// [ EXERCISE ]
+	status = interface.readED247Configuration(filename,data,NULL);
+
+	// [ VERIFY ]
+	EXPECT_EQ(status, INVALID_FILE);
+
+	// [ TEARDOWN ]
+	interface.ioFreeMemory(data);
+
+ }
+/*
  TEST_F(TransmissionTest, ANATransmission)
  {
 	int i,nrecv;
@@ -183,3 +184,4 @@
 	io_free_memory(senddata);
 	
  }
+ */
