@@ -837,7 +837,7 @@ int Interface::sizeofNADDataType(ed247_nad_type_t type){
 
 }
 
-char Interface::checkStatus(ed247_status_t status, char* fcnname, int level){
+char Interface::checkStatus(ed247_status_t status, const char* fcnname, int level){
 
 	int i;
 	char format[1024] = "";

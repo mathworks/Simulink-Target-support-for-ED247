@@ -193,7 +193,7 @@ namespace ed247simulink {
 			 * DEBUG / HELPERS
 			 */
 			BuiltInDTypeId NAD2SimulinkDataType(ed247_nad_type_t type);
-			char checkStatus(ed247_status_t status, char* fcnname, int level);
+			char checkStatus(ed247_status_t status, const char* fcnname, int level);
 			int sizeofNADDataType(ed247_nad_type_t type);
 
 	/*
