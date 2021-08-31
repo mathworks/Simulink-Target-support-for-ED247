@@ -67,11 +67,11 @@ enable_testing()
 set(SOURCES 
 		${PROJECT_SOURCE_DIR}/tests/ed247_cmd_xml_test.cpp 
 		${PROJECT_SOURCE_DIR}/tests/ed247_interface_test.cpp 
-		#${PROJECT_SOURCE_DIR}/tests/issues_test.cpp 
+		${PROJECT_SOURCE_DIR}/tests/issues_test.cpp 
 		${PROJECT_SOURCE_DIR}/tests/a429_test.cpp 
-		#${PROJECT_SOURCE_DIR}/tests/a664_test.cpp 
-		#${PROJECT_SOURCE_DIR}/tests/a825_test.cpp 
-		#${PROJECT_SOURCE_DIR}/tests/nad_test.cpp 
+		${PROJECT_SOURCE_DIR}/tests/a664_test.cpp 
+		${PROJECT_SOURCE_DIR}/tests/a825_test.cpp 
+		${PROJECT_SOURCE_DIR}/tests/nad_test.cpp 
 		${PROJECT_SOURCE_DIR}/tests/testutils.cpp 
 		${PROJECT_SOURCE_DIR}/tests/tools_test.cpp 
 		${PROJECT_SOURCE_DIR}/tests/main.cpp
