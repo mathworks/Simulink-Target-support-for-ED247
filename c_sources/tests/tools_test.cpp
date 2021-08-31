@@ -14,8 +14,10 @@
 	std::string absolutefilename = "C:\\Temp\\projectA\\fileB.txt";
 	char folder[STRING_MAX_LENGTH];
 
+	ed247simulink::Tools tools;
+
 	/* [ EXERCISE ] */
-	ed247simulink::Tools::fileparts(absolutefilename.c_str(),folder);
+	tools.fileparts(absolutefilename.c_str(),folder);
 
 	/* [ VERIFY ] */
 	EXPECT_STREQ(folder, "C:\\Temp\\projectA");

@@ -30,9 +30,9 @@ namespace ed247simulink {
 	class Tools {
 
 		public:
-			static void myprintf(const char *fmt, ...);
-			static int fileexists(const char * filename);
-			static void fileparts(const char* path, char* folder);
+			void myprintf(const char *fmt, ...);
+			int fileexists(const char * filename);
+			void fileparts(const char* path, char* folder);
 
 	};
 
