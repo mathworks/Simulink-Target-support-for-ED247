@@ -32,6 +32,9 @@
 	/* [ VERIFY ] */
 	EXPECT_EQ(status, CMD_READ_INVALID_FILE);
 
+	// [ TEARDOWN ]
+	free(data);
+
  }
 
  TEST_F(ConfigurationTest, BridgeMessageDescription)
