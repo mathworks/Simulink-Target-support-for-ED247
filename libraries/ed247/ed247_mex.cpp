@@ -14,12 +14,17 @@ void mexFunction( int nlhs, mxArray *plhs[],
 {
 	char* filename;
 	size_t buflen;
-	int status;
-	IO_t *io;
+	int status;	
 	int nIn, nOut;
 	int i,j;
 	char *fieldnames[N_FIELDNAMES];
 
+    data_characteristics_t* inputs;
+	data_characteristics_t* outputs;
+    
+    ed247simulink::Tools* tools;
+	ed247simulink::ED247Connector* connector;
+    
 	fieldnames[0] = (char*)mxMalloc(MAX_STRING_SIZE);
 	memcpy(fieldnames[0],"name",sizeof("name"));
 	fieldnames[1] = (char*)mxMalloc(MAX_STRING_SIZE);
@@ -56,7 +61,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	}
 
 	buflen = mxGetN(prhs[0]) + 1;
-	filename = mxMalloc(buflen);
+	filename = (char*)mxMalloc(buflen);
 
 	/* Copy the string data into buf. */ 
 	status = mxGetString(prhs[0], filename, (mwSize) buflen);
@@ -64,27 +69,33 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		mexErrMsgIdAndTxt( "ED247:mxGetString", 
 							"Failed to copy input string into allocated memory.");
 	}
+    
+    tools = new ed247simulink::Tools();
+	connector = new ed247simulink::ED247Connector(filename,*tools);
+    
+	tools->myprintf("The input string is:  %s\n", filename);
 
-	myprintf("The input string is:  %s\n", filename);
+	connector->allocateMemory();
+	connector->readED247Configuration();
 
-	io_allocate_memory(&io);
-	read_ed247_configuration(filename, io, "");
-
+    inputs = connector->getInputs();
+    outputs = connector->getOutputs();
+    
 	//
 	// Configuration structure
-	//
-	nIn = io->inputs->nsignals;
-	nOut = io->outputs->nsignals;
-	myprintf("%d input signals, %d output signal\n", nIn, nOut);
+	//    
+	nIn = inputs->nsignals;
+	nOut = outputs->nsignals;
+	tools->myprintf("%d input signals, %d output signal\n", nIn, nOut);
 	plhs[0] = mxCreateStructMatrix(nIn + nOut,1,N_FIELDNAMES,(const char**)fieldnames);
 
 	for (i = 0; i < nIn; i++){
-		myprintf("Fill elements %d/%d\n", i+1, nIn + nOut);
-		fillStructure(plhs[0], i, io->inputs->signals[i]);
+		tools->myprintf("Fill elements %d/%d\n", i+1, nIn + nOut);
+		fillStructure(plhs[0], i, inputs->signals[i]);
 	}
 	for (j = 0; j < nOut; j++){
-		myprintf("Fill elements %d/%d\n", i+j+1, nIn + nOut);
-		fillStructure(plhs[0], i+j, io->outputs->signals[j]);  
+		tools->myprintf("Fill elements %d/%d\n", i+j+1, nIn + nOut);
+		fillStructure(plhs[0], i+j, outputs->signals[j]);  
 	}
 
 	//Deallocate memory for the fieldnames
@@ -95,21 +106,21 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	//
 	// List of files
 	//
-	nIn = io->inputs->nstreams;
-	nOut = io->outputs->nstreams;
-	myprintf("%d input streams, %d output streams\n", nIn, nOut);
+	nIn = inputs->nstreams;
+	nOut = outputs->nstreams;
+	tools->myprintf("%d input streams, %d output streams\n", nIn, nOut);
 	plhs[1] = mxCreateCellMatrix(nIn + nOut, 1);
 	for (i = 0; i < nIn; i++){
-		myprintf("Store filenames for input stream %d/%d\n", i+1, nIn + nOut);
-		mxSetCell(plhs[1],i,mxCreateString(io->inputs->streams[i].filename));
+		tools->myprintf("Store filenames for input stream %d/%d\n", i+1, nIn + nOut);
+		mxSetCell(plhs[1],i,mxCreateString(inputs->streams[i].filename));
 	}
 	for (j = 0; j < nOut; j++){
-		myprintf("Store filenames for output stream %d/%d\n", i+j+1, nIn + nOut);
-		mxSetCell(plhs[1],i+j,mxCreateString(io->outputs->streams[j].filename));
+		tools->myprintf("Store filenames for output stream %d/%d\n", i+j+1, nIn + nOut);
+		mxSetCell(plhs[1],i+j,mxCreateString(outputs->streams[j].filename));
 	}
 
 	mxFree(filename);
-	io_free_memory(io);
+	connector->freeMemory();
 
 }
 
