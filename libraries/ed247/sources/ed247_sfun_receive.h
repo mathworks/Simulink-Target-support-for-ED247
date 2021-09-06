@@ -6,22 +6,34 @@
 
 #define MAX_COUNTER 10000000
 
-#define ED247_RECEIVE_INITIALIZE
-void receiveInitialize(SimStruct *S, IO_t *io);
-
-#define ED247_RECEIVE_START
-void receiveStart(SimStruct *S, IO_t *io);
-
-#define ED247_RECEIVE_OUTPUTS
-void receiveOutputs(SimStruct *S, IO_t* io);
-
-#define ED247_RECEIVE_UPDATE
-void receiveUpdate(SimStruct *S, IO_t* io);
-
-#define ED247_RECEIVE_TERMINATE
-void receiveTerminate(SimStruct *S, IO_t* io);
-
-#define ED247_RECEIVE_RTW
-void receiveRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, int_T* nSignals, real_T portIndex[100], real_T refreshIndex[100]);
+namespace ed247sfcn {
+    
+    class Receive {
+        
+    private:
+        ed247simulink::ED247Connector* _connector;
+        ed247simulink::Tools* _tools;
+        SimStruct* _S;
+        
+    public:
+        /*
+         * CONSTRUCTORS
+         */
+        Receive(SimStruct *S, ed247simulink::ED247Connector* connector);
+        Receive(SimStruct *S, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools);
+        
+        /*
+         * S-Function API
+         */
+        void initialize();
+        void start();
+        void outputs();
+        void update();
+        void terminate();
+        void RTW(real_T* blockTypeID, int_T* nSignals, real_T portIndex[MAX_SIGNALS], real_T refreshIndex[MAX_SIGNALS]);
+        
+    };
+    
+}
 
 #endif

@@ -50,9 +50,9 @@ defines             = {};
 opts                = {};
 
 % Source files
-sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_cmd_xml.c');
-sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_interface.c');
-sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'tools.c');
+sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_cmd_xml.cpp');
+sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'ed247_interface.cpp');
+sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'tools.cpp');
 
 if isunix()
     sourcefiles{end+1} = fullfile(ed247folder,   'lib',  'libed247.so');
@@ -100,7 +100,7 @@ defines             = cellfun(@(d) sprintf('-D%s',d), cellstr(defines), 'Uniform
 cd(mexfolder)
 
 if strcmp(p.Results.MEXFile,'all')
-    mexfiles = dir(fullfile(mexfolder,'*.c'));
+    mexfiles = dir(fullfile(mexfolder,'*.cpp'));
     mexfiles = {mexfiles.name};
 else
     mexfiles = {p.Results.MEXFile};
@@ -113,10 +113,10 @@ for i_mex = 1:numel(mexfiles)
     
     fprintf(1, '## Run MEX compilation : %s (%02d/%02d)\n', mexfiles{i_mex}, i_mex, numel(mexfiles))
     
-    if strcmp(mexfiles{i_mex},'ed247_sfun.c')
-        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_configure.c'); %#ok<AGROW>
-        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_receive.c'); %#ok<AGROW>
-        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_send.c'); %#ok<AGROW>
+    if strcmp(mexfiles{i_mex},'ed247_sfun.cpp')
+        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_configure.cpp'); %#ok<AGROW>
+        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_receive.cpp'); %#ok<AGROW>
+        sourcefiles{end+1} = fullfile(sfunsourcefolder, 'ed247_sfun_send.cpp'); %#ok<AGROW>
     end
             
     warning('off','MATLAB:mex:MinGWVersion_link')

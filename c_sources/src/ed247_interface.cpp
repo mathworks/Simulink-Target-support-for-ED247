@@ -819,7 +819,7 @@ BuiltInDTypeId ED247Connector::NAD2SimulinkDataType(ed247_nad_type_t type){
 		case ED247_NAD_TYPE_INT32:
 			return SS_INT32;
 		case ED247_NAD_TYPE_INT64:
-			return SS_INT64;
+			return (BuiltInDTypeId) SS_INT64;
 		case ED247_NAD_TYPE_UINT8:
 			return SS_UINT8;
 		case ED247_NAD_TYPE_UINT16:
@@ -827,13 +827,13 @@ BuiltInDTypeId ED247Connector::NAD2SimulinkDataType(ed247_nad_type_t type){
 		case ED247_NAD_TYPE_UINT32:
 			return SS_UINT32;
 		case ED247_NAD_TYPE_UINT64:
-			return SS_UINT64;
+			return (BuiltInDTypeId) SS_UINT64;
 		case ED247_NAD_TYPE_FLOAT32:
 			return SS_SINGLE;
 		case ED247_NAD_TYPE_FLOAT64:
 			return SS_DOUBLE;
 		default:
-			return SS_INVALID;
+			return (BuiltInDTypeId) SS_INVALID;
 	}
 
 }

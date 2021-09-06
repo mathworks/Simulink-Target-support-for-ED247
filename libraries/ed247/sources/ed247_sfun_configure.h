@@ -4,22 +4,34 @@
 #include "simstruc.h"
 #include "ed247_interface.h"
 
-#define ED247_CONFIGURE_INITIALIZE
-IO_t* configureInitialize(SimStruct *S);
-
-#define ED247_CONFIGURE_START
-void configureStart(SimStruct *S, IO_t *io);
-
-#define ED247_CONFIGURE_OUTPUTS
-void configureOutputs(SimStruct *S, IO_t* io);
-
-#define ED247_CONFIGURE_UPDATE
-void configureUpdate(SimStruct *S, IO_t* io);
-
-#define ED247_CONFIGURE_TERMINATE
-void configureTerminate(SimStruct *S, IO_t* io);
-
-#define ED247_CONFIGURE_RTW
-void configureRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, char_T* configurationFile);
+namespace ed247sfcn {
+    
+    class Configure {
+        
+    private:
+        ed247simulink::ED247Connector* _connector;
+        ed247simulink::Tools* _tools;
+        SimStruct* _S;
+        
+    public:
+        /*
+         * CONSTRUCTORS
+         */
+        Configure(SimStruct *S, ed247simulink::ED247Connector* connector);
+        Configure(SimStruct *S, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools);
+        
+        /*
+         * S-Function API
+         */
+        configuration_status_t initialize();
+        void start();
+        void outputs();
+        void update();
+        void terminate();
+        void RTW(real_T* blockTypeID, char_T* configurationFile);
+        
+    };
+    
+}
 
 #endif
