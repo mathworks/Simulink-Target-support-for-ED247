@@ -64,19 +64,18 @@
 	data_characteristics_t* outputs;
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),tools);
 
 	// [ SETUP ]
 	connector.allocateMemory();
 
 	// [ EXERCISE ]
-	status = connector.readED247Configuration(filename.c_str(),NULL);
+	status = connector.readED247Configuration();
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
-
-	inputs = connector.getInputs();
 
 	// [ VERIFY ]
 	// Inputs
+	inputs = connector.getInputs();
 	EXPECT_EQ(		inputs->nstreams,					1);
 	EXPECT_EQ(		inputs->nsignals,					1);
 
@@ -97,6 +96,7 @@
 	EXPECT_EQ(		inputs->signals[0].sample_time,	0.064F);
 	
 	// Outputs
+	outputs = connector.getOutputs();
 	EXPECT_EQ(		outputs->nstreams,					1);
 	EXPECT_EQ(		outputs->nsignals,					1);
 	
@@ -132,13 +132,13 @@
 	std::string filename = filefolder_ + "/a664_mc_simple03.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),tools);
 
 	// [ SETUP ]
 	connector.allocateMemory();
 
 	// [ EXERCISE ]
-	status = connector.readED247Configuration(filename.c_str(),NULL);
+	status = connector.readED247Configuration();
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
 
 	// [ VERIFY ]
@@ -210,16 +210,16 @@
 	std::string configuration02 = filefolder_ + "/a664_mc_simple02.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector conn01 = ed247simulink::ED247Connector(tools);
-	ed247simulink::ED247Connector conn02 = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector conn01 = ed247simulink::ED247Connector(configuration01.c_str(),tools);
+	ed247simulink::ED247Connector conn02 = ed247simulink::ED247Connector(configuration02.c_str(),tools);
 
 	// [ SETUP ]
 	conn01.allocateMemory();
 	conn02.allocateMemory();
 
-	cstatus = conn01.readED247Configuration(configuration01.c_str(),NULL);
+	cstatus = conn01.readED247Configuration();
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
-	cstatus = conn02.readED247Configuration(configuration02.c_str(),NULL);
+	cstatus = conn02.readED247Configuration();
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
 
 	data01in  = conn01.getInputs();
@@ -300,16 +300,16 @@
 	std::string configuration02 = filefolder_ + "/a664_mc_simple04.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector conn01 = ed247simulink::ED247Connector(tools);
-	ed247simulink::ED247Connector conn02 = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector conn01 = ed247simulink::ED247Connector(configuration01.c_str(),tools);
+	ed247simulink::ED247Connector conn02 = ed247simulink::ED247Connector(configuration02.c_str(),tools);
 
 	// [ SETUP ]
 	conn01.allocateMemory();
 	conn02.allocateMemory();
 
-	cstatus = conn01.readED247Configuration(configuration01.c_str(),NULL);
+	cstatus = conn01.readED247Configuration();
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
-	cstatus = conn02.readED247Configuration(configuration02.c_str(),NULL);
+	cstatus = conn02.readED247Configuration();
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
 
 	data01in  = conn01.getInputs();
@@ -393,16 +393,16 @@
 	std::string configuration02 = filefolder_ + "/a664_mc_simple02.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector conn01 = ed247simulink::ED247Connector(tools);
-	ed247simulink::ED247Connector conn02 = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector conn01 = ed247simulink::ED247Connector(configuration01.c_str(),tools);
+	ed247simulink::ED247Connector conn02 = ed247simulink::ED247Connector(configuration02.c_str(),tools);
 
 	// [ SETUP ]
 	conn01.allocateMemory();
 	conn02.allocateMemory();
 
-	cstatus = conn01.readED247Configuration(configuration01.c_str(),NULL);
+	cstatus = conn01.readED247Configuration();
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
-	cstatus = conn02.readED247Configuration(configuration02.c_str(),NULL);
+	cstatus = conn02.readED247Configuration();
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
 
 	data01in  = conn01.getInputs();

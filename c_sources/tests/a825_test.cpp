@@ -64,13 +64,13 @@
 	data_characteristics_t* outputs;
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),tools);
 
 	// [ SETUP ]
 	connector.allocateMemory();
 
 	// [ EXERCISE ]
-	status = connector.readED247Configuration(filename.c_str(),NULL);
+	status = connector.readED247Configuration();
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
 
 	// [ VERIFY ]
@@ -160,16 +160,16 @@
 	std::string configuration02 = filefolder_ + "/a825_mc_2.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector conn01 = ed247simulink::ED247Connector(tools);
-	ed247simulink::ED247Connector conn02 = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector conn01 = ed247simulink::ED247Connector(configuration01.c_str(),tools);
+	ed247simulink::ED247Connector conn02 = ed247simulink::ED247Connector(configuration02.c_str(),tools);
 
 	// [ SETUP ]
 	conn01.allocateMemory();
 	conn02.allocateMemory();
 
-	cstatus = conn01.readED247Configuration(configuration01.c_str(),NULL);
+	cstatus = conn01.readED247Configuration();
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
-	cstatus = conn02.readED247Configuration(configuration02.c_str(),NULL);
+	cstatus = conn02.readED247Configuration();
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
 
 	data01in  = conn01.getInputs();

@@ -167,9 +167,15 @@ namespace ed247simulink {
 			IO_t*	_io;
 			Tools	_tools;
 
+			const char* _filename;
+			const char* _logfilename;
+
 		public:
 			ED247Connector();
-			ED247Connector(Tools tools);
+			ED247Connector(const char* filename);
+			ED247Connector(const char* filename,const char* logfilename);
+			ED247Connector(const char* filename,Tools tools);
+			ED247Connector(const char* filename,const char* logfilename,Tools tools);
 
 		public:
 			/*
@@ -181,7 +187,7 @@ namespace ed247simulink {
 			/*
 			 * ED247 INTERFACE
 			 */
-			configuration_status_t readED247Configuration(const char* filename, const char* logfilename);
+			configuration_status_t readED247Configuration();
 			send_status_t sendSimulinkToED247();
 			receive_status_t receiveED247ToSimulink(int *n);
 

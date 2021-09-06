@@ -23,13 +23,13 @@
 	data_characteristics_t* outputs;
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),tools);
 
 	// [ SETUP ]
 	connector.allocateMemory();
 
 	// [ EXERCISE ]
-	status = connector.readED247Configuration(filename.c_str(),NULL);
+	status = connector.readED247Configuration();
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
 
 	// [ VERIFY ]
@@ -110,13 +110,13 @@
 	data_characteristics_t* outputs;
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),tools);
 
 	// [ SETUP ]
 	connector.allocateMemory();
 
 	// [ EXERCISE ]
-	status = connector.readED247Configuration(filename.c_str(),NULL);
+	status = connector.readED247Configuration();
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
 
 	// [ VERIFY ]
@@ -188,13 +188,13 @@
 	data_characteristics_t* outputs;
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),tools);
 
 	// [ SETUP ]
 	connector.allocateMemory();
 
 	// [ EXERCISE ]
-	status = connector.readED247Configuration(filename.c_str(),NULL);
+	status = connector.readED247Configuration();
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
 
 	// [ VERIFY ]
@@ -275,16 +275,16 @@
 	std::string recvconfiguration = filefolder_ + "/nad_mc_2.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(tools);
-	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(sendconfiguration.c_str(),tools);
+	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(recvconfiguration.c_str(),tools);
 
 	// [ SETUP ]
 	sendconnector.allocateMemory();
 	recvconnector.allocateMemory();
 
-	cstatus = sendconnector.readED247Configuration(sendconfiguration.c_str(),NULL);
+	cstatus = sendconnector.readED247Configuration();
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
-	cstatus = recvconnector.readED247Configuration(recvconfiguration.c_str(),NULL);
+	cstatus = recvconnector.readED247Configuration();
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
 
 	senddata = sendconnector.getInputs();
@@ -347,16 +347,16 @@
 	std::string recvconfiguration = filefolder_ + "/nad_mc_4.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(tools);
-	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(sendconfiguration.c_str(),tools);
+	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(recvconfiguration.c_str(),tools);
 
 	// [ SETUP ]
 	sendconnector.allocateMemory();
 	recvconnector.allocateMemory();
 
-	cstatus = sendconnector.readED247Configuration(sendconfiguration.c_str(),NULL);
+	cstatus = sendconnector.readED247Configuration();
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
-	cstatus = recvconnector.readED247Configuration(recvconfiguration.c_str(),NULL);
+	cstatus = recvconnector.readED247Configuration();
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
 
 	senddata = sendconnector.getInputs();

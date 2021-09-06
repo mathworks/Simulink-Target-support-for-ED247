@@ -24,13 +24,13 @@
 	data_characteristics_t* outputs;
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),tools);
 
 	// [ SETUP ]
 	connector.allocateMemory();
 
 	// [ EXERCISE ]
-	status = connector.readED247Configuration(filename.c_str(),NULL);
+	status = connector.readED247Configuration();
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
 
 	inputs = connector.getInputs();

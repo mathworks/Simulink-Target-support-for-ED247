@@ -11,9 +11,28 @@ namespace ed247simulink {
  */
 ED247Connector::ED247Connector(){
 	_tools = Tools();
+	_filename = NULL;
+	_logfilename = NULL;
 }
-ED247Connector::ED247Connector(Tools tools){
+ED247Connector::ED247Connector(const char* filename){
+	_tools = Tools();
+	_filename = filename;
+	_logfilename = NULL;
+}
+ED247Connector::ED247Connector(const char* filename,const char* logfilename){
+	_tools = Tools();
+	_filename = filename;
+	_logfilename = logfilename;
+}
+ED247Connector::ED247Connector(const char* filename,Tools tools){
 	_tools = tools;
+	_filename = filename;
+	_logfilename = NULL;
+}
+ED247Connector::ED247Connector(const char* filename,const char* logfilename,Tools tools){
+	_tools = tools;
+	_filename = filename;
+	_logfilename = logfilename;
 }
 
 /*
@@ -30,7 +49,7 @@ data_characteristics_t* ED247Connector::getOutputs(){
 /*
  * ED247 INTERFACE
  */
-configuration_status_t ED247Connector::readED247Configuration(const char* filename, const char* logfilename){
+configuration_status_t ED247Connector::readED247Configuration(){
 
 	int i,streamidx;
 	char folder[STRING_MAX_LENGTH];
@@ -47,19 +66,19 @@ configuration_status_t ED247Connector::readED247Configuration(const char* filena
 	_io->outputs->nsignals 	= 0;
 	_io->outputs->nstreams 	= 0;
 
-	if (_tools.fileexists(filename) != 0){
+	if (_tools.fileexists(_filename) != 0){
 		return INVALID_FILE;
 	}
-	_tools.fileparts(filename,folder);
+	_tools.fileparts(_filename,folder);
 
     #ifndef DISABLE_LOG // Dependending on ED247 version, the log structure contains these additional fields or not 
-    if (logfilename != NULL){
-        config.log_filepath = logfilename;
+    if (_logfilename != NULL){
+        config.log_filepath = _logfilename;
         config.log_level = ED247_LOG_LEVEL_DEBUG;
     }
     #endif
     
-	status = ed247_load(filename,&config,&(_io->_context));
+	status = ed247_load(_filename,&config,&(_io->_context));
 	if (checkStatus(status,"ed247_load",1)){return LOAD_FAILURE;}
 
 	status = ed247_find_streams(_io->_context,".*",&(streams));
