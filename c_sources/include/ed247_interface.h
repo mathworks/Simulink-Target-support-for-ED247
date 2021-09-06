@@ -161,32 +161,39 @@ typedef struct {
 
 namespace ed247simulink {
 
-	class Interface {
+	class ED247Connector {
 
 		private:
-			Tools _tools;
+			IO_t*	_io;
+			Tools	_tools;
 
 		public:
-			Interface();
-			Interface(Tools tools);
+			ED247Connector();
+			ED247Connector(Tools tools);
 
 		public:
 			/*
+			 * ACCESSORS
+			 */
+			data_characteristics_t* getInputs();
+			data_characteristics_t* getOutputs();
+
+			/*
 			 * ED247 INTERFACE
 			 */
-			configuration_status_t readED247Configuration(const char* filename, IO_t *io, const char* logfilename);
-			send_status_t sendSimulinkToED247(IO_t *io);
-			receive_status_t receiveED247ToSimulink(IO_t *io, int *n);
+			configuration_status_t readED247Configuration(const char* filename, const char* logfilename);
+			send_status_t sendSimulinkToED247();
+			receive_status_t receiveED247ToSimulink(int *n);
 
 			/*
 			 * MEMORY MANAGEMENT
 			 */
-			io_allocation_status_t ioAllocateMemory(IO_t ** io);
-			io_free_status_t ioFreeMemory(IO_t * io);
+			io_allocation_status_t allocateMemory();
+			io_free_status_t freeMemory();
 
 		protected:
-			 configuration_status_t localSignalsFromECIC(IO_t* io, ed247_stream_t stream, const ed247_stream_info_t* stream_info);
-			 configuration_status_t localSignalsFromICD(IO_t* io, ed247_stream_t stream, const ed247_stream_info_t* stream_info, char* folder);
+			 configuration_status_t localSignalsFromECIC(ed247_stream_t stream, const ed247_stream_info_t* stream_info);
+			 configuration_status_t localSignalsFromICD(ed247_stream_t stream, const ed247_stream_info_t* stream_info, char* folder);
 
 		private:
 			/*

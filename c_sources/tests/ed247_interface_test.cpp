@@ -17,23 +17,22 @@
  {
 
 	configuration_status_t status;
-	IO_t *data;
 	const char *filename = "";
 
 	ed247simulink::Tools tools;
-	ed247simulink::Interface interface = ed247simulink::Interface(tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(tools);
 
 	// [ SETUP ]
-	interface.ioAllocateMemory(&data);
+	connector.allocateMemory();
 
 	// [ EXERCISE ]
-	status = interface.readED247Configuration(filename,data,NULL);
+	status = connector.readED247Configuration(filename,NULL);
 
 	// [ VERIFY ]
 	EXPECT_EQ(status, INVALID_FILE);
 
 	// [ TEARDOWN ]
-	interface.ioFreeMemory(data);
+	connector.freeMemory();
 
  }
 
@@ -47,52 +46,57 @@
 	send_status_t sstatus;
 	receive_status_t rstatus;
 
-	IO_t *senddata;
-	IO_t *recvdata;
+	data_characteristics_t* senddata;
+	data_characteristics_t* recvdata;
+
 	std::string sendconfiguration = filefolder_ + "/ana_mc_1.xml";	
 	std::string recvconfiguration = filefolder_ + "/ana_mc_2.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::Interface interface = ed247simulink::Interface(tools);
+	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(tools);
 
 	// [ SETUP ]
-	interface.ioAllocateMemory(&senddata);
-	interface.ioAllocateMemory(&recvdata);
+	sendconnector.allocateMemory();
+	recvconnector.allocateMemory();
 
-	cstatus = interface.readED247Configuration(sendconfiguration.c_str(),senddata,NULL);
+	cstatus = sendconnector.readED247Configuration(sendconfiguration.c_str(),NULL);
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
-	cstatus = interface.readED247Configuration(recvconfiguration.c_str(),recvdata,NULL);
+	cstatus = recvconnector.readED247Configuration(recvconfiguration.c_str(),NULL);
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
-	
-	for (i = 0; i < senddata->inputs->nsignals; i++){
-		senddata->inputs->signals[i].valuePtr = (void*) &(sendvalues[i]);
+
+	senddata = sendconnector.getInputs();
+	recvdata = recvconnector.getOutputs();
+
+	for (i = 0; i < senddata->nsignals; i++){
+		senddata->signals[i].valuePtr = (void*) &(sendvalues[i]);
 	}
-	for (i = 0; i < recvdata->outputs->nsignals; i++){
-		recvdata->outputs->signals[i].valuePtr = (void*) &(recvvalues[i]);
+	for (i = 0; i < recvdata->nsignals; i++){
+		recvdata->signals[i].valuePtr = (void*) &(recvvalues[i]);
 	}
 	nrecv = 0;
 
 	// [ EXERCISE ]
 	sendvalues[0] = 1;sendvalues[1] = 2;sendvalues[2] = 3;sendvalues[3] = 4;
 
-	sstatus = interface.sendSimulinkToED247(senddata);
-	rstatus = interface.receiveED247ToSimulink(recvdata, &nrecv);
+	sstatus = sendconnector.sendSimulinkToED247();
+	rstatus = recvconnector.receiveED247ToSimulink(&nrecv);
 
 	ASSERT_EQ(sstatus, SEND_OK);
 	ASSERT_EQ(rstatus, RECEIVE_OK);
 
 	// [ VERIFY ]
 	EXPECT_EQ(nrecv,3);
-	EXPECT_EQ(*((unsigned char *)recvdata->outputs->signals[0].valuePtr), sendvalues[0]);
-	EXPECT_EQ(*((unsigned char *)recvdata->outputs->signals[1].valuePtr), sendvalues[1]);
-	EXPECT_EQ(*((unsigned char *)recvdata->outputs->signals[2].valuePtr), sendvalues[2]);
+	EXPECT_EQ(*((unsigned char *)recvdata->signals[0].valuePtr), sendvalues[0]);
+	EXPECT_EQ(*((unsigned char *)recvdata->signals[1].valuePtr), sendvalues[1]);
+	EXPECT_EQ(*((unsigned char *)recvdata->signals[2].valuePtr), sendvalues[2]);
 
 	// [ TEARDOWN ]
-	interface.ioFreeMemory(senddata);
-	interface.ioFreeMemory(recvdata);
+	sendconnector.freeMemory();
+	recvconnector.freeMemory();
 
  }
- 
+
  TEST_F(TransmissionTest, DISTransmission)
  {
 	int i,nrecv;
@@ -103,49 +107,53 @@
 	send_status_t sstatus;
 	receive_status_t rstatus;
 
-	IO_t *senddata;
-	IO_t *recvdata;
+	data_characteristics_t* senddata;
+	data_characteristics_t* recvdata;
 	std::string sendconfiguration = filefolder_ + "/dis_mc_1.xml";
 	std::string recvconfiguration = filefolder_ + "/dis_mc_2.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::Interface interface = ed247simulink::Interface(tools);
+	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(tools);
+	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(tools);
 
 	// [ SETUP ]
-	interface.ioAllocateMemory(&senddata);
-	interface.ioAllocateMemory(&recvdata);
+	sendconnector.allocateMemory();
+	recvconnector.allocateMemory();
 
-	cstatus = interface.readED247Configuration(sendconfiguration.c_str(),senddata,NULL);
+	cstatus = sendconnector.readED247Configuration(sendconfiguration.c_str(),NULL);
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
-	cstatus = interface.readED247Configuration(recvconfiguration.c_str(),recvdata,NULL);
+	cstatus = recvconnector.readED247Configuration(recvconfiguration.c_str(),NULL);
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
 
-	for (i = 0; i < senddata->inputs->nsignals; i++){
-		senddata->inputs->signals[i].valuePtr = (void*) &(sendvalues[i]);
+	senddata = sendconnector.getInputs();
+	recvdata = recvconnector.getOutputs();
+
+	for (i = 0; i < senddata->nsignals; i++){
+		senddata->signals[i].valuePtr = (void*) &(sendvalues[i]);
 	}
-	for (i = 0; i < recvdata->outputs->nsignals; i++){
-		recvdata->outputs->signals[i].valuePtr = (void*) &(recvvalues[i]);
+	for (i = 0; i < recvdata->nsignals; i++){
+		recvdata->signals[i].valuePtr = (void*) &(recvvalues[i]);
 	}	
 	nrecv = 0;
 
 	// [ EXERCISE ]
 	sendvalues[0] = 1;sendvalues[1] = 2;sendvalues[2] = 3;sendvalues[3] = 4;
 
-	sstatus = interface.sendSimulinkToED247(senddata);
-	rstatus = interface.receiveED247ToSimulink(recvdata, &nrecv);
+	sstatus = sendconnector.sendSimulinkToED247();
+	rstatus = recvconnector.receiveED247ToSimulink(&nrecv);
 
 	ASSERT_EQ(sstatus, SEND_OK);
 	ASSERT_EQ(rstatus, RECEIVE_OK);
 
 	// [ VERIFY ]
 	EXPECT_EQ(nrecv,3);
-	EXPECT_EQ(*((unsigned char *)recvdata->outputs->signals[0].valuePtr), sendvalues[0]);
-	EXPECT_EQ(*((unsigned char *)recvdata->outputs->signals[1].valuePtr), sendvalues[1]);
-	EXPECT_EQ(*((unsigned char *)recvdata->outputs->signals[2].valuePtr), sendvalues[3]);
+	EXPECT_EQ(*((unsigned char *)recvdata->signals[0].valuePtr), sendvalues[0]);
+	EXPECT_EQ(*((unsigned char *)recvdata->signals[1].valuePtr), sendvalues[1]);
+	EXPECT_EQ(*((unsigned char *)recvdata->signals[2].valuePtr), sendvalues[3]);
 
 	// [ TEARDOWN ]
-	interface.ioFreeMemory(senddata);
-	interface.ioFreeMemory(recvdata);
+	sendconnector.freeMemory();
+	recvconnector.freeMemory();
 
  }
  
@@ -160,37 +168,36 @@
 	send_status_t sstatus;
 	receive_status_t rstatus;
 
-	IO_t *senddata;
-	IO_t *recvdata;
+	data_characteristics_t* senddata;
 	std::string sendconfiguration = filefolder_ + "/dis_mc_1.xml";
-	std::string recvconfiguration = filefolder_ + "/dis_mc_2.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::Interface interface = ed247simulink::Interface(tools);
+	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(tools);
 
 	// [ SETUP ]
-	interface.ioAllocateMemory(&senddata);
-	interface.ioAllocateMemory(&recvdata);
+	sendconnector.allocateMemory();
 
 	sprintf(logfilename,"%s/LogFileTest.log", filefolder_.c_str());
 
-	cstatus = interface.readED247Configuration(sendconfiguration.c_str(),senddata,(const char*)logfilename);
+	cstatus = sendconnector.readED247Configuration(sendconfiguration.c_str(),(const char*)logfilename);
 	ASSERT_EQ(cstatus, CONFIGURATION_SUCCESS);
 
-	for (i = 0; i < senddata->inputs->nsignals; i++){
-		senddata->inputs->signals[i].valuePtr = (void*) &(sendvalues[i]);
+	senddata = sendconnector.getInputs();
+
+	for (i = 0; i < senddata->nsignals; i++){
+		senddata->signals[i].valuePtr = (void*) &(sendvalues[i]);
 	}
 
 	// [ EXERCISE ]
 	sendvalues[0] = 1;sendvalues[1] = 2;sendvalues[2] = 3;sendvalues[3] = 4;
-	sstatus = interface.sendSimulinkToED247(senddata);
+	sstatus = sendconnector.sendSimulinkToED247();
 	ASSERT_EQ(sstatus, SEND_OK);
 
 	// [ VERIFY ]
 	EXPECT_EQ(access( logfilename, F_OK ),0);
 
 	// [ TEARDOWN ]
-	interface.ioFreeMemory(senddata);
+	sendconnector.freeMemory();
 
  }
 
