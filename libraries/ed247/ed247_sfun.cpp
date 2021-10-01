@@ -19,7 +19,7 @@ typedef enum {
 } BLOCK_TYPE_T ;
 
 static ed247simulink::ED247Connector* connector;
-static ed247simulink::Tools* tools;
+static ed247simulink::Tools* tools = new ed247simulink::Tools();
 
 static void mdlInitializeSizes(SimStruct *S)
 {
@@ -27,7 +27,7 @@ static void mdlInitializeSizes(SimStruct *S)
 	int i;
 	int isig,iport,idim,nports;
 	int32_T* d;
-        
+
 	ssAllowSignalsWithMoreThan2D(S);
 	DECL_AND_INIT_DIMSINFO(di);
 
@@ -44,56 +44,57 @@ static void mdlInitializeSizes(SimStruct *S)
 	ssSetSFcnParamTunable(S, 3, SS_PRM_NOT_TUNABLE); // Refresh factor (used by Receive block)
 	ssSetSFcnParamTunable(S, 4, SS_PRM_NOT_TUNABLE); // Sample time (used by Receive block)
 
-    ssSetNumPWork(S, 1);
-    
-    tools = new ed247simulink::Tools();
-        
+	ssSetNumPWork(S, 2);
+
 	BLOCK_TYPE_T * blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
 	if (*blockType == SEND){
 
-        ed247sfcn::Send *obj = new ed247sfcn::Send(S,connector,tools);
-                
 		tools->myprintf("SEND block (%d)\n", (int) *blockType);
+
 		if (connector == NULL) {
 			tools->myprintf("[INITIALIZE] No connector defined\n");
 			return;
 		}
-        obj->initialize();
-        ssGetPWork(S)[0] = (void *) obj;
+		connector = (ed247simulink::ED247Connector*) ssGetPWork(S)[1];
+		ed247sfcn::Send *obj = new ed247sfcn::Send(S,connector,tools);
+		//obj->initialize();
+		ssGetPWork(S)[1] = (void *) obj;
 
 	} else if (*blockType == RECEIVE){
 
-		ed247sfcn::Receive *obj = new ed247sfcn::Receive(S,connector,tools);
-        
 		tools->myprintf("RECEIVE block (%d)\n", (int) *blockType);
-		if (connector == NULL) {
+
+		if (ssGetPWork(S)[1] == NULL) {
 			tools->myprintf("[INITIALIZE] No connector defined\n");
 			return;
 		}
-        obj->initialize();
-        ssGetPWork(S)[0] = (void *) obj;
-		
+		connector = (ed247simulink::ED247Connector*) ssGetPWork(S)[1];
+		/*ed247sfcn::Receive *obj = new ed247sfcn::Receive(S,connector,tools);
+		//obj->initialize();
+		ssGetPWork(S)[1] = (void *) obj;*/
+
 	} else {
-        		        
+
 		tools->myprintf("CONFIGURATION block (%d)\n", (int_T) *blockType);
-        
-        char_T *configurationFile = (char_T *)( mxGetData(ssGetSFcnParam(S,1)) );
-        char_T *logFile = (char_T *)( mxGetData(ssGetSFcnParam(S,2)) );
-        if (configurationFile != NULL){
-            
-            tools->myprintf("Configuration file = '%s'\n", configurationFile);
-            tools->myprintf("Log file = '%s'\n", logFile);
-            
-            connector = new ed247simulink::ED247Connector(configurationFile,logFile);
-        
-            ed247sfcn::Configure *obj = new ed247sfcn::Configure(S,connector,tools);            
-            obj->initialize();
-            ssGetPWork(S)[0] = (void *) obj;
-            
-        }
-		        
+
+		char_T *configurationFile = (char_T *)( mxGetData(ssGetSFcnParam(S,1)) );
+		char_T *logFile = (char_T *)( mxGetData(ssGetSFcnParam(S,2)) );
+		if (configurationFile != NULL){
+
+			tools->myprintf("Configuration file = '%s'\n", configurationFile);
+			tools->myprintf("Log file = '%s'\n", logFile);
+
+			connector = new ed247simulink::ED247Connector(configurationFile,logFile);
+			ssGetPWork(S)[0] = (void *) connector;
+
+			ed247sfcn::Configure *obj = new ed247sfcn::Configure(S,connector,tools);
+			//obj->initialize();
+			ssGetPWork(S)[1] = (void *) obj;
+
+		}
+
 	}
-            
+
 	/*
 	* CONFIGURATION
 	*/
@@ -126,49 +127,40 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 #ifdef MDL_START
 static void mdlStart(SimStruct *S)
 {
-	if (connector == NULL) {
-		tools->myprintf("[START] No connector defined\n");
-		return;
-	}
-
+    
 	BLOCK_TYPE_T * blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
-
+/*
 	if (*blockType == SEND){
-		ed247sfcn::Send *obj = (ed247sfcn::Send*) ssGetPWork(S)[0]; 
+		ed247sfcn::Send *obj = (ed247sfcn::Send*) ssGetPWork(S)[1]; 
 		obj->start();
 		
 	} else if (*blockType == RECEIVE){
-		ed247sfcn::Receive *obj = (ed247sfcn::Receive*) ssGetPWork(S)[0]; 
+		ed247sfcn::Receive *obj = (ed247sfcn::Receive*) ssGetPWork(S)[1]; 
 		obj->start();
         
 	} else {
-		ed247sfcn::Configure *obj = (ed247sfcn::Configure*) ssGetPWork(S)[0]; 
+		ed247sfcn::Configure *obj = (ed247sfcn::Configure*) ssGetPWork(S)[1]; 
 		obj->start();
 	}
-
+*/
 }
 #endif
 
 static void mdlOutputs(SimStruct *S, int_T tid)
 {
 
-	if (connector == NULL) {
-		tools->myprintf("[OUTPUTS] No connector defined\n");
-		return;
-	}
-
 	BLOCK_TYPE_T * blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
 
 	if (*blockType == RECEIVE){
-		ed247sfcn::Receive *obj = (ed247sfcn::Receive*) ssGetPWork(S)[0]; 
+		ed247sfcn::Receive *obj = (ed247sfcn::Receive*) ssGetPWork(S)[1]; 
 		obj->outputs();
         
 	} else if (*blockType == SEND){
-		ed247sfcn::Send *obj = (ed247sfcn::Send*) ssGetPWork(S)[0]; 
+		ed247sfcn::Send *obj = (ed247sfcn::Send*) ssGetPWork(S)[1]; 
 		obj->outputs();
         
 	} else {
-		ed247sfcn::Configure *obj = (ed247sfcn::Configure*) ssGetPWork(S)[0]; 
+		ed247sfcn::Configure *obj = (ed247sfcn::Configure*) ssGetPWork(S)[1]; 
 		obj->outputs();
         
 	}
@@ -179,22 +171,17 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 #ifdef MDL_UPDATE
 static void mdlUpdate(SimStruct *S, int_T tid){
     
-	if (connector == NULL) {
-		tools->myprintf("No connector defined\n");
-		return;
-	}
-
 	BLOCK_TYPE_T * blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
 	if (*blockType == RECEIVE){
-		ed247sfcn::Receive *obj = (ed247sfcn::Receive*) ssGetPWork(S)[0]; 
+		ed247sfcn::Receive *obj = (ed247sfcn::Receive*) ssGetPWork(S)[1]; 
 		obj->update();
         
 	} else if (*blockType == SEND){
-		ed247sfcn::Send *obj = (ed247sfcn::Send*) ssGetPWork(S)[0]; 
+		ed247sfcn::Send *obj = (ed247sfcn::Send*) ssGetPWork(S)[1]; 
 		obj->update();
         
 	} else {
-		ed247sfcn::Configure *obj = (ed247sfcn::Configure*) ssGetPWork(S)[0]; 
+		ed247sfcn::Configure *obj = (ed247sfcn::Configure*) ssGetPWork(S)[1]; 
 		obj->update();
         
 	}
@@ -204,22 +191,17 @@ static void mdlUpdate(SimStruct *S, int_T tid){
 
 static void mdlTerminate(SimStruct *S){
     
-	if (connector == NULL) {
-		tools->myprintf("No connector defined\n");
-		return;
-	}
-
 	BLOCK_TYPE_T * blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
 	if (*blockType == RECEIVE){
-		ed247sfcn::Receive *obj = (ed247sfcn::Receive*) ssGetPWork(S)[0]; 
+		ed247sfcn::Receive *obj = (ed247sfcn::Receive*) ssGetPWork(S)[1]; 
 		obj->terminate();
         
 	} else if (*blockType == SEND){
-		ed247sfcn::Send *obj = (ed247sfcn::Send*) ssGetPWork(S)[0]; 
+		ed247sfcn::Send *obj = (ed247sfcn::Send*) ssGetPWork(S)[1]; 
 		obj->terminate();
         
 	} else {
-		ed247sfcn::Configure *obj = (ed247sfcn::Configure*) ssGetPWork(S)[0]; 
+		ed247sfcn::Configure *obj = (ed247sfcn::Configure*) ssGetPWork(S)[1]; 
 		obj->terminate();
         
 	}
@@ -243,7 +225,7 @@ static void mdlRTW(SimStruct *S)
 	blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
 	if (*blockType == SEND){
         
-		ed247sfcn::Send *obj = (ed247sfcn::Send*) ssGetPWork(S)[0]; 
+		ed247sfcn::Send *obj = (ed247sfcn::Send*) ssGetPWork(S)[1]; 
 		obj->RTW(&blockTypeID, &nSignals, portIndex, refreshIndex);
         if (!ssWriteRTWParamSettings(S, 4, 
 			SSWRITE_VALUE_NUM,  "BlockType",    blockTypeID,
@@ -255,7 +237,7 @@ static void mdlRTW(SimStruct *S)
 
 	} else if (*blockType == RECEIVE){
 		
-        ed247sfcn::Receive *obj = (ed247sfcn::Receive*) ssGetPWork(S)[0]; 
+        ed247sfcn::Receive *obj = (ed247sfcn::Receive*) ssGetPWork(S)[1]; 
 		obj->RTW(&blockTypeID, &nSignals, portIndex, refreshIndex);
         if (!ssWriteRTWParamSettings(S, 4, 
 			SSWRITE_VALUE_NUM,  "BlockType",    blockTypeID,
@@ -267,7 +249,7 @@ static void mdlRTW(SimStruct *S)
 
 	} else {
         
-		ed247sfcn::Configure *obj = (ed247sfcn::Configure*) ssGetPWork(S)[0]; 
+		ed247sfcn::Configure *obj = (ed247sfcn::Configure*) ssGetPWork(S)[1]; 
 		obj->RTW(&blockTypeID, configurationFile);
         if (!ssWriteRTWParamSettings(S, 2, 
 			SSWRITE_VALUE_QSTR, "Filename",     configurationFile,
