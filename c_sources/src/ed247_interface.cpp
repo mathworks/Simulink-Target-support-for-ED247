@@ -379,8 +379,33 @@ io_free_status_t ED247Connector::freeMemory(){
  */
 void ED247Connector::displayConfiguration(){
 
-	_tools->myprintf("ED247 connector for configuration '%s'\n", _filename);
-	_tools->myprintf("-------------------------------------------------\n");
+	_tools->myprintf("=== ED247 connector ==================================\n\n");
+	_tools->myprintf("\tConfiguration '%s'\n", _filename);
+	_tools->myprintf("\n\n");
+
+	if (_io != NULL) {
+
+		_tools->myprintf("\n--- INPUTS ----------------------------------------\n");
+		if (_io->inputs != NULL){
+			_tools->myprintf("\t- Streams = %d\n", _io->inputs->nstreams);
+			_tools->myprintf("\t- Signals = %d\n", _io->inputs->nsignals);
+		} else {
+			_tools->myprintf("WARNING : NULL pointer\n");
+		}
+
+		_tools->myprintf("\n--- OUTPUTS ----------------------------------------\n");
+		if (_io->outputs != NULL){
+			_tools->myprintf("\t- Streams = %d\n", _io->outputs->nstreams);
+			_tools->myprintf("\t- Signals = %d\n", _io->outputs->nsignals);
+		} else {
+			_tools->myprintf("WARNING : NULL pointer\n");
+		}
+
+	} else {
+		_tools->myprintf("WARNING : NULL pointer for IOs\n");
+	}
+
+	_tools->myprintf("\n\n===============================================\n\n");
 
 }
 
