@@ -1,4 +1,9 @@
-
+/******************************************************************************
+ *
+ * Copyright (c) 2021 The MathWorks Inc.
+ *
+ */
+ 
 #include "tools.h"
 
 namespace ed247simulink {
@@ -20,6 +25,14 @@ namespace ed247simulink {
 
  #ifdef DEBUG
 	(*printfcn)("%s",str);
+ #endif
+ 
+ #ifdef TOFILE
+ std::ofstream debugfile;
+ debugfile.open ("debug.log", std::ios_base::app);
+ debugfile << str; 
+ debugfile << "\n"; 
+ debugfile.close();
  #endif
 
  }

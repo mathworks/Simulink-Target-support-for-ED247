@@ -25,6 +25,8 @@
 	#define FILESEP "/" 
  #endif
 
+#include <fstream>
+
 namespace ed247simulink {
 
 	class Tools {
