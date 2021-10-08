@@ -36,6 +36,10 @@ if [ ! -z "$DEBUG" ]; then
 	LOGFILE=
 fi
 
+if [ ! -z "$TOFILE" ]; then
+	CC_OPTS="${CC_OPTS} -DTOFILE"
+fi
+
 export CC=${MINGW_FOLDER}/gcc.exe
 export CXX=${MINGW_FOLDER}/g++.exe
 export AR=${MINGW_FOLDER}/ar.exe
