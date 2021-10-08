@@ -50,12 +50,13 @@ pushd ${BUILD_FOLDER}
 
 echo "## Compile the debug program for test purpose"
 INCLUDES="-I${ROOT_FOLDER}/c_sources/include -I${ROOT_FOLDER}/libraries/ed247 -I${ROOT_FOLDER}/libraries/ed247/sources -I${SOURCEFOLDER} -I${ROOT_FOLDER}/../ED247_LIBRARY/_install/inc -I${ROOT_FOLDER}/../libxml2/include"
-INTERFACE_SOURCES="${ROOT_FOLDER}/c_sources/src/ed247_cmd_xml.c ${ROOT_FOLDER}/c_sources/src/ed247_interface.c ${ROOT_FOLDER}/c_sources/src/tools.c"
+INTERFACE_SOURCES="${ROOT_FOLDER}/c_sources/src/ed247_cmd_xml.cpp ${ROOT_FOLDER}/c_sources/src/ed247_interface.cpp ${ROOT_FOLDER}/c_sources/src/tools.cpp"
 LIBRARIES="-L${ROOT_FOLDER}/../libxml2/lib -lxml2 ${MINGW_FOLDER}/../x86_64-w64-mingw32/lib/libws2_32.a -L${ROOT_FOLDER}/../ED247_LIBRARY/_install/lib -led247"
-SFUN_SOURCES="${ROOT_FOLDER}/libraries/ed247/ed247_sfun.c ${ROOT_FOLDER}/libraries/ed247/sources/ed247_sfun_configure.c ${ROOT_FOLDER}/libraries/ed247/sources/ed247_sfun_send.c ${ROOT_FOLDER}/libraries/ed247/sources/ed247_sfun_receive.c"
-TEST_SOURCES="${SOURCEFOLDER}/main.c ${SOURCEFOLDER}/sfcn_stubs.c"
+SFUN_SOURCES="${ROOT_FOLDER}/libraries/ed247/ed247_sfun.cpp ${ROOT_FOLDER}/libraries/ed247/sources/ed247_sfun_configure.cpp ${ROOT_FOLDER}/libraries/ed247/sources/ed247_sfun_send.cpp ${ROOT_FOLDER}/libraries/ed247/sources/ed247_sfun_receive.cpp"
+TEST_SOURCES="${SOURCEFOLDER}/main.cpp ${SOURCEFOLDER}/sfcn_stubs.cpp"
 
-${CC} -o ${EXE} ${CC_OPTS} ${INCLUDES} ${SFUN_SOURCES} ${INTERFACE_SOURCES} ${TEST_SOURCES} ${LIBRARIES}
+echo "	${CCXX} -o ${EXE} ${CC_OPTS} ${INCLUDES} ${SFUN_SOURCES} ${INTERFACE_SOURCES} ${TEST_SOURCES} ${LIBRARIES}"
+${CXX} -o ${EXE} ${CC_OPTS} ${INCLUDES} ${SFUN_SOURCES} ${INTERFACE_SOURCES} ${TEST_SOURCES} ${LIBRARIES}
 status=$?
 
 if [ $status -eq 0 ]; then
