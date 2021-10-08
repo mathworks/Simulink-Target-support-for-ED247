@@ -14,7 +14,7 @@ typedef struct {
 	int				npworks;
 	int				nsampletimes;
 } SimStruct;
-#define INIT_SIMSTRUC(type) { type, "", "", 0, 0.2, 0, 0, 0, 0 }
+#define INIT_SIMSTRUC(type) { type, "", "", 0, 0.2, 0, 0, 0, 0, 0 }
 
 typedef struct {
 	int width;
