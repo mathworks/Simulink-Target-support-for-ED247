@@ -69,7 +69,7 @@ static void mdlInitializeSizes(SimStruct *S)
 			return;
 		}
 		connector = (ed247simulink::ED247Connector*) ssGetPWork(S)[1];
-		ed247sfcn::Receive *obj = new ed247sfcn::Receive(S,connector,tools);
+		ed247sfcn::Receive *obj = new ed247sfcn::Receive(S,&di,connector,tools);
 		obj->initialize();
 		ssGetPWork(S)[1] = (void *) obj;
 
@@ -93,6 +93,12 @@ static void mdlInitializeSizes(SimStruct *S)
 
 		}
 
+	}
+
+	if (connector != NULL){
+		connector->displayConfiguration();
+	} else {
+		tools->myprintf("No connector\n");
 	}
 
 	/*
