@@ -380,7 +380,7 @@ io_free_status_t ED247Connector::freeMemory(){
 void ED247Connector::displayConfiguration(){
 
 	_tools->myprintf("=== ED247 connector ==================================\n\n");
-	_tools->myprintf("\tConfiguration '%s'\n", _filename);
+	_tools->myprintf("\tConfiguration '%s'\n", (_filename != NULL ? _filename : "N/A"));
 	_tools->myprintf("\n\n");
 
 	if (_io != NULL) {
