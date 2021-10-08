@@ -5,14 +5,16 @@ namespace ed247sfcn {
     /*
      * CONSTRUCTORS
      */
-    Send::Send(SimStruct *_S, ed247simulink::ED247Connector* connector){
+    Send::Send(SimStruct *_S, di_T* di, ed247simulink::ED247Connector* connector){
         _S = _S;
+		_di = di;
         _connector = connector;
         _tools = new ed247simulink::Tools();
     }
     
-    Send::Send(SimStruct *_S, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools){
+    Send::Send(SimStruct *_S, di_T* di, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools){
         _S = _S;
+		_di = di;
         _connector = connector;
         _tools = tools;
     }
@@ -26,10 +28,7 @@ namespace ed247sfcn {
         int_T isRefreshEnabled;
         int32_T* d;
         data_characteristics_t *inputs;
-        
-        ssAllowSignalsWithMoreThan2D(_S);
-        DECL_AND_INIT_DIMSINFO(di);
-        
+
         ssSetNumDWork(_S, 0);
         
         _tools->myprintf("\n\n=== SEND INITIALIZATION START ===\n");
@@ -63,16 +62,16 @@ namespace ed247sfcn {
             _tools->myprintf("\t-Width = %d\n", inputs->signals[isig].width);
             _tools->myprintf("\t-Dimensions = %d\n", inputs->signals[isig].dimensions);
             
-            di.width	= inputs->signals[isig].width;
-            di.numDims	= inputs->signals[isig].dimensions;
+            _di->width	= inputs->signals[isig].width;
+            _di->numDims	= inputs->signals[isig].dimensions;
             
-            d = (int32_T*) malloc(di.numDims*sizeof(int32_T));
-            for (idim = 0; idim < di.numDims && idim < MAX_DIMENSIONS; idim++){
+            d = (int32_T*) malloc(_di->numDims*sizeof(int32_T));
+            for (idim = 0; idim < _di->numDims && idim < MAX_DIMENSIONS; idim++){
                 _tools->myprintf("\t\t-Dimension #%d = %d\n", idim, inputs->signals[isig].size[idim]);
                 d[idim] = (int32_T)(inputs->signals[isig].size[idim]);
             }
-            di.dims = &(d[0]);
-            if(!ssSetInputPortDimensionInfo(_S, iport, &di)) return;
+            _di->dims = &(d[0]);
+            if(!ssSetInputPortDimensionInfo(_S, iport, _di)) return;
             
             ssSetInputPortWidth(_S, iport, inputs->signals[isig].width);
             ssSetInputPortDirectFeedThrough(_S, iport, 1);

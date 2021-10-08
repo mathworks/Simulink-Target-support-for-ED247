@@ -56,7 +56,7 @@ static void mdlInitializeSizes(SimStruct *S)
 			return;
 		}
 		connector = (ed247simulink::ED247Connector*) ssGetPWork(S)[1];
-		ed247sfcn::Send *obj = new ed247sfcn::Send(S,connector,tools);
+		ed247sfcn::Send *obj = new ed247sfcn::Send(S,&di,connector,tools);
 		//obj->initialize();
 		ssGetPWork(S)[1] = (void *) obj;
 
