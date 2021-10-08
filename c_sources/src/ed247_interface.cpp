@@ -10,26 +10,26 @@ namespace ed247simulink {
  * CONSTRUCTORS
  */
 ED247Connector::ED247Connector(){
-	_tools = Tools();
+	//_tools = Tools();
 	_filename = NULL;
 	_logfilename = NULL;
 }
 ED247Connector::ED247Connector(const char* filename){
-	_tools = Tools();
+	//_tools = Tools();
 	_filename = filename;
 	_logfilename = NULL;
 }
 ED247Connector::ED247Connector(const char* filename,const char* logfilename){
-	_tools = Tools();
+	//_tools = Tools();
 	_filename = filename;
 	_logfilename = logfilename;
 }
-ED247Connector::ED247Connector(const char* filename,Tools tools){
+ED247Connector::ED247Connector(const char* filename,Tools *tools){
 	_tools = tools;
 	_filename = filename;
 	_logfilename = NULL;
 }
-ED247Connector::ED247Connector(const char* filename,const char* logfilename,Tools tools){
+ED247Connector::ED247Connector(const char* filename,const char* logfilename,Tools *tools){
 	_tools = tools;
 	_filename = filename;
 	_logfilename = logfilename;
@@ -66,10 +66,10 @@ configuration_status_t ED247Connector::readED247Configuration(){
 	_io->outputs->nsignals 	= 0;
 	_io->outputs->nstreams 	= 0;
 
-	if (_tools.fileexists(_filename) != 0){
+	if (_tools->fileexists(_filename) != 0){
 		return INVALID_FILE;
 	}
-	_tools.fileparts(_filename,folder);
+	_tools->fileparts(_filename,folder);
 
     #ifndef DISABLE_LOG // Dependending on ED247 version, the log structure contains these additional fields or not 
     if (_logfilename != NULL){
@@ -98,7 +98,7 @@ configuration_status_t ED247Connector::readED247Configuration(){
 			stream_info->type == ED247_STREAM_TYPE_VNAD)
 		{
 			read_status = localSignalsFromECIC(stream, stream_info);
-			if (read_status == STREAM_REACH_ARRAY_LIMIT){_tools.myprintf("WARNING: Stream array limit reached (%d), some data may be skipped\n", MAX_STREAMS);}
+			if (read_status == STREAM_REACH_ARRAY_LIMIT){_tools->myprintf("WARNING: Stream array limit reached (%d), some data may be skipped\n", MAX_STREAMS);}
 		}
 
 		// ICD is defined only for A429, A664 and A825
@@ -108,12 +108,12 @@ configuration_status_t ED247Connector::readED247Configuration(){
 		{
 			read_status = localSignalsFromICD(stream, stream_info, folder);
 			if (read_status == STREAM_REACH_ARRAY_LIMIT){
-				_tools.myprintf("WARNING: Stream array limit reached (%d), some data may be skipped\n", MAX_STREAMS);
+				_tools->myprintf("WARNING: Stream array limit reached (%d), some data may be skipped\n", MAX_STREAMS);
 			}
 		}
 		status = ed247_stream_list_next(streams,&stream);
 		checkStatus(status,"ed247_stream_list_next",2);
-		if (stream == NULL){_tools.myprintf("\t\t> No more stream\n");}
+		if (stream == NULL){_tools->myprintf("\t\t> No more stream\n");}
 
 	}
 
@@ -130,7 +130,7 @@ send_status_t ED247Connector::sendSimulinkToED247(){
 	ed247_status_t status;
 
 	if (_io->inputs->nsignals == 0){
-		_tools.myprintf("\t\t- %s : No inputs\n", "SimulinkToED247");
+		_tools->myprintf("\t\t- %s : No inputs\n", "SimulinkToED247");
 		return NO_DATA_TO_SEND;
 	}
 
@@ -165,9 +165,9 @@ send_status_t ED247Connector::sendSimulinkToED247(){
 
 				for (j=0;j < _io->inputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
                     
-                    _tools.myprintf("Refresh value for signal #%d = %d\n", j, _io->inputs->streams[i].signals[j]->do_refresh);
+                    _tools->myprintf("Refresh value for signal #%d = %d\n", j, _io->inputs->streams[i].signals[j]->do_refresh);
                     if (_io->inputs->streams[i].signals[j]->do_refresh == 1){
-                        _tools.myprintf("Push sample for signal #%d\n", j);
+                        _tools->myprintf("Push sample for signal #%d\n", j);
                         status = ed247_stream_push_sample(_io->inputs->streams[i].stream, _io->inputs->streams[i].signals[j]->valuePtr,_io->inputs->streams[i].signals[j]->sample_size, NULL, NULL);
                     } else {
                         status = ED247_STATUS_SUCCESS;
@@ -205,7 +205,7 @@ receive_status_t ED247Connector::receiveED247ToSimulink(int *n){
 	const void* sample_data;
 
 	if (_io->outputs->nsignals == 0){
-		_tools.myprintf("\t- %s : No outputs\n", "ED247ToSimulink");
+		_tools->myprintf("\t- %s : No outputs\n", "ED247ToSimulink");
 		return NO_DATA_TO_RECEIVE;
 	}
 
@@ -214,7 +214,7 @@ receive_status_t ED247Connector::receiveED247ToSimulink(int *n){
 	status = ed247_wait_frame(_io->_context, &(streams), WAIT_FRAME_TIMEOUT_US);	
 	if (ED247_STATUS_SUCCESS == status){
 
-		_tools.myprintf("\t> %s OK\n", "ed247_wait_frame");
+		_tools->myprintf("\t> %s OK\n", "ed247_wait_frame");
 
 		for (i=0;i < _io->outputs->nstreams && i < MAX_STREAMS; i++){
 
@@ -230,7 +230,7 @@ receive_status_t ED247Connector::receiveED247ToSimulink(int *n){
 					status = ed247_stream_assistant_pop_sample(_io->outputs->streams[i].assistant, NULL, NULL, NULL, &empty);
 					if (status == ED247_STATUS_SUCCESS){
 
-						_tools.myprintf("\t> %s OK\n", "ed247_stream_assistant_pop_sample");
+						_tools->myprintf("\t> %s OK\n", "ed247_stream_assistant_pop_sample");
 
 						for (j=0;j < _io->outputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
 
@@ -259,12 +259,12 @@ receive_status_t ED247Connector::receiveED247ToSimulink(int *n){
 
 					for (j=0;j < _io->outputs->streams[i].nsignals && j < MAX_SIGNALS; j++){
 
-						_tools.myprintf("\t> signal #%d/#%d", j+1, _io->outputs->streams[i].nsignals);
+						_tools->myprintf("\t> signal #%d/#%d", j+1, _io->outputs->streams[i].nsignals);
 
 						status = ed247_stream_pop_sample(_io->outputs->streams[i].stream,&sample_data,&sample_size, NULL, NULL, NULL, &empty);
 						if (status == ED247_STATUS_SUCCESS && _io->outputs->streams[i].signals[j]->valuePtr != NULL && sample_data != NULL){
 
-							_tools.myprintf("\t> %s OK\n", "ed247_stream_pop_sample");
+							_tools->myprintf("\t> %s OK\n", "ed247_stream_pop_sample");
 
 							memcpy(_io->outputs->streams[i].signals[j]->valuePtr,(void*)sample_data,_io->outputs->streams[i].signals[j]->sample_size);
 							if (n != NULL){(*n)++;}/* polyspace DEFECT:USELESS_IF RTE:UNR [Justified:Low] Robustness */
@@ -272,7 +272,7 @@ receive_status_t ED247Connector::receiveED247ToSimulink(int *n){
 							_io->outputs->streams[i].signals[j]->do_refresh = 1;
 
 						} else {
-							_tools.myprintf("\t> %s NOK\n", "ed247_stream_pop_sample");
+							_tools->myprintf("\t> %s NOK\n", "ed247_stream_pop_sample");
 							_io->outputs->streams[i].signals[j]->do_refresh = 0;
 						}
 
@@ -308,7 +308,7 @@ receive_status_t ED247Connector::receiveED247ToSimulink(int *n){
 			}
 		}
 
-		_tools.myprintf("\t\t - No data received before timeout\n");
+		_tools->myprintf("\t\t - No data received before timeout\n");
 		return NO_DATA_BEFORE_TIMEOUT;
 	}
 	else {
@@ -319,7 +319,7 @@ receive_status_t ED247Connector::receiveED247ToSimulink(int *n){
 			}
 		}
 
-		_tools.myprintf("\t\t!! %s returns invalid status\n", "ed247_wait_frame");
+		_tools->myprintf("\t\t!! %s returns invalid status\n", "ed247_wait_frame");
 		return WAIT_FRAME_FAILURE;
 	}
 
@@ -375,6 +375,16 @@ io_free_status_t ED247Connector::freeMemory(){
 }
 
 /*
+ * DISPLAY
+ */
+void ED247Connector::displayConfiguration(){
+
+	_tools->myprintf("ED247 connector for configuration '%s'\n", _filename);
+	_tools->myprintf("-------------------------------------------------\n");
+
+}
+
+/*
  * LOCAL FUNCTIONS
  */
   configuration_status_t ED247Connector::localSignalsFromECIC(ed247_stream_t stream, const ed247_stream_info_t*	stream_info){
@@ -395,7 +405,7 @@ io_free_status_t ED247Connector::freeMemory(){
 	} else if (stream_info->direction == ED247_DIRECTION_OUT) {
 		current_io = _io->inputs;
 	} else {
-		_tools.myprintf("!!! Stream direction unknown %s, skip\n", ed247_direction_string(stream_info->direction));
+		_tools->myprintf("!!! Stream direction unknown %s, skip\n", ed247_direction_string(stream_info->direction));
 		return INVALID_DIRECTION;
 	}
 
@@ -504,7 +514,7 @@ io_free_status_t ED247Connector::freeMemory(){
 		current_io->nsignals++;
 
 	}
-	if (current_io->nsignals == MAX_SIGNALS){_tools.myprintf("WARNING: Limit of maximum signal number reached (%d), some signals may be missing\n", MAX_SIGNALS);}
+	if (current_io->nsignals == MAX_SIGNALS){_tools->myprintf("WARNING: Limit of maximum signal number reached (%d), some signals may be missing\n", MAX_SIGNALS);}
 
 	status = ed247_signal_list_free(signals);
 	if (checkStatus(status,"ed247_signal_list_free",4)){return SIGNAL_LIST_FREE_FAILURE;}
@@ -606,7 +616,7 @@ io_free_status_t ED247Connector::freeMemory(){
 
 						if (current_io->nsignals < MAX_SIGNALS && current_stream->nsignals < MAX_SIGNALS){
 
-							_tools.myprintf("[A429] Store signal information #%d/#%d\n", current_io->nsignals+1, data.a429[i].n_messages);
+							_tools->myprintf("[A429] Store signal information #%d/#%d\n", current_io->nsignals+1, data.a429[i].n_messages);
 							current_signal = &(current_io->signals[current_io->nsignals]);
 
 							strcpy(current_signal->name,data.a429[i].messages[j].name);
@@ -627,7 +637,7 @@ io_free_status_t ED247Connector::freeMemory(){
 							current_io->nsignals++;
 
 						} else {
-							_tools.myprintf("[A429] Cannot store signal #%d/#%d (array max size = %d)\n", current_io->nsignals+1, data.a429[i].n_messages, MAX_SIGNALS);
+							_tools->myprintf("[A429] Cannot store signal #%d/#%d (array max size = %d)\n", current_io->nsignals+1, data.a429[i].n_messages, MAX_SIGNALS);
 						}
 
 					}
@@ -674,7 +684,7 @@ io_free_status_t ED247Connector::freeMemory(){
 
 					if (current_io->nsignals < MAX_SIGNALS && current_stream->nsignals < MAX_SIGNALS){
 
-						_tools.myprintf("[A664] Store signal information #%d/#%d\n", current_io->nsignals+1, data.counter.a664);
+						_tools->myprintf("[A664] Store signal information #%d/#%d\n", current_io->nsignals+1, data.counter.a664);
 						current_signal = &(current_io->signals[current_io->nsignals]);
 
 						strcpy(current_signal->name,data.a664[i].name);
@@ -693,7 +703,7 @@ io_free_status_t ED247Connector::freeMemory(){
 						current_stream->nsignals++;
 						current_io->nsignals++;
 					} else {
-						_tools.myprintf("[A664] Cannot store signal #%d/#%d (array max size = %d)\n", current_io->nsignals+1, data.counter.a664, MAX_SIGNALS);
+						_tools->myprintf("[A664] Cannot store signal #%d/#%d (array max size = %d)\n", current_io->nsignals+1, data.counter.a664, MAX_SIGNALS);
 					}
 
 				}
@@ -743,7 +753,7 @@ io_free_status_t ED247Connector::freeMemory(){
 
 					if (_io->inputs->nsignals < MAX_SIGNALS && input_stream->nsignals < MAX_SIGNALS){
 
-						_tools.myprintf("[A825] Store signal information #%d/#%d\n", _io->inputs->nsignals+1, data.counter.a825);
+						_tools->myprintf("[A825] Store signal information #%d/#%d\n", _io->inputs->nsignals+1, data.counter.a825);
 						current_signal = &(_io->inputs->signals[_io->inputs->nsignals]);
 
 						strcpy(current_signal->name,data.a825[i].name);
@@ -763,12 +773,12 @@ io_free_status_t ED247Connector::freeMemory(){
 						_io->inputs->nsignals++;
 
 					} else {
-						_tools.myprintf("[A825] Cannot store signal #%d/#%d (array max size = %d)\n", _io->inputs->nsignals+1, data.counter.a825, MAX_SIGNALS);
+						_tools->myprintf("[A825] Cannot store signal #%d/#%d (array max size = %d)\n", _io->inputs->nsignals+1, data.counter.a825, MAX_SIGNALS);
 					}
 
 					if (_io->outputs->nsignals < MAX_SIGNALS && output_stream->nsignals < MAX_SIGNALS){
 
-						_tools.myprintf("[A825] Store signal information #%d/#%d\n", _io->outputs->nsignals+1, data.counter.a825);
+						_tools->myprintf("[A825] Store signal information #%d/#%d\n", _io->outputs->nsignals+1, data.counter.a825);
 						current_signal = &(_io->outputs->signals[_io->outputs->nsignals]);
 
 						strcpy(current_signal->name,data.a825[i].name);
@@ -788,7 +798,7 @@ io_free_status_t ED247Connector::freeMemory(){
 						_io->outputs->nsignals++;
 
 					} else {
-						_tools.myprintf("[A825] Cannot store signal #%d/#%d (array max size = %d)\n", _io->outputs->nsignals+1, data.counter.a825, MAX_SIGNALS);
+						_tools->myprintf("[A825] Cannot store signal #%d/#%d (array max size = %d)\n", _io->outputs->nsignals+1, data.counter.a825, MAX_SIGNALS);
 					}
 
 				}
@@ -877,11 +887,11 @@ char ED247Connector::checkStatus(ed247_status_t status, const char* fcnname, int
 
 	if (ED247_STATUS_SUCCESS != status){
 		strcat(format,"!! %s returns invalid status (%d / %d)\n");
-		_tools.myprintf(format, fcnname, status, ED247_STATUS_SUCCESS);
+		_tools->myprintf(format, fcnname, status, ED247_STATUS_SUCCESS);
 		return 1;
 	} else {
 		strcat(format,"> %s OK\n");
-		_tools.myprintf(format, fcnname);
+		_tools->myprintf(format, fcnname);
 		return 0;
 	}
 

@@ -23,7 +23,7 @@
 	data_characteristics_t* outputs;
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),&tools);
 
 	// [ SETUP ]
 	connector.allocateMemory();
@@ -110,7 +110,7 @@
 	data_characteristics_t* outputs;
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),&tools);
 
 	// [ SETUP ]
 	connector.allocateMemory();
@@ -188,7 +188,7 @@
 	data_characteristics_t* outputs;
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),&tools);
 
 	// [ SETUP ]
 	connector.allocateMemory();
@@ -275,8 +275,8 @@
 	std::string recvconfiguration = filefolder_ + "/nad_mc_2.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(sendconfiguration.c_str(),tools);
-	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(recvconfiguration.c_str(),tools);
+	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(sendconfiguration.c_str(),&tools);
+	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(recvconfiguration.c_str(),&tools);
 
 	// [ SETUP ]
 	sendconnector.allocateMemory();
@@ -347,8 +347,8 @@
 	std::string recvconfiguration = filefolder_ + "/nad_mc_4.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(sendconfiguration.c_str(),tools);
-	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(recvconfiguration.c_str(),tools);
+	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(sendconfiguration.c_str(),&tools);
+	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(recvconfiguration.c_str(),&tools);
 
 	// [ SETUP ]
 	sendconnector.allocateMemory();

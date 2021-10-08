@@ -20,7 +20,7 @@
 	const char *filename = "";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename,tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename,&tools);
 
 	// [ SETUP ]
 	connector.allocateMemory();
@@ -53,8 +53,8 @@
 	std::string recvconfiguration = filefolder_ + "/ana_mc_2.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(sendconfiguration.c_str(),tools);
-	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(recvconfiguration.c_str(),tools);
+	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(sendconfiguration.c_str(),&tools);
+	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(recvconfiguration.c_str(),&tools);
 
 	// [ SETUP ]
 	sendconnector.allocateMemory();
@@ -113,8 +113,8 @@
 	std::string recvconfiguration = filefolder_ + "/dis_mc_2.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(sendconfiguration.c_str(),tools);
-	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(recvconfiguration.c_str(),tools);
+	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(sendconfiguration.c_str(),&tools);
+	ed247simulink::ED247Connector recvconnector = ed247simulink::ED247Connector(recvconfiguration.c_str(),&tools);
 
 	// [ SETUP ]
 	sendconnector.allocateMemory();
@@ -172,7 +172,7 @@
 	std::string sendconfiguration = filefolder_ + "/dis_mc_1.xml";
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(sendconfiguration.c_str(),(const char*)logfilename,tools);
+	ed247simulink::ED247Connector sendconnector = ed247simulink::ED247Connector(sendconfiguration.c_str(),(const char*)logfilename,&tools);
 
 	// [ SETUP ]
 	sendconnector.allocateMemory();

@@ -24,7 +24,7 @@
 	data_characteristics_t* outputs;
 
 	ed247simulink::Tools tools;
-	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),tools);
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),&tools);
 
 	// [ SETUP ]
 	connector.allocateMemory();

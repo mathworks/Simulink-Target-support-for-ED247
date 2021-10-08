@@ -161,11 +161,11 @@ namespace ed247simulink {
 	class Cmd {
 
 		private:
-			Tools _tools;
+			Tools* _tools;
 
 		public:
 			Cmd();
-			Cmd(Tools tools);
+			Cmd(Tools* tools);
 
 		public:
 			cmd_read_status_t readData(const char *filename, cmd_data_t *data);

@@ -165,7 +165,7 @@ namespace ed247simulink {
 
 		private:
 			IO_t*	_io;
-			Tools	_tools;
+			Tools*	_tools;
 
 			const char* _filename;
 			const char* _logfilename;
@@ -174,8 +174,8 @@ namespace ed247simulink {
 			ED247Connector();
 			ED247Connector(const char* filename);
 			ED247Connector(const char* filename,const char* logfilename);
-			ED247Connector(const char* filename,Tools tools);
-			ED247Connector(const char* filename,const char* logfilename,Tools tools);
+			ED247Connector(const char* filename,Tools* tools);
+			ED247Connector(const char* filename,const char* logfilename,Tools* tools);
 
 		public:
 			/*
@@ -190,6 +190,11 @@ namespace ed247simulink {
 			configuration_status_t readED247Configuration();
 			send_status_t sendSimulinkToED247();
 			receive_status_t receiveED247ToSimulink(int *n);
+
+			/*
+			 * DISPLAY
+			 */
+			void displayConfiguration();
 
 			/*
 			 * MEMORY MANAGEMENT

@@ -24,7 +24,7 @@
 	EXPECT_TRUE(data != NULL);
 
 	ed247simulink::Tools tools;
-	ed247simulink::Cmd cmd = ed247simulink::Cmd(tools);
+	ed247simulink::Cmd cmd = ed247simulink::Cmd(&tools);
 
 	/* [ EXERCISE ] */
 	status = cmd.readData(filename,data);
@@ -48,7 +48,7 @@
 	EXPECT_TRUE(data != NULL);
 
 	ed247simulink::Tools tools;
-	ed247simulink::Cmd cmd = ed247simulink::Cmd(tools);
+	ed247simulink::Cmd cmd = ed247simulink::Cmd(&tools);
 
 	/* [ EXERCISE ] */
 	status = cmd.readData(filename.c_str(), data);

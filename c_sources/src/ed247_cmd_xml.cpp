@@ -10,9 +10,9 @@ namespace ed247simulink {
 	 * Constructors
 	 */
 	Cmd::Cmd(){
-		_tools = Tools();
+		//_tools = Tools();
 	}
-	Cmd::Cmd(Tools tools){
+	Cmd::Cmd(Tools* tools){
 		_tools = tools;
 	}
 
@@ -30,20 +30,20 @@ namespace ed247simulink {
 		xmlNodePtr 			xml_node_iter;
 
 		// Check that file exist
-		if (_tools.fileexists(filename) != 0){
-			_tools.myprintf("Cannot find file : %s\n",filename);
+		if (_tools->fileexists(filename) != 0){
+			_tools->myprintf("Cannot find file : %s\n",filename);
 			return CMD_READ_INVALID_FILE;
 		}
 
 		// Create context
 		if((_p_xml_context = xmlNewParserCtxt()) == NULL){/* polyspace RTE:UNR [Justified:Low] Robustness */
-			_tools.myprintf("Failed to create context\n");
+			_tools->myprintf("Failed to create context\n");
 			return CMD_READ_CANNOT_CREATE_CONTEXT;
 		}
 
 		// Create read file
 		if((_p_xml_doc = xmlCtxtReadFile(_p_xml_context,filename,NULL,0)) == NULL){/* polyspace RTE:UNR [Justified:Low] Robustness */
-			_tools.myprintf("Failed to read %s\n",filename);
+			_tools->myprintf("Failed to read %s\n",filename);
 			if(_p_xml_context){
 				xmlFreeParserCtxt(_p_xml_context);
 			}
@@ -62,7 +62,7 @@ namespace ed247simulink {
 					fillA429(xml_node_iter, (data->a429 + data->counter.a429));
 					data->counter.a429++;
 				} else {
-					_tools.myprintf("[%s] Too many A429 buses, skip after %d\n", "cmd_read_data", data->counter.a429+1);
+					_tools->myprintf("[%s] Too many A429 buses, skip after %d\n", "cmd_read_data", data->counter.a429+1);
 				}
 
 			} else if (strcmp((const char*) xml_node_iter->name, "A664_SamplingMessage") == 0){
@@ -71,7 +71,7 @@ namespace ed247simulink {
 					fillA664(xml_node_iter, (data->a664 + data->counter.a664));
 					data->counter.a664++;
 				} else {
-					_tools.myprintf("[%s] Too many A664 messages, skip after %d\n", "cmd_read_data", data->counter.a664+1);
+					_tools->myprintf("[%s] Too many A664 messages, skip after %d\n", "cmd_read_data", data->counter.a664+1);
 				}
 
 			} else if (strcmp((const char*) xml_node_iter->name, "A825_SamplingMessage") == 0){
@@ -80,7 +80,7 @@ namespace ed247simulink {
 					fillA825(xml_node_iter, (data->a825 + data->counter.a825));
 					data->counter.a825++;
 				} else {
-					_tools.myprintf("[%s] Too many A825 messages, skip after %d\n", "cmd_read_data", data->counter.a825+1);
+					_tools->myprintf("[%s] Too many A825 messages, skip after %d\n", "cmd_read_data", data->counter.a825+1);
 				}
 
 			} else if (strcmp((const char*) xml_node_iter->name, "NAD_Variable") == 0){
@@ -89,7 +89,7 @@ namespace ed247simulink {
 					fillNAD(xml_node_iter, (data->nad + data->counter.nad));
 					data->counter.nad++;
 				} else {
-					_tools.myprintf("[%s] Too many NAD messages, skip after %d\n", "cmd_read_data", data->counter.nad+1);
+					_tools->myprintf("[%s] Too many NAD messages, skip after %d\n", "cmd_read_data", data->counter.nad+1);
 				}
 
 			}
