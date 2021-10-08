@@ -57,7 +57,7 @@ static void mdlInitializeSizes(SimStruct *S)
 		}
 		connector = (ed247simulink::ED247Connector*) ssGetPWork(S)[1];
 		ed247sfcn::Send *obj = new ed247sfcn::Send(S,&di,connector,tools);
-		//obj->initialize();
+		obj->initialize();
 		ssGetPWork(S)[1] = (void *) obj;
 
 	} else if (*blockType == RECEIVE){
@@ -69,9 +69,9 @@ static void mdlInitializeSizes(SimStruct *S)
 			return;
 		}
 		connector = (ed247simulink::ED247Connector*) ssGetPWork(S)[1];
-		/*ed247sfcn::Receive *obj = new ed247sfcn::Receive(S,connector,tools);
-		//obj->initialize();
-		ssGetPWork(S)[1] = (void *) obj;*/
+		ed247sfcn::Receive *obj = new ed247sfcn::Receive(S,connector,tools);
+		obj->initialize();
+		ssGetPWork(S)[1] = (void *) obj;
 
 	} else {
 
@@ -88,7 +88,7 @@ static void mdlInitializeSizes(SimStruct *S)
 			ssGetPWork(S)[0] = (void *) connector;
 
 			ed247sfcn::Configure *obj = new ed247sfcn::Configure(S,connector,tools);
-			//obj->initialize();
+			obj->initialize();
 			ssGetPWork(S)[1] = (void *) obj;
 
 		}
