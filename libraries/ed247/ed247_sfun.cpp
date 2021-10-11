@@ -82,7 +82,7 @@ static void mdlInitializeSizes(SimStruct *S)
 			tools->myprintf("Configuration file = '%s'\n", configurationFile);
 			tools->myprintf("Log file = '%s'\n", logFile);
 
-			connector = new ed247simulink::ED247Connector(configurationFile,logFile);
+			connector = new ed247simulink::ED247Connector(configurationFile,logFile,tools);
 
 			ed247sfcn::Configure *obj = new ed247sfcn::Configure(S,connector,tools);
 			obj->initialize();
