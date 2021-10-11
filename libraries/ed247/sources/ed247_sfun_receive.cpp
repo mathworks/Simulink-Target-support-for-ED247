@@ -5,14 +5,14 @@ namespace ed247sfcn {
     /*
      * CONSTRUCTORS
      */
-	Receive::Receive(SimStruct *S, di_T* di, ed247simulink::ED247Connector* connector){
+	Receive::Receive(SimStruct *S, DimsInfo_T* di, ed247simulink::ED247Connector* connector){
 		_S = S;
 		_di = di;
 		_connector = connector;
 		_tools = new ed247simulink::Tools();
 	}
 
-	Receive::Receive(SimStruct *S, di_T* di, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools){
+	Receive::Receive(SimStruct *S, DimsInfo_T* di, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools){
 		_S = S;
 		_di = di;
 		_connector = connector;
@@ -69,14 +69,14 @@ namespace ed247sfcn {
 				_tools->myprintf(", Width = %d", outputs->signals[isig].width);
 				_tools->myprintf(", Dimensions = %d\n", outputs->signals[isig].dimensions);
 
-				di.width	= outputs->signals[isig].width;
-				di.numDims	= outputs->signals[isig].dimensions;
-				d = (int32_T*) malloc(di.numDims*sizeof(int32_T));
-				for (idim = 0; idim < di.numDims && idim < MAX_DIMENSIONS; idim++){
+				_di->width		= outputs->signals[isig].width;
+				_di->numDims	= outputs->signals[isig].dimensions;
+				d = (int32_T*) malloc(_di->numDims*sizeof(int32_T));
+				for (idim = 0; idim < _di->numDims && idim < MAX_DIMENSIONS; idim++){
 					d[idim] = (int32_T)(outputs->signals[isig].size[idim]);
 				}
-				di.dims = &(d[0]);
-				if(!ssSetOutputPortDimensionInfo(_S, iport, &di)) return;
+				_di->dims = &(d[0]);
+				if(!ssSetOutputPortDimensionInfo(_S, iport, _di)) return;
 
 				//ssSetOutputPortWidth(_S, iport, outputs->signals[iport].width);
 				ssSetOutputPortDataType(_S, iport, outputs->signals[isig].type);

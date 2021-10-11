@@ -14,14 +14,14 @@ namespace ed247sfcn {
 		ed247simulink::ED247Connector* _connector;
 		ed247simulink::Tools* _tools;
 		SimStruct* _S;
-		di_T* _di;
+		DimsInfo_T* _di;
 
 	public:
 		/*
 		 * CONSTRUCTORS
 		 */
-		Receive(SimStruct *S, di_T* di, ed247simulink::ED247Connector* connector);
-		Receive(SimStruct *S, di_T* di, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools);
+		Receive(SimStruct *S, DimsInfo_T* di, ed247simulink::ED247Connector* connector);
+		Receive(SimStruct *S, DimsInfo_T* di, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools);
 
 		/*
 		 * S-Function API

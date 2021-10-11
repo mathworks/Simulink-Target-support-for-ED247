@@ -20,8 +20,8 @@ typedef struct {
 	int width;
 	int numDims;
 	int* dims;
-} di_T;
-extern di_T di;
+} DimsInfo_T;
+extern DimsInfo_T di;
 
 extern "C" void* ssGetDWork(SimStruct* S,int n);
 extern "C" void** ssGetPWork(SimStruct* S);

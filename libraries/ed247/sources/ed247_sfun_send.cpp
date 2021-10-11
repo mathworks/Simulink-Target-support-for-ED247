@@ -5,14 +5,14 @@ namespace ed247sfcn {
 	/*
 	 * CONSTRUCTORS
 	 */
-	Send::Send(SimStruct *S, di_T* di, ed247simulink::ED247Connector* connector){
+	Send::Send(SimStruct *S, DimsInfo_T* di, ed247simulink::ED247Connector* connector){
 		_S = S;
 		_di = di;
 		_connector = connector;
 		_tools = new ed247simulink::Tools();
 	}
 
-	Send::Send(SimStruct *S, di_T* di, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools){
+	Send::Send(SimStruct *S, DimsInfo_T* di, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools){
 		_S = S;
 		_di = di;
 		_connector = connector;

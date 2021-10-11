@@ -1,7 +1,7 @@
 
 #include "simstruc.h"
 
-di_T di;
+DimsInfo_T di;
 
 real_T data = 0.0F;
 real_T val_real = 0.0F;

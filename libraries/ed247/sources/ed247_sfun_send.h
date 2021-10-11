@@ -12,14 +12,14 @@ namespace ed247sfcn {
 		ed247simulink::ED247Connector* _connector;
 		ed247simulink::Tools* _tools;
 		SimStruct* _S;
-		di_T* _di;
+		DimsInfo_T* _di;
 
 	public:
 		/*
 		 * CONSTRUCTORS
 		 */
-		Send(SimStruct *S, di_T* di, ed247simulink::ED247Connector* connector);
-		Send(SimStruct *S, di_T* di, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools);
+		Send(SimStruct *S, DimsInfo_T* di, ed247simulink::ED247Connector* connector);
+		Send(SimStruct *S, DimsInfo_T* di, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools);
 
 		/*
 		 * S-Function API
