@@ -6,16 +6,16 @@
 
 #include "ed247_sfun.cpp"
 
+SimStruct configureBlock 	= INIT_SIMSTRUC(0); 
+SimStruct receiveBlock 		= INIT_SIMSTRUC(1); 
+SimStruct sendBlock 		= INIT_SIMSTRUC(2); 
+
 extern "C" {
 
 	int main(int argc, char *argv[]){
 
 		char filename[512];
 		char logfile[512];
-
-		SimStruct configureBlock 	= INIT_SIMSTRUC(0); 
-		SimStruct receiveBlock 		= INIT_SIMSTRUC(1); 
-		SimStruct sendBlock 		= INIT_SIMSTRUC(2); 
 
 		if (argc > 1){strcpy(configureBlock.configuration,argv[1]);}
 		if (argc > 2){strcpy(configureBlock.logfile,argv[2]);}
