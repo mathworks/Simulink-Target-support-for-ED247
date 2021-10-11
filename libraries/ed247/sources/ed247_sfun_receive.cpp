@@ -5,112 +5,118 @@ namespace ed247sfcn {
     /*
      * CONSTRUCTORS
      */
-    Receive::Receive(SimStruct *S, ed247simulink::ED247Connector* connector){
-        _S = S;
-        _connector = connector;
-        _tools = new ed247simulink::Tools();
-    }
-    
-    Receive::Receive(SimStruct *S, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools){
-        _S = S;
-        _connector = connector;
-        _tools = tools;
-    }
-    
+	Receive::Receive(SimStruct *S, di_T* di, ed247simulink::ED247Connector* connector){
+		_S = S;
+		_di = di;
+		_connector = connector;
+		_tools = new ed247simulink::Tools();
+	}
+
+	Receive::Receive(SimStruct *S, di_T* di, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools){
+		_S = S;
+		_di = di;
+		_connector = connector;
+		_tools = tools;
+	}
+
     /*
      * PUBLIC METHODS
      */
     void Receive::initialize() {
-        
+
         int i,isig,iport,idim,nports;
         int_T nrefresh;
         int_T *refreshFactor;
         int32_T* d;
         data_characteristics_t *outputs;
-        
-        ssAllowSignalsWithMoreThan2D(_S);
-        DECL_AND_INIT_DIMSINFO(di);
-        
-        _tools->myprintf("\n\n=== RECEIVE INITIALIZATION START ===\n");
-        
-        refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(_S,3)) );
-        _tools->myprintf("Refresh factor = %d\n",*refreshFactor);
-        
-        /*
-         * OUTPUTS
-         */
-        outputs = _connector->getOutputs();
-        nrefresh = 0;
-        for (i = 0; i < outputs->nsignals && i < MAX_SIGNALS; i++){
-            nrefresh += outputs->signals[i].is_refresh;
-        }
-        
-        nports = outputs->nsignals;
-        if (nports > MAX_SIGNALS){nports = MAX_SIGNALS;}
-        if (*refreshFactor > 0){nports = nports + nrefresh;}
-        _tools->myprintf("%d streams\n",outputs->nstreams);
-        _tools->myprintf("%d output messages\n", outputs->nsignals);
-        _tools->myprintf("%d output ports\n", nports);
-        
-        if (!ssSetNumOutputPorts(_S, nports)) return;
-        
-        ssSetNumDWork(_S, outputs->nsignals);
-        
-        iport = 0;
-        for (isig = 0; isig < outputs->nsignals && isig < MAX_SIGNALS; isig++){
-            
-            //
-            // Data port
-            //
-            _tools->myprintf("Port %d : Signal", iport);
-            _tools->myprintf(", Width = %d", outputs->signals[isig].width);
-            _tools->myprintf(", Dimensions = %d\n", outputs->signals[isig].dimensions);
-            
-            di.width	= outputs->signals[isig].width;
-            di.numDims	= outputs->signals[isig].dimensions;
-            d = (int32_T*) malloc(di.numDims*sizeof(int32_T));
-            for (idim = 0; idim < di.numDims && idim < MAX_DIMENSIONS; idim++){
-                d[idim] = (int32_T)(outputs->signals[isig].size[idim]);
-            }
-            di.dims = &(d[0]);
-            if(!ssSetOutputPortDimensionInfo(_S, iport, &di)) return;
-            
-            //ssSetOutputPortWidth(_S, iport, outputs->signals[iport].width);
-            ssSetOutputPortDataType(_S, iport, outputs->signals[isig].type);
-            
-            free(d);
-            
-            outputs->signals[isig].port_index = iport;
-            iport++;
-            
-            //
-            // Refresh ports
-            //
-            if (*refreshFactor > 0 && outputs->signals[isig].is_refresh == 1){
-                
-                _tools->myprintf("Port %d : Refresh\n", iport);
-                
-                ssSetOutputPortVectorDimension(_S, iport, 1);
-                ssSetOutputPortDataType(_S, iport, SS_BOOLEAN);
-                
-                outputs->signals[isig].refresh_index = iport;
-                iport++;
-                
-            } else {
-                outputs->signals[isig].refresh_index = -1;
-            }
-            
-            //
-            // COUNTER
-            //
-            ssSetDWorkWidth(_S, isig, 1);
-            ssSetDWorkDataType(_S, isig, SS_UINT32);
-            
-        }
-        
-        _tools->myprintf("\n=== RECEIVE INITIALIZATION END ===\n\n");
-        
-    }
+
+		_tools->myprintf("\n\n=== RECEIVE INITIALIZATION START ===\n");
+
+		refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(_S,3)) );
+		_tools->myprintf("Refresh factor = %d\n",*refreshFactor);
+
+		int_T factor = 0;
+		refreshFactor = &factor;
+
+		//
+		// OUTPUTS
+		//
+		outputs = _connector->getOutputs();
+		if (outputs != NULL){
+			nrefresh = 0;
+			for (i = 0; i < outputs->nsignals && i < MAX_SIGNALS; i++){
+				nrefresh += outputs->signals[i].is_refresh;
+			}
+
+			nports = outputs->nsignals;
+			if (nports > MAX_SIGNALS){nports = MAX_SIGNALS;}
+			if (*refreshFactor > 0){nports = nports + nrefresh;}
+			_tools->myprintf("%d streams\n",outputs->nstreams);
+			_tools->myprintf("%d output messages\n", outputs->nsignals);
+			_tools->myprintf("%d output ports\n", nports);
+
+			if (!ssSetNumOutputPorts(_S, nports)) return;
+
+			ssSetNumDWork(_S, outputs->nsignals);
+
+			iport = 0;
+			for (isig = 0; isig < outputs->nsignals && isig < MAX_SIGNALS; isig++){
+
+				//
+				// Data port
+				//
+				_tools->myprintf("Port %d : Signal", iport);
+				_tools->myprintf(", Width = %d", outputs->signals[isig].width);
+				_tools->myprintf(", Dimensions = %d\n", outputs->signals[isig].dimensions);
+
+				di.width	= outputs->signals[isig].width;
+				di.numDims	= outputs->signals[isig].dimensions;
+				d = (int32_T*) malloc(di.numDims*sizeof(int32_T));
+				for (idim = 0; idim < di.numDims && idim < MAX_DIMENSIONS; idim++){
+					d[idim] = (int32_T)(outputs->signals[isig].size[idim]);
+				}
+				di.dims = &(d[0]);
+				if(!ssSetOutputPortDimensionInfo(_S, iport, &di)) return;
+
+				//ssSetOutputPortWidth(_S, iport, outputs->signals[iport].width);
+				ssSetOutputPortDataType(_S, iport, outputs->signals[isig].type);
+
+				free(d);
+
+				outputs->signals[isig].port_index = iport;
+				iport++;
+
+				//
+				// Refresh ports
+				//
+				if (*refreshFactor > 0 && outputs->signals[isig].is_refresh == 1){
+
+					_tools->myprintf("Port %d : Refresh\n", iport);
+
+					ssSetOutputPortVectorDimension(_S, iport, 1);
+					ssSetOutputPortDataType(_S, iport, SS_BOOLEAN);
+
+					outputs->signals[isig].refresh_index = iport;
+					iport++;
+
+				} else {
+					outputs->signals[isig].refresh_index = -1;
+				}
+
+				//
+				// COUNTER
+				//
+				ssSetDWorkWidth(_S, isig, 1);
+				ssSetDWorkDataType(_S, isig, SS_UINT32);
+
+			}
+		} else {
+			_tools->myprintf("WARNING : Output pointer is NULL\n");
+		}
+
+		_tools->myprintf("\n=== RECEIVE INITIALIZATION END ===\n\n");
+
+	}
 
     void Receive::start(){
         
