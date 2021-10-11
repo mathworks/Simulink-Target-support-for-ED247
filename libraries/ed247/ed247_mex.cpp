@@ -71,7 +71,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	}
     
     tools = new ed247simulink::Tools();
-	connector = new ed247simulink::ED247Connector(filename,*tools);
+	connector = new ed247simulink::ED247Connector(filename,tools);
     
 	tools->myprintf("The input string is:  %s\n", filename);
 
