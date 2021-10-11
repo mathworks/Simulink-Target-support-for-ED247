@@ -17,9 +17,9 @@
 %function BlockTypeSetup (block, system) void
 
 	%<LibAddToCommonIncludes("ed247_interface.h")>
-	%<SLibAddToStaticSources("ed247_interface.c")>
-	%<SLibAddToStaticSources("ed247_cmd_xml.c")>
-	%<SLibAddToStaticSources("tools.c")>
+	%<SLibAddToStaticSources("ed247_interface.cpp")>
+	%<SLibAddToStaticSources("ed247_cmd_xml.cpp")>
+	%<SLibAddToStaticSources("tools.cpp")>
 
 %endfunction
 

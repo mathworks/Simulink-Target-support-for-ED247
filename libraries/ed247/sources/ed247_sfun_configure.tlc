@@ -30,7 +30,8 @@ extern char *configurationFile;
 %% Declare IO variable
 %%
 %openfile tmpBuf
-static IO_t *%<modelname>_io;
+static ed247simulink::ED247Connector* %<modelname>_connector;
+static ed247simulink::Tools* %<modelname>_tools = new ed247simulink::Tools();
 %closefile tmpBuf
 %<LibSetSourceFileSection(cSource,"Declarations",tmpBuf)>
 
@@ -48,8 +49,11 @@ char *configurationFile = "%<filename>";
 
 %assign modelname = LibGetModelName()
 
-io_allocate_memory((IO_t **)&(%<modelname>_io));
-read_ed247_configuration(configurationFile, (IO_t *)%<modelname>_io, "");
+%<modelname>_connector = new ed247simulink::ED247Connector(configurationFile,"",tools);
+
+%<modelname>_connector->allocateMemory();
+
+%<modelname>_connector->readED247Configuration();
 
 %endfunction
 
@@ -65,6 +69,6 @@ read_ed247_configuration(configurationFile, (IO_t *)%<modelname>_io, "");
 
 %assign modelname = LibGetModelName()
 
-io_free_memory((IO_t *)%<modelname>_io);
+%<modelname>_connector->freeMemory();
 
 %endfunction

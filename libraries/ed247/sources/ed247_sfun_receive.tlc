@@ -36,16 +36,18 @@
 	int_T status, ndata, last_update;
 	int_T iPort;
 	real_T timeFromLastUpdate;
+    data_characteristics_t *outputs;
 
 	%%
 	%% Assign pointer to value
 	%%
+    outputs = %<modelname>_connector->getOutputs();
 	%foreach sigIdx = SFcnParamSettings.NumSignals
 		%assign portIdx = SFcnParamSettings.PortIndex[sigIdx]
-		((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].valuePtr = (void*) %<LibBlockOutputSignalAddr(portIdx, "", "", 0)>;
+		outputs->signals[%<sigIdx>].valuePtr = (void*) %<LibBlockOutputSignalAddr(portIdx, "", "", 0)>;
 	%endforeach
 
-	status = (int)receive_ed247_to_simulink(%<modelname>_io,&ndata);
+	status = (int)%<modelname>_connector->receiveED247ToSimulink(&ndata);
 
 	%foreach sigIdx = SFcnParamSettings.NumSignals
 
@@ -57,7 +59,7 @@
 			last_update = (int_T) %<LibBlockDWork(DWork[sigIdx], "", "", 0)>;
 			timeFromLastUpdate = ((real_T) last_update) * ((real_T) ED247_RECEIVE_SAMPLE_TIME);
 
-			if (((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].do_refresh == 1 || timeFromLastUpdate < ((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].validity_duration){
+			if (((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].do_refresh == 1 || timeFromLastUpdate < outputs->signals[%<sigIdx>].validity_duration){
 				%<LibBlockOutputSignal(refreshIdx, "", "", 0)> = 1;
 			} else {
 				%<LibBlockOutputSignal(refreshIdx, "", "", 0)> = 0;
@@ -87,7 +89,7 @@
 	%else
 
 		last_update = (int_T) %<LibBlockDWork(DWork[sigIdx], "", "", 0)>;
-		if (((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].do_refresh == 1){
+		if (%<modelname>_connector->getOutputs()->signals[%<sigIdx>].do_refresh == 1){
 			last_update = 0;
 		} else if (last_update < ED247_RECEIVE_MAX_COUNTER){
 			last_update = last_update+1;
