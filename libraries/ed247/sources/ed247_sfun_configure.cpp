@@ -48,7 +48,9 @@ namespace ed247sfcn {
     
     void Configure::update(){}
     
-    void Configure::terminate(){}
+    void Configure::terminate(){
+		//_connector->freeMemory();
+	}
     
     void Configure::RTW(real_T* blockTypeID, char_T* configurationFile){
         
