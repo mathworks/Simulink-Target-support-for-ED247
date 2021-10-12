@@ -45,7 +45,7 @@ namespace ed247sfcn {
 
 			nports = inputs->nsignals;
 			for (iport = 0; iport < inputs->nsignals && iport < MAX_SIGNALS; iport++){
-				if (inputs->signals[iport].is_refresh == 1 ){ /* && *isRefreshEnabled == 1*/
+				if (inputs->signals[iport].is_refresh == 1 && *isRefreshEnabled == 1 ){
 					nports++;
 				}
 			}
@@ -89,7 +89,7 @@ namespace ed247sfcn {
 				//
 				// Refresh ports
 				//
-				if (inputs->signals[isig].is_refresh == 1){ /* && *isRefreshEnabled == 1 */
+				if (inputs->signals[isig].is_refresh == 1 && *isRefreshEnabled == 1 ){
 
 					_tools->myprintf("Port %d : Refresh\n", iport);
 
