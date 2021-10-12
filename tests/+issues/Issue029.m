@@ -13,6 +13,8 @@ classdef (SharedTestFixtures={...
         function configurationPrerequisites(testCase)
             testCase.assumeFalse(verLessThan('MATLAB','9.9'), ...
                 'MATLAB release should be greater or equal to R2020b')
+            testCase.assumeTrue(isfolder(fullfile(matlabshared.supportpkg.getSupportPackageRoot(), "toolbox","slrealtime","target","supportpackage")), ...
+                "SLREALTIME Support Package for QNX shall be installed to proceed")
         end
         
         function setFileFolder(testCase)
@@ -49,7 +51,7 @@ classdef (SharedTestFixtures={...
     methods (Test)
         
         function testSimpleA429(testCase)
-            
+                        
             % [ SETUP ]            
             warning('off')
             resetWarnings = onCleanup(@() warning('on'));
