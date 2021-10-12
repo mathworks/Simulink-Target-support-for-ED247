@@ -27,8 +27,6 @@ extern "C" {
 		//
 		printf("[CONFIGURE] mdlInitializeSizes()\n");
 		mdlInitializeSizes(&configureBlock);
-		//printf("Inputs : Streams = %d, Signals = %d\n", io->inputs->nstreams, io->inputs->nsignals);
-		//printf("Outputs : Streams = %d, Signals = %d\n", io->outputs->nstreams, io->outputs->nsignals);
 
 		printf("[SEND] mdlInitializeSizes() ... ");
 		mdlInitializeSizes(&sendBlock);
@@ -38,8 +36,6 @@ extern "C" {
 		mdlInitializeSizes(&receiveBlock);
 		printf("Output ports = %d (Input ports = %d)\n", receiveBlock.noutports, receiveBlock.ninports);
 
-		return 0;
-	/*
 		//
 		// mdlInitializeSampleTimes()
 		//
@@ -114,7 +110,9 @@ extern "C" {
 		printf("[RECEIVE] mdlTerminate() ... ");
 		mdlTerminate(&receiveBlock);
 		printf("Done\n");
-	*/
+
+		return 0;
+
 	}
 
 }
