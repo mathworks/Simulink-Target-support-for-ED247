@@ -31,7 +31,7 @@ extern char *configurationFile;
 %%
 %openfile tmpBuf
 static ed247simulink::ED247Connector* %<modelname>_connector;
-static ed247simulink::Tools* %<modelname>_tools = new ed247simulink::Tools();
+static ed247simulink::Tools* %<modelname>_tools;
 %closefile tmpBuf
 %<LibSetSourceFileSection(cSource,"Declarations",tmpBuf)>
 
@@ -49,10 +49,18 @@ char *configurationFile = "%<filename>";
 
 %assign modelname = LibGetModelName()
 
-%<modelname>_connector = new ed247simulink::ED247Connector(configurationFile,"",tools);
+/*
+ * Instantiate global/common objects
+ */
+%<modelname>_tools = new ed247simulink::Tools();
+%<modelname>_connector = new ed247simulink::ED247Connector(configurationFile,"",%<modelname>_tools);
 
+/*
+ * Initialize connector
+ *	- Allocate memory
+ *	- Read configuration
+ */
 %<modelname>_connector->allocateMemory();
-
 %<modelname>_connector->readED247Configuration();
 
 %endfunction
@@ -69,6 +77,9 @@ char *configurationFile = "%<filename>";
 
 %assign modelname = LibGetModelName()
 
+/*
+ * Free memory
+ */
 %<modelname>_connector->freeMemory();
 
 %endfunction

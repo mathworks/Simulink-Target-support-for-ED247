@@ -33,22 +33,32 @@
 
 %else
 
+	/*
+	 * Receive block local variables
+	 */
 	int_T status, ndata, last_update;
 	int_T iPort;
 	real_T timeFromLastUpdate;
-    data_characteristics_t *outputs;
 
 	%%
 	%% Assign pointer to value
 	%%
-    outputs = %<modelname>_connector->getOutputs();
+	/*
+	 * Assign output values (data)
+	 */
 	%foreach sigIdx = SFcnParamSettings.NumSignals
 		%assign portIdx = SFcnParamSettings.PortIndex[sigIdx]
-		outputs->signals[%<sigIdx>].valuePtr = (void*) %<LibBlockOutputSignalAddr(portIdx, "", "", 0)>;
+		%<modelname>_connector->getOutputs()->signals[%<sigIdx>].valuePtr = (void*) %<LibBlockOutputSignalAddr(portIdx, "", "", 0)>;
 	%endforeach
 
+	/*
+	 * Call ED247 Core library to receive data
+	 */
 	status = (int)%<modelname>_connector->receiveED247ToSimulink(&ndata);
 
+	/*
+	 * Assign output values (refresh)
+	 */
 	%foreach sigIdx = SFcnParamSettings.NumSignals
 
 		%assign refreshIdx = SFcnParamSettings.RefreshIndex[sigIdx]
@@ -59,7 +69,8 @@
 			last_update = (int_T) %<LibBlockDWork(DWork[sigIdx], "", "", 0)>;
 			timeFromLastUpdate = ((real_T) last_update) * ((real_T) ED247_RECEIVE_SAMPLE_TIME);
 
-			if (((IO_t *)%<modelname>_io)->outputs->signals[%<sigIdx>].do_refresh == 1 || timeFromLastUpdate < outputs->signals[%<sigIdx>].validity_duration){
+			if (%<modelname>_connector->getOutputs()->signals[%<sigIdx>].do_refresh == 1 || 
+				timeFromLastUpdate < %<modelname>_connector->getOutputs()->signals[%<sigIdx>].validity_duration){
 				%<LibBlockOutputSignal(refreshIdx, "", "", 0)> = 1;
 			} else {
 				%<LibBlockOutputSignal(refreshIdx, "", "", 0)> = 0;
@@ -85,6 +96,9 @@
 
 	%assign refreshIdx = SFcnParamSettings.RefreshIndex[sigIdx]
 
+	/*
+	 * Update refresh counter
+	 */
 	%if ISEQUAL(refreshIdx,-1.0)
 	%else
 
