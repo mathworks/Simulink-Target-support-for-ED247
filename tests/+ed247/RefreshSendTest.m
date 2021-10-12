@@ -97,6 +97,8 @@ classdef (SharedTestFixtures={ ...
     
         function testA429SendCodeGenerationERT(testCase)
             
+            testCase.assumeTrue(false, "Code generation (temporary disabled in tests)")
+            
             % [ SETUP ]
             modelname = ['send_a429_r',version('-release')];
             if ~bdIsLoaded(modelname)
@@ -137,6 +139,8 @@ classdef (SharedTestFixtures={ ...
         
         function testA429SendExecutableERT(testCase)
             
+            testCase.assumeTrue(false, "Code generation (temporary disabled in tests)")
+            
             % [ SETUP ]
             modelname = ['send_a429_r',version('-release')];
             if ~bdIsLoaded(modelname)
@@ -168,7 +172,7 @@ classdef (SharedTestFixtures={ ...
             pause(0.5)
             testCase.runExe([modelname, '.exe'])
             
-            recv = readDump(testCase, dumpfilename);
+            recv = readDump(testCase, dumpfilename); %#ok<NASGU>
             
         end
         
