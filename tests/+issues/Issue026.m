@@ -1,5 +1,5 @@
 classdef (SharedTestFixtures={...
-        tools.WorkFolderFixture({'ED247','Issue025'})}) ...
+        tools.WorkFolderFixture({'ED247','Issue026'})}) ...
         Issue026 < matlab.unittest.TestCase
     % ISSUE026
     %
@@ -23,7 +23,7 @@ classdef (SharedTestFixtures={...
             %
             % MATLAB crash during code generation
             %
-            
+                        
             % [ SETUP ]
             warning('off') % Lots of warnings due to unconnected lines (do not care for this test)
             restoreWarnings = onCleanup(@() warning('on'));
@@ -69,7 +69,7 @@ classdef (SharedTestFixtures={...
             %
             % MATLAB crash during code generation
             %
-            
+                        
             % [ SETUP ]
             warning('off') % Lots of warnings due to unconnected lines (do not care for this test)
             restoreWarnings = onCleanup(@() warning('on'));
