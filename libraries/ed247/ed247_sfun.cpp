@@ -19,7 +19,7 @@ typedef enum {
 } BLOCK_TYPE_T ;
 
 static ed247simulink::ED247Connector* connector;
-static ed247simulink::Tools* tools = new ed247simulink::Tools();
+static ed247simulink::Tools* tools;
 
 static ed247sfcn::Configure* configure;
 static ed247sfcn::Receive* receive;
@@ -51,6 +51,7 @@ static void mdlInitializeSizes(SimStruct *S)
 	ssSetSFcnParamTunable(S, 4, SS_PRM_NOT_TUNABLE); // Sample time (used by Receive block)
 
 	//ssSetNumPWork(S, 1);
+	tools = new ed247simulink::Tools();
 
 	BLOCK_TYPE_T * blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
 	if (*blockType == SEND){
@@ -218,15 +219,17 @@ static void mdlTerminate(SimStruct *S){
 	BLOCK_TYPE_T * blockType = (BLOCK_TYPE_T *)( mxGetData(ssGetSFcnParam(S,0)) );
 	if (*blockType == RECEIVE){
 		//ed247sfcn::Receive *receive = (ed247sfcn::Receive*) ssGetPWork(S)[0]; 
-		receive->terminate();
+		//receive->terminate();
 
 	} else if (*blockType == SEND){
 		//ed247sfcn::Send *send = (ed247sfcn::Send*) ssGetPWork(S)[0]; 
-		send->terminate();
+		//send->terminate();
 
 	} else {
 		//ed247sfcn::Configure *configure = (ed247sfcn::Configure*) ssGetPWork(S)[0]; 
 		configure->terminate();
+		delete connector;
+		connector = NULL;
 
 	}
 
