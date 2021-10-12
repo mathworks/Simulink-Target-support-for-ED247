@@ -35,9 +35,6 @@ namespace ed247sfcn {
 		refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(_S,3)) );
 		_tools->myprintf("Refresh factor = %d\n",*refreshFactor);
 
-		int_T factor = 0;
-		refreshFactor = &factor;
-
 		//
 		// OUTPUTS
 		//
