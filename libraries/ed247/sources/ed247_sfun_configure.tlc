@@ -22,7 +22,7 @@
 %% Declare configurationFile variable
 %%
 %openfile tmpBuf
-extern char *configurationFile;
+extern const char configurationFile[];
 %closefile tmpBuf
 %<LibSetSourceFileSection(hFile,"Declarations",tmpBuf)>
 
@@ -39,7 +39,7 @@ static ed247simulink::Tools* %<modelname>_tools;
 %% Define configurationFile variable
 %%
 %openfile tmpBuf
-char *configurationFile = "%<filename>";
+const char configurationFile[] = "%<filename>";
 %closefile tmpBuf
 %<LibSetSourceFileSection(cData,"Definitions",tmpBuf)>
 
