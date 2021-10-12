@@ -13,6 +13,7 @@ classdef (SharedTestFixtures={...
     methods (TestClassSetup)
         
         function setFileFolder(testCase)
+            testCase.assumeFalse(true, "Disabled : MATLAB crashes when run in a Test Suite")
             proj = currentProject();
             testCase.filefolder_ = fullfile(proj.RootFolder,'tests','_files');
         end
