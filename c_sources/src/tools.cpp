@@ -31,7 +31,6 @@ namespace ed247simulink {
  std::ofstream debugfile;
  debugfile.open ("debug.log", std::ios_base::app);
  debugfile << str; 
- debugfile << "\n"; 
  debugfile.close();
  #endif
 
