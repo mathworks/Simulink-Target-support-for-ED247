@@ -6,6 +6,8 @@ function compile(varargin)
 %   - MEXFolder (char) Default = <projroot>/libraries/ed247
 %   - OutputFolder (char) Default = <projroot>/libraries/ed247
 %   - Verbose (true|false)
+%   - DebugFile (true|false) : Write debug.log in current folder with all
+%   printed information
 %
 % Copyright 2020 The MathWorks, Inc.
 %
@@ -39,6 +41,7 @@ p.addParameter('MEXFile','all',@(x) ischar(x) || isstring(x))
 p.addParameter('MEXFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR>
 p.addParameter('OutputFolder',mexfolder,@(x) isdir(x)) %#ok<ISDIR> Backward compatibility with r2016b
 p.addParameter('Verbose',false,@(x) validateattributes(x,{'logical'},{'scalar'}))
+p.addParameter('DebugFile',false,@(x) validateattributes(x,{'logical'},{'scalar'}))
 p.addParameter('EnablePolyspace',false,@(x) validateattributes(x,{'logical'},{'scalar'}))
 parse(p,varargin{:})
 
@@ -85,6 +88,11 @@ includedirectories{end+1} = sfunsourcefolder;
 if p.Results.Verbose
     % Defines
     defines{end+1} = 'DEBUG';
+end
+
+if p.Results.DebugFile
+    % Defines
+    defines{end+1} = 'TOFILE';
 end
 
 if isunix
