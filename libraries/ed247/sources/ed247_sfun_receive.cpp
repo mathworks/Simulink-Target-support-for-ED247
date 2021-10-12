@@ -19,18 +19,18 @@ namespace ed247sfcn {
 		_tools = tools;
 	}
 
-    /*
-     * PUBLIC METHODS
-     */
-    void Receive::initialize() {
+	/*
+	 * PUBLIC METHODS
+	 */
+	void Receive::initialize() {
 
-        int i,isig,iport,idim,nports;
-        int_T nrefresh;
-        int_T *refreshFactor;
-        int32_T* d;
-        data_characteristics_t *outputs;
+		int i,isig,iport,idim,nports;
+		int_T nrefresh;
+		int_T *refreshFactor;
+		int32_T* d;
+		data_characteristics_t *outputs;
 
-		_tools->myprintf("\n\n=== RECEIVE INITIALIZATION START ===\n");
+		_tools->myprintf("\n\n=== RECEIVE INITIALIZE START ===\n");
 
 		refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(_S,3)) );
 		_tools->myprintf("Refresh factor = %d\n",*refreshFactor);
@@ -114,142 +114,146 @@ namespace ed247sfcn {
 			_tools->myprintf("WARNING : Output pointer is NULL\n");
 		}
 
-		_tools->myprintf("\n=== RECEIVE INITIALIZATION END ===\n\n");
+		_tools->myprintf("\n=== RECEIVE INITIALIZE END ===\n\n");
 
 	}
 
-    void Receive::start(){
-        
-        uint32_T *last_update;
-        int_T iCounter,nCounter;
-        
-        _tools->myprintf("Counter initialization: ");
-        
-        nCounter = ssGetNumDWork(_S);
-        for (iCounter = 0; iCounter < nCounter; iCounter++){
-            last_update = (uint32_T*) ssGetDWork(_S,iCounter);
-            *last_update = MAX_COUNTER;
-            _tools->myprintf("[%d] = %d ", iCounter, *last_update);
-        }
-        _tools->myprintf("\n");
-        
-    }
+	void Receive::start(){
 
-    void Receive::outputs(){
-        
-        int isig, iport, ndata, status;
-        data_characteristics_t *outputs;
-        
-        int_T *refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(_S,3)) );
-        time_T sampleTime = ssGetSampleTime(_S, 0);
-        
-        _tools->myprintf("\n\n=== RECEIVE OUTPUTS START ===\n");
-        
-        outputs = _connector->getOutputs();
-        
-        //
-        // Prepare output (assign pointer to block output)
-        //
-        for (isig = 0; isig < outputs->nsignals && isig < MAX_SIGNALS; isig++){
-            iport = outputs->signals[isig].port_index;
-            _tools->myprintf("Attach output signal #%d to port #%d\n", isig, iport);
-            outputs->signals[isig].valuePtr = (void*)ssGetOutputPortSignal(_S,iport);
-        }
-        
-        //
-        // Receive data
-        //
-        _tools->myprintf("Receive data");
-        status = (int)_connector->receiveED247ToSimulink(&ndata);
-        _tools->myprintf(" with status = %d", status);
-        
-        if (*refreshFactor > 0){
-            
-            for (isig = 0; isig < outputs->nsignals && isig < MAX_SIGNALS; isig++){
-                
-                real_T timeFromLastUpdate;
-                uint32_T *last_update;
-                int8_T* refresh;
-                int_T irefresh = outputs->signals[isig].refresh_index;
-                
-                if (irefresh >= 0){
-                    
-                    refresh = (int8_T*)ssGetOutputPortSignal(_S,irefresh);
-                    
-                    last_update = (uint32_T*) ssGetDWork(_S,isig);
-                    timeFromLastUpdate = ((real_T) *last_update) * ((real_T) sampleTime);
-                    
+		_tools->myprintf("\n\n=== RECEIVE START START ===\n");
+
+		uint32_T *last_update;
+		int_T iCounter,nCounter;
+		
+		_tools->myprintf("Counter initialization: ");
+
+		nCounter = ssGetNumDWork(_S);
+		for (iCounter = 0; iCounter < nCounter; iCounter++){
+			last_update = (uint32_T*) ssGetDWork(_S,iCounter);
+			*last_update = MAX_COUNTER;
+			_tools->myprintf("[%d] = %d ", iCounter, *last_update);
+		}
+		_tools->myprintf("\n");
+
+		_tools->myprintf("\n\n=== RECEIVE START END ===\n");
+
+	}
+
+	void Receive::outputs(){
+
+		int isig, iport, ndata, status;
+		data_characteristics_t *outputs;
+
+		int_T *refreshFactor = (int_T *)( mxGetData(ssGetSFcnParam(_S,3)) );
+		time_T sampleTime = ssGetSampleTime(_S, 0);
+
+		_tools->myprintf("\n\n=== RECEIVE OUTPUTS START ===\n");
+
+		outputs = _connector->getOutputs();
+
+		//
+		// Prepare output (assign pointer to block output)
+		//
+		for (isig = 0; isig < outputs->nsignals && isig < MAX_SIGNALS; isig++){
+			iport = outputs->signals[isig].port_index;
+			_tools->myprintf("Attach output signal #%d to port #%d\n", isig, iport);
+			outputs->signals[isig].valuePtr = (void*)ssGetOutputPortSignal(_S,iport);
+		}
+
+		//
+		// Receive data
+		//
+		_tools->myprintf("Receive data");
+		status = (int)_connector->receiveED247ToSimulink(&ndata);
+		_tools->myprintf(" with status = %d", status);
+
+		if (*refreshFactor > 0){
+
+			for (isig = 0; isig < outputs->nsignals && isig < MAX_SIGNALS; isig++){
+
+				real_T timeFromLastUpdate;
+				uint32_T *last_update;
+				int8_T* refresh;
+				int_T irefresh = outputs->signals[isig].refresh_index;
+
+				if (irefresh >= 0){
+
+					refresh = (int8_T*)ssGetOutputPortSignal(_S,irefresh);
+
+					last_update = (uint32_T*) ssGetDWork(_S,isig);
+					timeFromLastUpdate = ((real_T) *last_update) * ((real_T) sampleTime);
+
                     if (outputs->signals[isig].do_refresh == 1 ||
-                            timeFromLastUpdate < outputs->signals[isig].validity_duration){
-                        *refresh = 1;
-                    } else {
-                        *refresh = 0;
-                    }
-                    _tools->myprintf("\t#%d Refresh = %d (Validity duration = %f sec, Time from last update = %f sec)\n", isig, *refresh, outputs->signals[isig].validity_duration, timeFromLastUpdate);
-                    
-                }
-                
-            }
-            
-        } else {
-            _tools->myprintf("\tNo refresh");
-        }
-        
-        _tools->myprintf("\n\n=== RECEIVE OUTPUTS END ===\n");
-        
-    }
+							timeFromLastUpdate < outputs->signals[isig].validity_duration){
+						*refresh = 1;
+					} else {
+						*refresh = 0;
+					}
+					_tools->myprintf("\t#%d Refresh = %d (Validity duration = %f sec, Time from last update = %f sec)\n", isig, *refresh, outputs->signals[isig].validity_duration, timeFromLastUpdate);
 
-    void Receive::update(){
-                
-        int isig;
-        uint32_T *last_update;
-        data_characteristics_t *outputs;
-        
-        _tools->myprintf("\n\n=== RECEIVE UPDATE START ===\n");
-        
-        _tools->myprintf("Update receive block:\n");
-        outputs = _connector->getOutputs();
-        for (isig = 0; isig < outputs->nsignals && isig < MAX_SIGNALS; isig++){
-            
-            _tools->myprintf("\tSignal #%d", isig);
-            
-            last_update = (uint32_T*) ssGetDWork(_S,isig);
-            _tools->myprintf(" : last update = %d | Action = ", *last_update);
-            
-            if (outputs->signals[isig].do_refresh == 1){
-                _tools->myprintf("Reset counter");
-                last_update[0] = 0;
-            } else if (*last_update < MAX_COUNTER){
-                _tools->myprintf("Increment counter");
-                last_update[0] = last_update[0]+1;
-            } else {
-                _tools->myprintf("Counter saturation");
-            }
-            _tools->myprintf("\n");
-            
-        }
-        
-        _tools->myprintf("\n\n=== RECEIVE OUTPUTS END ===\n");
-        
-    }
+				}
 
-    void Receive::terminate(){}
-    
-    void Receive::RTW(real_T* blockTypeID, int_T* nSignals, real_T portIndex[MAX_SIGNALS], real_T refreshIndex[MAX_SIGNALS]){
-        
-        int i;
-        data_characteristics_t *outputs;
-        
-        *blockTypeID = 1.0;
-        
-        outputs = _connector->getOutputs();
-        *nSignals = outputs->nsignals;
-        if (*nSignals > MAX_SIGNALS){*nSignals = MAX_SIGNALS;}
-        for (i = 0; i < *nSignals; i++){
-            portIndex[i] = (real_T) outputs->signals[i].port_index;
-            refreshIndex[i] = (real_T) outputs->signals[i].refresh_index;
-        }
-        
-    }
-    
+			}
+
+		} else {
+			_tools->myprintf("\tNo refresh");
+		}
+
+		_tools->myprintf("\n\n=== RECEIVE OUTPUTS END ===\n");
+
+	}
+
+	void Receive::update(){
+
+		int isig;
+		uint32_T *last_update;
+		data_characteristics_t *outputs;
+
+		_tools->myprintf("\n\n=== RECEIVE UPDATE START ===\n");
+
+		_tools->myprintf("Update receive block:\n");
+		outputs = _connector->getOutputs();
+		for (isig = 0; isig < outputs->nsignals && isig < MAX_SIGNALS; isig++){
+
+			_tools->myprintf("\tSignal #%d", isig);
+
+			last_update = (uint32_T*) ssGetDWork(_S,isig);
+			_tools->myprintf(" : last update = %d | Action = ", *last_update);
+
+			if (outputs->signals[isig].do_refresh == 1){
+				_tools->myprintf("Reset counter");
+				last_update[0] = 0;
+			} else if (*last_update < MAX_COUNTER){
+				_tools->myprintf("Increment counter");
+				last_update[0] = last_update[0]+1;
+			} else {
+				_tools->myprintf("Counter saturation");
+			}
+			_tools->myprintf("\n");
+
+		}
+
+		_tools->myprintf("\n\n=== RECEIVE OUTPUTS END ===\n");
+
+	}
+
+	void Receive::terminate(){}
+
+	void Receive::RTW(real_T* blockTypeID, int_T* nSignals, real_T portIndex[MAX_SIGNALS], real_T refreshIndex[MAX_SIGNALS]){
+
+		int i;
+		data_characteristics_t *outputs;
+
+		*blockTypeID = 1.0;
+
+		outputs = _connector->getOutputs();
+		*nSignals = outputs->nsignals;
+		if (*nSignals > MAX_SIGNALS){*nSignals = MAX_SIGNALS;}
+		for (i = 0; i < *nSignals; i++){
+			portIndex[i] = (real_T) outputs->signals[i].port_index;
+			refreshIndex[i] = (real_T) outputs->signals[i].refresh_index;
+		}
+
+	}
+
 }

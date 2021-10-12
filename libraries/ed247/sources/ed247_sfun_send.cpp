@@ -29,7 +29,7 @@ namespace ed247sfcn {
 		int32_T* d;
 		data_characteristics_t *inputs;
 
-		_tools->myprintf("\n\n=== SEND INITIALIZATION START ===\n");
+		_tools->myprintf("\n\n=== SEND INITIALIZE START ===\n");
 
 		isRefreshEnabled = (int_T *)( mxGetData(ssGetSFcnParam(_S,3)) );
 		//_tools->myprintf("Is refresh enabled = %d\n",isRefreshEnabled == NULL ? -1 : (int_T)*isRefreshEnabled);
@@ -109,72 +109,80 @@ namespace ed247sfcn {
 			_tools->myprintf("WARNING : Input pointer is NULL\n");
 		}
 
-		_tools->myprintf("\n=== SEND INITIALIZATION END ===\n\n");
+		_tools->myprintf("\n=== SEND INITIALIZE END ===\n\n");
 
-    }
+	}
 
-    void Send::start(){}
+	void Send::start(){}
 
-    void Send::outputs(){
-        
-        int isig, iport,status;
-        int8_T* refresh;
-        data_characteristics_t *inputs;
-        
-        inputs = _connector->getInputs();
-        for (isig = 0; isig < inputs->nsignals && isig < MAX_SIGNALS; isig++){
-            
-            iport = inputs->signals[isig].port_index;
-            inputs->signals[isig].valuePtr = (void*)ssGetInputPortSignal(_S,iport);
-            
-            if (inputs->signals[isig].is_refresh == 1 && inputs->signals[isig].refresh_index >= 0){
-                refresh = (int8_T*)ssGetInputPortSignal(_S,inputs->signals[isig].refresh_index);
-                _tools->myprintf("Refresh port #%d = %d\n", inputs->signals[isig].refresh_index, *refresh);
-                inputs->signals[isig].do_refresh = *refresh;
-            } else {
-                inputs->signals[isig].do_refresh = 1;
-            }
-            
-            if (inputs->signals[isig].do_refresh == 1){
-                _tools->myprintf("Send data from port %d to signal %d\n", iport, isig);
-            }
-            
-        }
-        
-        status = (int)_connector->sendSimulinkToED247();
-        _tools->myprintf("Send status = %d\n", status);
-        
-    }
+	void Send::outputs(){
 
-    void Send::update(){}
+		int isig, iport,status;
+		int8_T* refresh;
+		data_characteristics_t *inputs;
 
-    void Send::terminate(){}
+		_tools->myprintf("\n=== SEND OUTPUTS START ===\n\n");
 
-    void Send::RTW(real_T* blockTypeID, int_T* nSignals, real_T portIndex[MAX_SIGNALS], real_T refreshIndex[MAX_SIGNALS]){
-        
-        int i;
-        data_characteristics_t *inputs;
-        
-        *blockTypeID = 2.0;
-        
-        inputs = _connector->getInputs();
-        if (inputs->nsignals <= MAX_SIGNALS){
-            *nSignals = inputs->nsignals;
-        } else {
-            *nSignals = MAX_SIGNALS;
-        }
-        
-        for (i = 0; i < *nSignals; i++){
-            
-            portIndex[i] = (real_T) inputs->signals[i].port_index;
-            if (inputs->signals[i].is_refresh == 1 && inputs->signals[i].refresh_index >= 0){
-                refreshIndex[i] = (real_T) inputs->signals[i].refresh_index;
-            } else {
-                refreshIndex[i] = -1.0;
-            }
-            
-        }
-        
-    }
-    
+		inputs = _connector->getInputs();
+		for (isig = 0; isig < inputs->nsignals && isig < MAX_SIGNALS; isig++){
+
+			iport = inputs->signals[isig].port_index;
+			inputs->signals[isig].valuePtr = (void*)ssGetInputPortSignal(_S,iport);
+
+			if (inputs->signals[isig].is_refresh == 1 && inputs->signals[isig].refresh_index >= 0){
+				refresh = (int8_T*)ssGetInputPortSignal(_S,inputs->signals[isig].refresh_index);
+				_tools->myprintf("Refresh port #%d = %d\n", inputs->signals[isig].refresh_index, *refresh);
+				inputs->signals[isig].do_refresh = *refresh;
+			} else {
+				inputs->signals[isig].do_refresh = 1;
+			}
+
+			if (inputs->signals[isig].do_refresh == 1){
+				_tools->myprintf("Send data from port %d to signal %d\n", iport, isig);
+			}
+
+		}
+
+		status = (int)_connector->sendSimulinkToED247();
+		_tools->myprintf("Send status = %d\n", status);
+
+		_tools->myprintf("\n=== SEND OUTPUTS END ===\n\n");
+
+	}
+
+	void Send::update(){}
+
+	void Send::terminate(){}
+
+	void Send::RTW(real_T* blockTypeID, int_T* nSignals, real_T portIndex[MAX_SIGNALS], real_T refreshIndex[MAX_SIGNALS]){
+
+		int i;
+		data_characteristics_t *inputs;
+
+		_tools->myprintf("\n=== SEND RTW START ===\n\n");
+
+		*blockTypeID = 2.0;
+
+		inputs = _connector->getInputs();
+		if (inputs->nsignals <= MAX_SIGNALS){
+			*nSignals = inputs->nsignals;
+		} else {
+			*nSignals = MAX_SIGNALS;
+		}
+
+		for (i = 0; i < *nSignals; i++){
+
+			portIndex[i] = (real_T) inputs->signals[i].port_index;
+			if (inputs->signals[i].is_refresh == 1 && inputs->signals[i].refresh_index >= 0){
+				refreshIndex[i] = (real_T) inputs->signals[i].refresh_index;
+			} else {
+				refreshIndex[i] = -1.0;
+			}
+
+		}
+
+		_tools->myprintf("\n=== SEND RTW END ===\n\n");
+
+	}
+
 }
