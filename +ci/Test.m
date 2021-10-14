@@ -1,5 +1,5 @@
 classdef Test < matlab.mixin.SetGet
-   
+    
     %% DEPENDENT PROPERTIES
     properties (Dependent)
         Runner
@@ -9,7 +9,7 @@ classdef Test < matlab.mixin.SetGet
     %% OPTIONS
     properties
         CoverageEnable      (1,1)   logical     = false;
-        CoverageFilename    (1,1)   string      = "TestCoverage.xml";        
+        CoverageFilename    (1,1)   string      = "TestCoverage.xml";
         JUnitEnable         (1,1)   logical     = false;
         JUnitFilename       (1,1)   string      = "TestResults.xml";
         ReportEnable        (1,1)   logical     = false;
@@ -26,9 +26,9 @@ classdef Test < matlab.mixin.SetGet
     
     %% CONSTRUCTOR
     methods
-       
+        
         function obj = Test(project,varargin)
-           
+            
             obj.project_ = project;
             
             if ~isempty(varargin)
@@ -66,7 +66,7 @@ classdef Test < matlab.mixin.SetGet
                 plugin = matlab.unittest.plugins.XMLPlugin.producingJUnitFormat(xmlFile);
                 runner.addPlugin(plugin)
             end
-
+            
             %
             % Report plugin
             %
@@ -91,7 +91,7 @@ classdef Test < matlab.mixin.SetGet
                 plugin = matlab.unittest.plugins.CodeCoveragePlugin.forPackage("ed247","Producing",reportFormat);
                 runner.addPlugin(plugin)
             end
-                        
+            
         end
         
         function testsuite = get.TestSuite(obj)
@@ -99,10 +99,10 @@ classdef Test < matlab.mixin.SetGet
         end
         
     end
-        
+    
     %% PUBLIC METHODS
     methods
-       
+        
         function varargout = run(obj)
             
             results = matlab.unittest.TestResult.empty;
@@ -115,7 +115,7 @@ classdef Test < matlab.mixin.SetGet
                 end
                 
                 results = obj.Runner.run(obj.TestSuite);
-                status  = nnz([results.Failed]); % 0 = OK, > 0 = N tests failed               
+                status  = nnz([results.Failed]); % 0 = OK, > 0 = N tests failed
                 
             catch me
                 disp(me)
@@ -131,10 +131,10 @@ classdef Test < matlab.mixin.SetGet
     
     %% STATIC METHODS
     methods (Static)
-       
+        
         function runOnGitLabCI(varargin)
-           
-            proj = openProject(pwd);
+            
+            proj = ci.openProject();
             obj = ci.Test(proj, ...
                 "CoverageEnable",       true,               ...
                 "CoverageFilename",     "Coverage.xml",     ...
@@ -149,13 +149,8 @@ classdef Test < matlab.mixin.SetGet
         
         function varargout = runOnLocalComputer(varargin)
             
-            proj = slproject.getCurrentProjects();
-            if isempty(proj)
-                proj = openProject(pwd);
-            else
-                proj = currentProject();
-            end
-                        
+            proj = ci.openProject();
+            
             obj = ci.Test(proj, ...
                 "CoverageEnable",   true,               ...
                 "CoverageFilename", "Coverage.xml",     ...
