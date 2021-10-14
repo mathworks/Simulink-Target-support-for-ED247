@@ -35,7 +35,7 @@ switch sysTarget
 			error('Unsupported MATLAB release for use with Simulink Real-Time')
 		end
 		makeInfo.linkLibsObjs{end+1} = fullfile(getenv('SLREALTIME_QNX_SP_ROOT'),qnxfolder,'target','qnx7','x86_64','usr','lib','libxml2.so');
-		makeInfo.linkLibsObjs{end+1} = fullfile(config.ED247,'lib','libed247_static.a');
+		makeInfo.linkLibsObjs{end+1} = fullfile(config.QNXLib,'lib','libed247_static.a');
 
         makeInfo.includePath{end+1}  = fullfile(getenv('SLREALTIME_QNX_SP_ROOT'),qnxfolder,'target','qnx7','x86_64','usr', 'include');
         

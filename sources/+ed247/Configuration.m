@@ -6,9 +6,10 @@ classdef Configuration < matlab.mixin.SetGet
     %% CONSTANT
     properties (Constant)
         FILE = '.metadata';
-        MINGW_ENVIRONMENT_VARIABLE = 'MW_MINGW64_LOC';
-        LIBXML2_FOLDER_VARIABLE = 'LIBXML_LOC';
-        ED247_FOLDER_VARIABLE = 'ED247_LOC';
+        MINGW_ENVIRONMENT_VARIABLE  = 'MW_MINGW64_LOC';
+        LIBXML2_FOLDER_VARIABLE     = 'LIBXML_LOC';
+        ED247_FOLDER_VARIABLE       = 'ED247_LOC';
+        QNX_FOLDER_VARIABLE         = 'QNX_LOC';
     end
     
     %% HIDDEN CONSTANT
@@ -32,6 +33,7 @@ classdef Configuration < matlab.mixin.SetGet
         Adapter
         ED247
         LibXML2
+        QNXLib
         MEX
         MinGW
         
@@ -153,6 +155,17 @@ classdef Configuration < matlab.mixin.SetGet
                 libxml2 = obj.libxml2_;
             else
                 libxml2 = '';
+            end
+            
+        end
+        
+        function qnxlib = get.QNXLib(obj)
+            
+            envvar = getenv(obj.QNX_FOLDER_VARIABLE);
+            if isdir(envvar) %#ok<ISDIR> Backward compatibility with r2016b
+                qnxlib = envvar;
+            else
+                qnxlib = obj.ED247;
             end
             
         end

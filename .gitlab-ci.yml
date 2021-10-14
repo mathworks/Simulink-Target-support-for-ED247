@@ -4,6 +4,9 @@ stages:
 
 variables:
   MW_MINGW64_LOC: "C:\\Tools\\MinGW64\\4.9.2-airbus"
+  LIBXML_LOC: "C:\\Temp\\ED247\\Dependencies\\libxml2"
+  ED247_LOC: "C:\\Temp\\ED247\\Dependencies\\ed247"
+  QNX_LOC: "C:\\Temp\\ED247\\Dependencies\\ed247_qnx"
 
 .windows-task:
   tags:

@@ -24,7 +24,9 @@ classdef Dependencies < matlab.mixin.SetGet
     %% IMMUTABLE PROPERTIES
     properties (SetAccess = immutable, GetAccess = private)
         
-        installationfolder_     (1,1)   string
+        ed247folder_            (1,1)   string
+        libxml2folder_          (1,1)   string
+        qnxfolder_              (1,1)   string
         rootfolder_             (1,1)   string
         temporaryfolder_        (1,1)   string
         
@@ -36,9 +38,12 @@ classdef Dependencies < matlab.mixin.SetGet
     %% CONSTRUCTOR
     methods
        
-        function obj = Dependencies(rootfolder, installationfolder, temporaryfolder, varargin)
+        function obj = Dependencies(rootfolder, ed247folder, libxml2folder, qnxfolder, temporaryfolder, varargin)
                         
-            obj.installationfolder_ = installationfolder;
+            obj.ed247folder_        = ed247folder;
+            obj.libxml2folder_      = libxml2folder;
+            obj.qnxfolder_          = qnxfolder;
+            
             obj.rootfolder_         = rootfolder;
             obj.temporaryfolder_    = temporaryfolder;
             
@@ -135,59 +140,44 @@ classdef Dependencies < matlab.mixin.SetGet
             obj.print("Unzip target archive to temporary folder")
             unzip(obj.targetarchive_)
             
-            ed247installationfolder = fullfile(obj.installationfolder_, "ED247_LIBRARY");
-            if ~isfolder(ed247installationfolder)
-                obj.print("Create folder '%s'", ed247installationfolder)
-                mkdir(ed247installationfolder)
+            if ~isfolder(obj.ed247folder_)
+                obj.print("Create folder '%s'", obj.ed247folder_)
+                mkdir(obj.ed247folder_)
             end
             
             %
             % Copy host library (Linux or Windows) to dependency folder
             %
-            hostlibraryfiles   = fullfile(obj.temporaryfolder_, "ED247_LIBRARY", "_install");
-            hostlibraryinstall = fullfile(ed247installationfolder, "host");
-            if ~isfolder(hostlibraryinstall)
-                obj.print("Create folder '%s'", hostlibraryinstall)
-                mkdir(hostlibraryinstall)
+            hostlibraryfiles   = fullfile(obj.temporaryfolder_, "ED247_LIBRARY", "_install");            
+            if ~isfolder(obj.ed247folder_)
+                obj.print("Create folder '%s'", obj.ed247folder_)
+                mkdir(obj.ed247folder_)
             end
-            obj.print("Copy ED247 host library into '%s'", hostlibraryinstall)
-            copyfile(fullfile(hostlibraryfiles, "*.*"), hostlibraryinstall)
+            obj.print("Copy ED247 host library into '%s'", obj.ed247folder_)
+            copyfile(fullfile(hostlibraryfiles, "*.*"), obj.ed247folder_)
             
             %
             % Copy target library (QNX) to dependency folder
             %
-            targetlibraryfiles      = fullfile(obj.temporaryfolder_, "ED247_LIBRARY", "_install_qnx");
-            targetlibraryinstall    = fullfile(ed247installationfolder, "target");
-            if ~isfolder(targetlibraryinstall)
-                obj.print("Create folder '%s'", targetlibraryinstall)
-                mkdir(targetlibraryinstall)
+            targetlibraryfiles      = fullfile(obj.temporaryfolder_, "ED247_LIBRARY", "_install_qnx");            
+            if ~isfolder(obj.qnxfolder_)
+                obj.print("Create folder '%s'", obj.qnxfolder_)
+                mkdir(obj.qnxfolder_)
             end
-            obj.print("Copy ED247 target library into '%s'", targetlibraryinstall)
-            copyfile(fullfile(targetlibraryfiles, "*.*"), targetlibraryinstall)
+            obj.print("Copy ED247 target library into '%s'", obj.qnxfolder_)
+            copyfile(fullfile(targetlibraryfiles, "*.*"), obj.qnxfolder_)
             
             %
             % Other dependencies (LibXML2)
-            %
-            libxml2installationfolder = fullfile(obj.installationfolder_, "LibXML2");
-            if ~isfolder(libxml2installationfolder)
-                obj.print("Create folder '%s'", libxml2installationfolder)
-                mkdir(libxml2installationfolder)
+            %            
+            if ~isfolder(obj.libxml2folder_)
+                obj.print("Create folder '%s'", obj.libxml2folder_)
+                mkdir(obj.libxml2folder_)
             end
             
             libxml2archive = fullfile(obj.rootfolder_, "archives", "libxml2.zip");
-            obj.print("Extract LibXML2 into '%s'", libxml2installationfolder)
-            unzip(libxml2archive, libxml2installationfolder)
-            
-        end
-        
-        function configure(obj)
-           
-            config = ed247.Configuration.default();
-            
-            config.ED247    = fullfile(obj.installationfolder_, "ED247_LIBRARY");
-            config.LibXML2  = fullfile(obj.installationfolder_, "LibXML2");
-                        
-            save(config)
+            obj.print("Extract LibXML2 into '%s'", obj.libxml2folder_)
+            unzip(libxml2archive, obj.libxml2folder_)
             
         end
         
@@ -234,7 +224,11 @@ classdef Dependencies < matlab.mixin.SetGet
             installationfolder = fullfile(proj.RootFolder, "deps");
             tempfolder = fullfile(tempdir, "ED247Cache");
             
-            obj = ci.Dependencies( proj.RootFolder, installationfolder, tempfolder, ...
+            ed247folder     = fullfile(installationfolder, "ED247");
+            libxml2folder   = fullfile(installationfolder, "LibXML2");
+            qnxfolder       = fullfile(installationfolder, "QNX");
+            
+            obj = ci.Dependencies( proj.RootFolder, ed247folder, libxml2folder, qnxfolder, tempfolder, ...
                 "BranchName",   "master",                       ...
                 "Host",         host,                           ...
                 "ProjectID",    "314",                          ...
@@ -263,14 +257,17 @@ classdef Dependencies < matlab.mixin.SetGet
                     host = "linux";
                 end
                 
-                installationfolder = fullfile(proj.RootFolder, "deps");
                 tempfolder = fullfile(tempdir, "ED247Cache");
                 
                 branchname = getenv("ARTIFACT_PROJECT_BRANCH");
                 projectid  = getenv("ARTIFACT_PROJECT_ID");
                 token      = getenv("ARTIFACT_PROJECT_TOKEN");
                 
-                obj = ci.Dependencies( proj.RootFolder, installationfolder, tempfolder, ...
+                ed247folder     = getenv("ED247_LOC");
+                libxml2folder   = getenv("LIBXML_LOC");
+                qnxfolder       = getenv("QNX_LOC");
+                
+                obj = ci.Dependencies( proj.RootFolder, ed247folder, libxml2folder, qnxfolder, tempfolder, ...
                     "BranchName",   branchname,                     ... 
                     "Host",         host,                           ...
                     "ProjectID",    projectid,                      ... 
@@ -281,7 +278,6 @@ classdef Dependencies < matlab.mixin.SetGet
                 
                 download(obj)
                 install(obj)
-                configure(obj)
                 
                 status = 0;
                 
