@@ -61,4 +61,4 @@ windows:toolbox:
   artifacts:
     name: Toolbox
     paths:
-        - *.mltbx
+      - ./*.mltbx
