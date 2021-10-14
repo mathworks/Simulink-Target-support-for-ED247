@@ -2,6 +2,7 @@ stages:
   - prepare
   - compile
   - test
+  - package
 
 variables:
   MW_MINGW64_LOC: "C:\\Tools\\MinGW64\\4.9.2-airbus"
@@ -49,3 +50,15 @@ windows:test:
     reports:
       cobertura: ./Coverage.xml
       junit: ./TestResults.xml
+      
+windows:toolbox:
+  stage: package  
+  needs: ["windows:test"]
+  extends: .windows-task
+  variables:
+    RELEASE: R2020b
+    CMD: ci.Package.runOnGitLabCI()
+  artifacts:
+    name: Toolbox
+    paths:
+        - *.mltbx
