@@ -101,11 +101,22 @@ classdef Package < matlab.mixin.SetGet
     methods (Static)
        
         function runOnGitLabCI(varargin)
-           
-            proj = ci.openProject();
-            obj = ci.Package(proj);
             
-            status = run(obj);
+            status = -1;
+            
+            try
+                
+                proj = ci.openProject();
+                obj = ci.Package(proj);
+                
+                package(obj);
+                
+                status = 0;
+                
+            catch me
+                disp(me.getReport())
+            end
+            
             quit(status)
             
         end
