@@ -25,10 +25,14 @@ windows:prepare:
     RELEASE: R2020b
     CMD: ci.Dependencies.runOnGitLabCI()
 
-windows:compile:
+windows:mex:
   stage: compile  
   needs: ["windows:prepare"]
   extends: .windows-task
   variables:
     RELEASE: R2020b
     CMD: ci.Compile.runOnGitLabCI()
+  artifacts:
+    name: Windows-MEX
+    paths:
+        - libraries/ed247/*.mex*
