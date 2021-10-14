@@ -1,15 +1,13 @@
 stages:    
-    - prepare
-    - compile
-	- test
-	- package
-	
+  - prepare
+  - compile
+  - test
+  - package
+
 windows:prepare:
   tags:
     - Windows
   stage: prepare  
   needs: []
   scripts:
-	- launch_matlab R2020b -batch "ci.Dependencies.runOnGitLabCI()"
-	
-	
+    - launch_matlab R2020b -batch "ci.Dependencies.runOnGitLabCI()"
