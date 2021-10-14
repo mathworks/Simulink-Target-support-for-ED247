@@ -6,5 +6,5 @@ windows:prepare:
     - Windows
   stage: prepare  
   needs: []
-  scripts:
+  script:
     - launch_matlab R2020b -batch "ci.Dependencies.runOnGitLabCI()"
