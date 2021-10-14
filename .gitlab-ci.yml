@@ -6,6 +6,8 @@ windows:prepare:
     - Windows
   stage: prepare  
   needs: []
+  before_script:
+    - $env:Path = [System.Environment]::ExpandEnvironmentVariables([System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User"))
   script:
     - echo $env:path
     - echo $env:ED247_TOOLS
