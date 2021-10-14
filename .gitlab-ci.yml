@@ -7,4 +7,6 @@ windows:prepare:
   stage: prepare  
   needs: []
   script:
+    - echo $env:path
+    - echo $env:ED247_TOOLS
     - launch_matlab R2020b -batch "ci.Dependencies.runOnGitLabCI()"
