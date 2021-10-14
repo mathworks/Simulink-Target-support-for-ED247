@@ -8,17 +8,21 @@ stages:
   before_script:
     - $env:Path = [System.Environment]::ExpandEnvironmentVariables([System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User"))
     - $env:ED247_TOOLS = [System.Environment]::ExpandEnvironmentVariables([System.Environment]::GetEnvironmentVariable("ED247_TOOLS","Machine"))
+  script:
+    - launch_matlab $RELEASE -batch "$CMD"
 
 windows:prepare:
   stage: prepare  
   needs: []
   extends: .windows-task
-  script:
-    - launch_matlab R2020b -batch "ci.Dependencies.runOnGitLabCI()"
+  variables:
+    RELEASE: R2020b
+    CMD: ci.Dependencies.runOnGitLabCI()
 
 windows:compile:
   stage: compile  
-  needs: []
+  needs: ["windows:prepare"]
   extends: .windows-task
-  script:
-    - launch_matlab R2020b -batch "ci.Compile.runOnGitLabCI()"
+  variables:
+    RELEASE: R2020b
+    CMD: ci.Compile.runOnGitLabCI()
