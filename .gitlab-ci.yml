@@ -1,8 +1,5 @@
 stages:    
   - prepare
-  - compile
-  - test
-  - package
 
 windows:prepare:
   tags:
