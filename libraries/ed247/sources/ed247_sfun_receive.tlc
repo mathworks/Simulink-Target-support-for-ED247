@@ -54,6 +54,7 @@
 	/*
 	 * Call ED247 Core library to receive data
 	 */
+    %<modelname>_tools->myprintf("Start receiving data ...\n");
 	status = (int)%<modelname>_connector->receiveED247ToSimulink(&ndata);
 
 	/*

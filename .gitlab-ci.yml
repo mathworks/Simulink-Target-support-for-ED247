@@ -1,6 +1,7 @@
 stages:    
   - prepare
   - compile
+  - test
 
 variables:
   MW_MINGW64_LOC: "C:\\Tools\\MinGW64\\4.9.2-airbus"
@@ -36,3 +37,15 @@ windows:mex:
     name: Windows-MEX
     paths:
         - libraries/ed247/*.mex*
+
+windows:test:
+  stage: test  
+  needs: ["windows:mex"]
+  extends: .windows-task
+  variables:
+    RELEASE: R2020b
+    CMD: ci.Test.runOnGitLabCI()
+  artifacts:
+    reports:
+      cobertura: ./Coverage.xml
+      junit: ./TestResults.xml
