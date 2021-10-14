@@ -2,6 +2,9 @@ stages:
   - prepare
   - compile
 
+variables:
+  MW_MINGW64_LOC: "C:\Tools\MinGW64\4.9.2-airbus"
+
 .windows-task:
   tags:
     - Windows

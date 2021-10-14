@@ -186,18 +186,7 @@ classdef Dependencies < matlab.mixin.SetGet
             
             config.ED247    = fullfile(obj.installationfolder_, "ED247_LIBRARY");
             config.LibXML2  = fullfile(obj.installationfolder_, "LibXML2");
-            
-            if ispc()
-                ed247_tools = getenv("ED247_TOOLS");
-                mingw64_folder = fullfile(ed247_tools, "MinGW64","4.9.2-airbus");
-                if isfolder(mingw64_folder)
-                    obj.print("Set MinGW installation folder (%s)", mingw64_folder)
-                    config.MinGW = mingw64_folder;
-                else
-                    obj.warning("Unable to locate MinGW installation folder (expect : %s)", mingw64_folder)
-                end
-            end
-            
+                        
             save(config)
             
         end
