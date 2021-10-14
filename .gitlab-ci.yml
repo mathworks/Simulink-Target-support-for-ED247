@@ -48,8 +48,8 @@ linux:prepare:
     RELEASE: r2020b
     CMD: ci.Dependencies.runOnGitLabCI()
   artifacts:
-    - name: Linux-Libraries
-    - paths:
+    name: Linux-Libraries
+    paths:
         - ./Dependencies/
 
 windows:mex:
