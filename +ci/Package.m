@@ -58,7 +58,7 @@ classdef Package < matlab.mixin.SetGet
             %   hard-code in .prj which make it failed in another location
             %
             txt = fileread(toolboxproject);
-            txt = regexprep(txt,'C:.*?\ed247_for_simulink',regexptranslate('escape',pwd));
+            txt = regexprep(txt,'C:.*?\\ed247_for_simulink',regexptranslate('escape',pwd));
             fid = fopen(toolboxproject,'wt');fprintf(fid,'%s',txt);fclose(fid);
             pause(1) % Pause to ensure that MATLAB path is updated
             

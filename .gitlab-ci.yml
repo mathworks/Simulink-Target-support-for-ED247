@@ -4,13 +4,12 @@ stages:
   - test
   - package
 
-variables:
-  MW_MINGW64_LOC: "C:\\Tools\\MinGW64\\4.9.2-airbus"
-  LIBXML_LOC: "C:\\Temp\\ED247\\Dependencies\\libxml2"
-  ED247_LOC: "C:\\Temp\\ED247\\Dependencies\\ed247"
-  QNX_LOC: "C:\\Temp\\ED247\\Dependencies\\ed247_qnx"
-
 .windows-task:
+  variables:
+    MW_MINGW64_LOC: "C:\\Tools\\MinGW64\\4.9.2-airbus"
+    LIBXML_LOC: "C:\\Temp\\ED247\\Dependencies\\libxml2"
+    ED247_LOC: "C:\\Temp\\ED247\\Dependencies\\ed247"
+    QNX_LOC: "C:\\Temp\\ED247\\Dependencies\\ed247_qnx"
   tags:
     - Windows
   before_script:
@@ -19,6 +18,20 @@ variables:
   script:
     - launch_matlab $RELEASE -batch "$CMD"
 
+.linux-task:
+  tags:
+    - Linux
+    - Docker
+  variables:
+    LIBXML_LOC: "./Dependencies/libxml2"
+    ED247_LOC: "./Dependencies/ed247"
+    QNX_LOC: "./Dependencies/ed247_qnx"
+  image:
+    name: gnb-csg-master:5000/matlab:$RELEASE
+    entrypoint: [""] 
+  script:
+    - matlab -r "$CMD"
+
 windows:prepare:
   stage: prepare  
   needs: []
@@ -26,6 +39,18 @@ windows:prepare:
   variables:
     RELEASE: R2020b
     CMD: ci.Dependencies.runOnGitLabCI()
+    
+linux:prepare:
+  stage: prepare
+  needs: []
+  extends: .linux-task
+  variables:
+    RELEASE: r2020b
+    CMD: ci.Dependencies.runOnGitLabCI()
+  artifacts:
+    - name: Linux-Libraries
+    - paths:
+        - ./Dependencies/
 
 windows:mex:
   stage: compile  
@@ -36,6 +61,20 @@ windows:mex:
     CMD: ci.Compile.runOnGitLabCI()
   artifacts:
     name: Windows-MEX
+    paths:
+        - libraries/ed247/*.mex*
+
+linux:mex:
+  stage: compile
+  needs: ["linux:prepare"]
+  extends: .linux-task
+  variables:
+    RELEASE: r2020b
+    CMD: ci.Compile.runOnGitLabCI()
+  before_script:
+    - apt-get update && apt-get install -y gcc
+  artifacts:
+    name: Linux-MEX
     paths:
         - libraries/ed247/*.mex*
 
@@ -50,13 +89,27 @@ windows:test:
     reports:
       cobertura: ./Coverage.xml
       junit: ./TestResults.xml
-      
-windows:toolbox:
-  stage: package  
-  needs: ["windows:test"]
-  extends: .windows-task
+
+linux:test:
+  stage: test  
+  needs: ["linux:mex"]
+  extends: .linux-task
   variables:
-    RELEASE: R2020b
+    RELEASE: r2020b
+    CMD: ci.Test.runOnGitLabCI()
+  before_script:
+    - apt-get update && apt-get install -y gcc
+  artifacts:
+    reports:
+      cobertura: ./Coverage.xml
+      junit: ./TestResults.xml
+      
+toolbox:
+  stage: package  
+  needs: ["windows:test", "linux:test"]
+  extends: .linux-task
+  variables:
+    RELEASE: r2020b
     CMD: ci.Package.runOnGitLabCI()
   artifacts:
     name: Toolbox
