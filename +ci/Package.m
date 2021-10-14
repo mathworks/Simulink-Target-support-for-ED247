@@ -31,6 +31,7 @@ classdef Package < matlab.mixin.SetGet
         function package(obj)
             
             configuration = ed247.Configuration.default();
+            version = configuration.Version;
             
             %
             % Create default metadata file for packaging (remove
@@ -40,7 +41,7 @@ classdef Package < matlab.mixin.SetGet
             metadatafilename = configuration.Filename;
             copyfile(metadatafilename, [metadatafilename,'.bckp'])
             resetMetadatafile = onCleanup(@() movefile([metadatafilename,'.bckp'],metadatafilename));
-            obj.print('## Reset .metadata file ("%s")\n', metadatafilename);
+            obj.print('## Reset .metadata file ("%s")', metadatafilename);
             config = ed247.Configuration.fromStruct(obj.configuration_);
             reset(config)
             clear('config')
@@ -60,7 +61,11 @@ classdef Package < matlab.mixin.SetGet
             txt = regexprep(txt,'C:.*?\ed247_for_simulink',regexptranslate('escape',pwd));
             fid = fopen(toolboxproject,'wt');fprintf(fid,'%s',txt);fclose(fid);
             pause(1) % Pause to ensure that MATLAB path is updated
-            obj.print( '## Package toolbox into "%s"\n', toolboxfile);
+            
+            obj.print( '## Set toolbox version to "%s"', version);
+            matlab.addons.toolbox.toolboxVersion(toolboxproject, version)
+            
+            obj.print( '## Package toolbox into "%s"', toolboxfile);
             matlab.addons.toolbox.packageToolbox(toolboxproject, toolboxfile)
             
         end
