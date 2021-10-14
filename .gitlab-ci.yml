@@ -8,7 +8,7 @@ windows:prepare:
   needs: []
   before_script:
     - $env:Path = [System.Environment]::ExpandEnvironmentVariables([System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User"))
-    - - $env:ED247_TOOLS = [System.Environment]::ExpandEnvironmentVariables([System.Environment]::GetEnvironmentVariable("ED247_TOOLS","Machine")
+    - $env:ED247_TOOLS = [System.Environment]::ExpandEnvironmentVariables([System.Environment]::GetEnvironmentVariable("ED247_TOOLS","Machine"))
   script:
     - echo $env:path
     - echo $env:ED247_TOOLS
