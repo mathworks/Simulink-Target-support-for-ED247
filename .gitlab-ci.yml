@@ -22,15 +22,6 @@ stages:
   tags:
     - Linux
     - Docker
-  variables:
-    LIBXML_LOC: "./Dependencies/libxml2"
-    ED247_LOC: "./Dependencies/ed247"
-    QNX_LOC: "./Dependencies/ed247_qnx"
-  image:
-    name: gnb-csg-master:5000/matlab:$RELEASE
-    entrypoint: [""] 
-  script:
-    - matlab -r "$CMD"
 
 windows:prepare:
   stage: prepare  
@@ -41,16 +32,12 @@ windows:prepare:
     CMD: ci.Dependencies.runOnGitLabCI()
     
 linux:prepare:
+  extends: .linux-task
   stage: prepare
   needs: []
-  extends: .linux-task
-  variables:
-    RELEASE: r2020b
-    CMD: ci.Dependencies.runOnGitLabCI()
-  artifacts:
-    - name: Linux-Libraries
-    - paths:
-        - ./Dependencies/
+  image: docker:19.03.12
+  script:
+    - docker build . -t matlab-ed247:r2020b --build-arg ARTIFACT_PROJECT_TOKEN=$ARTIFACT_PROJECT_TOKEN --build-arg ARTIFACT_PROJECT_ID=$ARTIFACT_PROJECT_ID --build-arg ARTIFACT_PROJECT_BRANCH=$ARTIFACT_PROJECT_BRANCH --build-arg ED247_LOC=/tools/ed247 --build-arg LIBXML_LOC=/tools/libxml2
 
 windows:mex:
   stage: compile  
@@ -68,11 +55,8 @@ linux:mex:
   stage: compile
   needs: ["linux:prepare"]
   extends: .linux-task
-  variables:
-    RELEASE: r2020b
-    CMD: ci.Compile.runOnGitLabCI()
-  before_script:
-    - apt-get update && apt-get install -y gcc
+  image: matlab-ed247:r2020b
+  script: matlab -r "ci.Compile.runOnGitLabCI()"
   artifacts:
     name: Linux-MEX
     paths:
@@ -94,24 +78,10 @@ linux:test:
   stage: test  
   needs: ["linux:mex"]
   extends: .linux-task
-  variables:
-    RELEASE: r2020b
-    CMD: ci.Test.runOnGitLabCI()
-  before_script:
-    - apt-get update && apt-get install -y gcc
+  image: matlab-ed247:r2020b
+  script: matlab -r "ci.Compile.runOnGitLabCI()"
   artifacts:
     reports:
       cobertura: ./Coverage.xml
       junit: ./TestResults.xml
-      
-toolbox:
-  stage: package  
-  needs: ["windows:test", "linux:test"]
-  extends: .linux-task
-  variables:
-    RELEASE: r2020b
-    CMD: ci.Package.runOnGitLabCI()
-  artifacts:
-    name: Toolbox
-    paths:
-      - ./*.mltbx
+ 
