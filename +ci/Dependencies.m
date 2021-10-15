@@ -144,17 +144,22 @@ classdef Dependencies < matlab.mixin.SetGet
                 obj.print("Create folder '%s'", obj.ed247folder_)
                 mkdir(obj.ed247folder_)
             end
+            if ~isfolder(fullfile(obj.ed247folder_,"inc"))
+                obj.print("Create folder '%s'", fullfile(obj.ed247folder_,"inc"))
+                mkdir(fullfile(obj.ed247folder_,"inc"))
+            end
+            if ~isfolder(fullfile(obj.ed247folder_,"lib"))
+                obj.print("Create folder '%s'", fullfile(obj.ed247folder_,"lib"))
+                mkdir(fullfile(obj.ed247folder_,"lib"))
+            end
             
             %
             % Copy host library (Linux or Windows) to dependency folder
             %
-            hostlibraryfiles   = fullfile(obj.temporaryfolder_, "ED247_LIBRARY", "_install");            
-            if ~isfolder(obj.ed247folder_)
-                obj.print("Create folder '%s'", obj.ed247folder_)
-                mkdir(obj.ed247folder_)
-            end
+            hostlibraryfiles   = fullfile(obj.temporaryfolder_, "ED247_LIBRARY", "_install");
             obj.print("Copy ED247 host library into '%s'", obj.ed247folder_)
-            copyfile(fullfile(hostlibraryfiles, "*.*"), obj.ed247folder_)
+            copyfile(fullfile(hostlibraryfiles, "include", "ed247.h"), fullfile(obj.ed247folder_,"inc"))
+            copyfile(fullfile(hostlibraryfiles, "lib", "*ed247*"), fullfile(obj.ed247folder_,"lib"))
             
             %
             % Copy target library (QNX) to dependency folder
@@ -174,10 +179,22 @@ classdef Dependencies < matlab.mixin.SetGet
                 obj.print("Create folder '%s'", obj.libxml2folder_)
                 mkdir(obj.libxml2folder_)
             end
+            if ~isfolder(fullfile(obj.libxml2folder_,"include"))
+                obj.print("Create folder '%s'", fullfile(obj.libxml2folder_,"include"))
+                mkdir(fullfile(obj.libxml2folder_,"include"))
+            end
+            if ~isfolder(fullfile(obj.libxml2folder_,"lib"))
+                obj.print("Create folder '%s'", fullfile(obj.libxml2folder_,"lib"))
+                mkdir(fullfile(obj.libxml2folder_,"lib"))
+            end
             
-            libxml2archive = fullfile(obj.rootfolder_, "archives", "libxml2.zip");
-            obj.print("Extract LibXML2 into '%s'", obj.libxml2folder_)
-            unzip(libxml2archive, obj.libxml2folder_)
+%             libxml2archive = fullfile(obj.rootfolder_, "archives", "libxml2.zip");
+%             obj.print("Extract LibXML2 into '%s'", obj.libxml2folder_)
+%             unzip(libxml2archive, obj.libxml2folder_)
+                    
+            obj.print("Copy LibXML2 library into '%s'", obj.libxml2folder_)
+            copyfile(fullfile(hostlibraryfiles, "include", "libxml2"), fullfile(obj.libxml2folder_,"include"))
+            copyfile(fullfile(hostlibraryfiles, "lib", "*libxml2*"), fullfile(obj.libxml2folder_,"lib"))
             
         end
         
