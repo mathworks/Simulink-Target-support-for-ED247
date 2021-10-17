@@ -37,7 +37,7 @@ linux:prepare:
   needs: []
   image: docker:19.03.12
   script:
-    - docker build . -t matlab-ed247:r2020b --build-arg ARTIFACT_PROJECT_TOKEN=$ARTIFACT_PROJECT_TOKEN --build-arg ARTIFACT_PROJECT_ID=$ARTIFACT_PROJECT_ID --build-arg ARTIFACT_PROJECT_BRANCH=$ARTIFACT_PROJECT_BRANCH --build-arg ED247_LOC=/tools/ed247 --build-arg LIBXML_LOC=/tools/libxml2
+    - docker build --no-cache . -t matlab-ed247:r2020b --build-arg ARTIFACT_PROJECT_TOKEN=$ARTIFACT_PROJECT_TOKEN --build-arg ARTIFACT_PROJECT_ID=$ARTIFACT_PROJECT_ID --build-arg ARTIFACT_PROJECT_BRANCH=$ARTIFACT_PROJECT_BRANCH --build-arg ED247_LOC=/tools/ed247 --build-arg LIBXML_LOC=/tools/libxml2
 
 windows:mex:
   stage: compile  
