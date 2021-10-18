@@ -58,6 +58,7 @@ classdef Configuration < matlab.mixin.SetGet
         adapter_
         ed247_
         libxml2_
+        qnxlib_
         mex_
         mingw_
         
@@ -164,6 +165,8 @@ classdef Configuration < matlab.mixin.SetGet
             envvar = getenv(obj.QNX_FOLDER_VARIABLE);
             if isdir(envvar) %#ok<ISDIR> Backward compatibility with r2016b
                 qnxlib = envvar;
+            elseif isdir(obj.qnxlib_) %#ok<ISDIR> Backward compatibility with r2016b
+                qnxlib = obj.qnxlib_;
             else
                 qnxlib = obj.ED247;
             end
@@ -215,6 +218,11 @@ classdef Configuration < matlab.mixin.SetGet
         
         function set.LibXML2(obj,libxml2)
             obj.libxml2_ = libxml2;
+            obj.isdirty_ = true;
+        end
+        
+        function set.QNXLib(obj,qnxlib)
+            obj.qnxlib_ = qnxlib;
             obj.isdirty_ = true;
         end
                 
