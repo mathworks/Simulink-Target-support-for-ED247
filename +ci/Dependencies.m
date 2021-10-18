@@ -17,6 +17,7 @@ classdef Dependencies < matlab.mixin.SetGet
         Host            (1,1)   string
         ProjectID       (1,1)   string
         ServerURL       (1,1)   string
+        Suffix          (1,1)   string
         Target          (1,1)   string
         Token           (1,1)   string
     end
@@ -73,7 +74,12 @@ classdef Dependencies < matlab.mixin.SetGet
                
         function hostlibraryurl = get.HostLibraryURL(obj)
             % Reference : https://docs.gitlab.com/ee/api/job_artifacts.html
-            hostlibraryurl = obj.ServerURL + "/api/v4/projects/" + obj.ProjectID + "/jobs/artifacts/" + obj.BranchName + "/download?job=" + obj.Host + ":" + obj.ARTIFACT_JOB;
+            hostlibraryurl = obj.ServerURL + "/api/v4/projects/" + ...
+                obj.ProjectID + "/jobs/artifacts/" + obj.BranchName + ...
+                "/download?job=" + obj.Host + ":" + obj.ARTIFACT_JOB;
+            if obj.Suffix ~= ""
+                hostlibraryurl = hostlibraryurl + ":" + obj.Suffix;
+            end
         end
        
         function targetlibraryurl = get.TargetLibraryURL(obj)
@@ -91,9 +97,16 @@ classdef Dependencies < matlab.mixin.SetGet
             opts = weboptions("HeaderFields",["PRIVATE-TOKEN",obj.Token],"ContentType","binary");
                         
             try
+                
+                destfolder = fileparts(obj.hostarchive_);
+                if ~isfolder(destfolder)
+                    mkdir(destfolder)
+                end
+                
                 obj.print("Download Host archive at URL '%s' to '%s' ...", obj.HostLibraryURL, obj.hostarchive_)
                 websave(obj.hostarchive_,obj.HostLibraryURL,opts);
                 obj.print("\b Done")
+            
             catch me
                 
                 if me.identifier == "MATLAB:webservices:HTTP404StatusCodeError"
@@ -106,9 +119,16 @@ classdef Dependencies < matlab.mixin.SetGet
             end
                     
             try
+                
+                destfolder = fileparts(obj.targetarchive_);
+                if ~isfolder(destfolder)
+                    mkdir(destfolder)
+                end
+                
                 obj.print("Download Target archive at URL '%s' to '%s' ...", obj.TargetLibraryURL, obj.targetarchive_)
                 websave(obj.targetarchive_,obj.TargetLibraryURL,opts);
                 obj.print("\b Done")
+                
             catch me
                 
                 if me.identifier == "MATLAB:webservices:HTTP404StatusCodeError"
@@ -156,7 +176,7 @@ classdef Dependencies < matlab.mixin.SetGet
             %
             % Copy host library (Linux or Windows) to dependency folder
             %
-            hostlibraryfiles   = fullfile(obj.temporaryfolder_, "ED247_LIBRARY", "_install");
+            hostlibraryfiles   = fullfile(obj.temporaryfolder_, "_install");
             obj.print("Copy ED247 host library into '%s'", obj.ed247folder_)
             copyfile(fullfile(hostlibraryfiles, "include", "ed247.h"), fullfile(obj.ed247folder_,"inc"))
             copyfile(fullfile(hostlibraryfiles, "lib", "*ed247*"), fullfile(obj.ed247folder_,"lib"))
@@ -164,7 +184,7 @@ classdef Dependencies < matlab.mixin.SetGet
             %
             % Copy target library (QNX) to dependency folder
             %
-            targetlibraryfiles      = fullfile(obj.temporaryfolder_, "ED247_LIBRARY", "_install_qnx");            
+            targetlibraryfiles      = fullfile(obj.temporaryfolder_, "_install_qnx");            
             if ~isfolder(obj.qnxfolder_)
                 obj.print("Create folder '%s'", obj.qnxfolder_)
                 mkdir(obj.qnxfolder_)
@@ -234,8 +254,10 @@ classdef Dependencies < matlab.mixin.SetGet
             
             if ispc()
                 host = "windows";
+                suffix = "gcc";
             else
                 host = "linux";
+                suffix = "";
             end
             
             installationfolder = fullfile(proj.RootFolder, "deps");
@@ -250,10 +272,14 @@ classdef Dependencies < matlab.mixin.SetGet
                 "Host",         host,                           ...
                 "ProjectID",    "314",                          ...
                 "ServerURL",    "http://gnb-csg-master:8484",   ...
+                "Suffix",       suffix,                         ...
                 "Target",       "qnx",                          ...
                 "Token",        "TGyAPFRAZzRQAzyBNTxB"          ...
                 );
-                        
+            
+            download(obj)
+            install(obj)
+            
             if nargout
                 varargout = {obj};
             end
@@ -270,8 +296,10 @@ classdef Dependencies < matlab.mixin.SetGet
                 
                 if ispc()
                     host = "windows";
+                    suffix = "gcc";
                 else
                     host = "linux";
+                    suffix = "";
                 end
                 
                 tempfolder = fullfile(tempdir, "ED247Cache");
@@ -285,12 +313,13 @@ classdef Dependencies < matlab.mixin.SetGet
                 qnxfolder       = getenv("QNX_LOC");
                 
                 obj = ci.Dependencies( proj.RootFolder, ed247folder, libxml2folder, qnxfolder, tempfolder, ...
-                    "BranchName",   branchname,                     ... 
+                    "BranchName",   branchname,                     ...
                     "Host",         host,                           ...
-                    "ProjectID",    projectid,                      ... 
+                    "ProjectID",    projectid,                      ...
                     "ServerURL",    "http://gnb-csg-master:8484",   ...
+                    "Suffix",       suffix,                         ...
                     "Target",       "qnx",                          ...
-                    "Token",        token                           ... 
+                    "Token",        token                           ...
                     );
                 
                 download(obj)
