@@ -6,7 +6,9 @@ function sl_customization(cm)
 initialize()
 
 % Put ED247 library at the top of Library Browser
-cm.LibraryBrowserCustomizer.applyNodePreference({'lib_ed247',-42}); 
+try %#ok<TRYNC>
+    cm.LibraryBrowserCustomizer.applyNodePreference({'lib_ed247',-42});
+end
   
 cm.addCustomMenuFcn('Simulink:ContextMenu', @getMyMenuItems);
 

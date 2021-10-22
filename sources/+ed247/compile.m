@@ -59,7 +59,7 @@ sourcefiles{end+1} = fullfile(adapterfolder, 'src',  'tools.cpp');
 
 if isunix()
     sourcefiles{end+1} = fullfile(ed247folder,   'lib',  'libed247.so');
-    sourcefiles{end+1} = fullfile(libxml2folder, 'lib',  'libxml2.so');
+    sourcefiles{end+1} = fullfile(libxml2folder, 'lib',  'libxml2.a');
 else
     
     sourcefiles{end+1} = fullfile(ed247folder,   'lib',  'libed247.dll.a');
@@ -97,7 +97,8 @@ end
 
 if isunix
     % https://www.mathworks.com/matlabcentral/answers/269-using-c-style-comments-in-mex-files
-    opts{end+1} = 'CFLAGS="\$CFLAGS -std=c99"';
+    % No more required after switching to C++
+    % opts{end+1} = 'CFLAGS="\$CFLAGS -std=c99"';
 end
 
 %% Add compiler flags (-I, -D, etc)

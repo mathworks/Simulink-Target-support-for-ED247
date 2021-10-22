@@ -6,9 +6,10 @@ classdef Configuration < matlab.mixin.SetGet
     %% CONSTANT
     properties (Constant)
         FILE = '.metadata';
-        MINGW_ENVIRONMENT_VARIABLE = 'MW_MINGW64_LOC';
-        LIBXML2_FOLDER_VARIABLE = 'LIBXML_LOC';
-        ED247_FOLDER_VARIABLE = 'ED247_LOC';
+        MINGW_ENVIRONMENT_VARIABLE  = 'MW_MINGW64_LOC';
+        LIBXML2_FOLDER_VARIABLE     = 'LIBXML_LOC';
+        ED247_FOLDER_VARIABLE       = 'ED247_LOC';
+        QNX_FOLDER_VARIABLE         = 'QNX_LOC';
     end
     
     %% HIDDEN CONSTANT
@@ -32,6 +33,7 @@ classdef Configuration < matlab.mixin.SetGet
         Adapter
         ED247
         LibXML2
+        QNXLib
         MEX
         MinGW
         
@@ -56,6 +58,7 @@ classdef Configuration < matlab.mixin.SetGet
         adapter_
         ed247_
         libxml2_
+        qnxlib_
         mex_
         mingw_
         
@@ -157,6 +160,19 @@ classdef Configuration < matlab.mixin.SetGet
             
         end
         
+        function qnxlib = get.QNXLib(obj)
+            
+            envvar = getenv(obj.QNX_FOLDER_VARIABLE);
+            if isdir(envvar) %#ok<ISDIR> Backward compatibility with r2016b
+                qnxlib = envvar;
+            elseif isdir(obj.qnxlib_) %#ok<ISDIR> Backward compatibility with r2016b
+                qnxlib = obj.qnxlib_;
+            else
+                qnxlib = obj.ED247;
+            end
+            
+        end
+        
         function mex = get.MEX(obj) %#ok<MANU>
             mex = ed247.Folder.LIBRARY.Path;            
         end
@@ -184,6 +200,7 @@ classdef Configuration < matlab.mixin.SetGet
         
         function systempath = get.SystemPath(obj)
             systempath = { ...
+                fullfile(obj.ED247,'bin'); ...
                 fullfile(obj.ED247,'lib'); ...
                 fullfile(obj.LibXML2,'bin'); ...
                 fullfile(obj.LibXML2,'lib'); ...
@@ -202,6 +219,11 @@ classdef Configuration < matlab.mixin.SetGet
         
         function set.LibXML2(obj,libxml2)
             obj.libxml2_ = libxml2;
+            obj.isdirty_ = true;
+        end
+        
+        function set.QNXLib(obj,qnxlib)
+            obj.qnxlib_ = qnxlib;
             obj.isdirty_ = true;
         end
                 
