@@ -147,7 +147,7 @@ classdef Test < matlab.mixin.SetGet
             
         end
         
-        function varargout = runOnLocalComputer(varargin)
+        function varargout = runOnLocal(varargin)
             
             proj = ci.openProject();
             

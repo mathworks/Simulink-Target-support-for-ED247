@@ -62,6 +62,7 @@ classdef Compile < matlab.mixin.SetGet
             proj = ci.openProject();
             
             obj = ci.Compile( proj.RootFolder);
+            createMEX(obj)
                         
             if nargout
                 varargout = {obj};

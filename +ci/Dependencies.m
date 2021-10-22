@@ -164,6 +164,10 @@ classdef Dependencies < matlab.mixin.SetGet
                 obj.print("Create folder '%s'", obj.ed247folder_)
                 mkdir(obj.ed247folder_)
             end
+            if ~isfolder(fullfile(obj.ed247folder_,"bin"))
+                obj.print("Create folder '%s'", fullfile(obj.ed247folder_,"bin"))
+                mkdir(fullfile(obj.ed247folder_,"bin"))
+            end
             if ~isfolder(fullfile(obj.ed247folder_,"inc"))
                 obj.print("Create folder '%s'", fullfile(obj.ed247folder_,"inc"))
                 mkdir(fullfile(obj.ed247folder_,"inc"))
@@ -178,8 +182,9 @@ classdef Dependencies < matlab.mixin.SetGet
             %
             hostlibraryfiles   = fullfile(obj.temporaryfolder_, "_install");
             obj.print("Copy ED247 host library into '%s'", obj.ed247folder_)
-            copyfile(fullfile(hostlibraryfiles, "include", "ed247.h"), fullfile(obj.ed247folder_,"inc"))
-            copyfile(fullfile(hostlibraryfiles, "lib", "*ed247*"), fullfile(obj.ed247folder_,"lib"))
+            copyfile(fullfile(hostlibraryfiles, "bin", "*ed247*"),      fullfile(obj.ed247folder_,"bin"))
+            copyfile(fullfile(hostlibraryfiles, "include", "ed247.h"),  fullfile(obj.ed247folder_,"inc"))
+            copyfile(fullfile(hostlibraryfiles, "lib", "*ed247*"),      fullfile(obj.ed247folder_,"lib"))
             
             %
             % Copy target library (QNX) to dependency folder
@@ -207,14 +212,10 @@ classdef Dependencies < matlab.mixin.SetGet
                 obj.print("Create folder '%s'", fullfile(obj.libxml2folder_,"lib"))
                 mkdir(fullfile(obj.libxml2folder_,"lib"))
             end
-            
-%             libxml2archive = fullfile(obj.rootfolder_, "archives", "libxml2.zip");
-%             obj.print("Extract LibXML2 into '%s'", obj.libxml2folder_)
-%             unzip(libxml2archive, obj.libxml2folder_)
-                    
+                                
             obj.print("Copy LibXML2 library into '%s'", obj.libxml2folder_)
-            copyfile(fullfile(hostlibraryfiles, "include", "libxml2"), fullfile(obj.libxml2folder_,"include"))
-            copyfile(fullfile(hostlibraryfiles, "lib", "*libxml2*"), fullfile(obj.libxml2folder_,"lib"))
+            copyfile(fullfile(hostlibraryfiles, "include", "libxml2"),  fullfile(obj.libxml2folder_,"include"))
+            copyfile(fullfile(hostlibraryfiles, "lib", "*libxml2*"),    fullfile(obj.libxml2folder_,"lib"))
             
         end
         
