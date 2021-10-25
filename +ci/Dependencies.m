@@ -168,9 +168,9 @@ classdef Dependencies < matlab.mixin.SetGet
                 obj.print("Create folder '%s'", fullfile(obj.ed247folder_,"bin"))
                 mkdir(fullfile(obj.ed247folder_,"bin"))
             end
-            if ~isfolder(fullfile(obj.ed247folder_,"inc"))
-                obj.print("Create folder '%s'", fullfile(obj.ed247folder_,"inc"))
-                mkdir(fullfile(obj.ed247folder_,"inc"))
+            if ~isfolder(fullfile(obj.ed247folder_,"include"))
+                obj.print("Create folder '%s'", fullfile(obj.ed247folder_,"include"))
+                mkdir(fullfile(obj.ed247folder_,"include"))
             end
             if ~isfolder(fullfile(obj.ed247folder_,"lib"))
                 obj.print("Create folder '%s'", fullfile(obj.ed247folder_,"lib"))
@@ -183,7 +183,7 @@ classdef Dependencies < matlab.mixin.SetGet
             hostlibraryfiles   = fullfile(obj.temporaryfolder_, "_install");
             obj.print("Copy ED247 host library into '%s'", obj.ed247folder_)
             copyfile(fullfile(hostlibraryfiles, "bin", "*ed247*"),      fullfile(obj.ed247folder_,"bin"))
-            copyfile(fullfile(hostlibraryfiles, "include", "ed247.h"),  fullfile(obj.ed247folder_,"inc"))
+            copyfile(fullfile(hostlibraryfiles, "include", "ed247.h"),  fullfile(obj.ed247folder_,"include"))
             copyfile(fullfile(hostlibraryfiles, "lib", "*ed247*"),      fullfile(obj.ed247folder_,"lib"))
             
             %

@@ -62,7 +62,7 @@ end
 
 % Include directories
 includedirectories{end+1} = fullfile(adapterfolder, 'include');
-includedirectories{end+1} = fullfile(ed247folder,   'inc');
+includedirectories{end+1} = fullfile(ed247folder,   'include');
 includedirectories{end+1} = fullfile(libxml2folder, 'include','libxml2');
 includedirectories{end+1} = fullfile(libxml2folder, 'include');
 includedirectories{end+1} = sfunsourcefolder;
