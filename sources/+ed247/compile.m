@@ -55,14 +55,14 @@ sourcefiles{end+1} = fullfile(adapterfolder, 'src', 'tools.cpp');
 if isunix()
     sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'libed247_static.a');
 elseif ispc()
-    sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'ed247.lib');
+    sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'libed247.dll.a');
 else
     error('Not supported OS.');
 end
 
 % Include directories
 includedirectories{end+1} = fullfile(adapterfolder, 'include');
-includedirectories{end+1} = fullfile(ed247folder,   'include');
+includedirectories{end+1} = fullfile(ed247folder,   'inc');
 includedirectories{end+1} = fullfile(libxml2folder, 'include','libxml2');
 includedirectories{end+1} = fullfile(libxml2folder, 'include');
 includedirectories{end+1} = sfunsourcefolder;
