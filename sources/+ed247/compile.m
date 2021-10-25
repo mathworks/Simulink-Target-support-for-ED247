@@ -55,7 +55,7 @@ sourcefiles{end+1} = fullfile(adapterfolder, 'src', 'tools.cpp');
 if isunix()
     sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'libed247_static.a');
 elseif ispc()
-    sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'libed247.dll.a');
+    sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'ed247.lib');
 else
     error('Not supported OS.');
 end
