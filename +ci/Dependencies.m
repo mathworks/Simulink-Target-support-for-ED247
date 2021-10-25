@@ -274,7 +274,7 @@ classdef Dependencies < matlab.mixin.SetGet
             
             if ispc()
                 host = "windows";
-                suffix = "gcc";
+                suffix = "vs";
             else
                 host = "linux";
                 suffix = "";
@@ -317,7 +317,7 @@ classdef Dependencies < matlab.mixin.SetGet
                 
                 if ispc()
                     host = "windows";
-                    suffix = "gcc";
+                    suffix = "vs";
                 else
                     host = "linux";
                     suffix = "";
