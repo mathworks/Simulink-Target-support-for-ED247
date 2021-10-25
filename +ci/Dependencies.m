@@ -219,6 +219,25 @@ classdef Dependencies < matlab.mixin.SetGet
             
         end
         
+        function configure(obj)
+           
+            obj.print("Update configuration")
+            config = ed247.Configuration.default();
+            
+            obj.print("\t- ED247 folder : '%s'", obj.ed247folder_)
+            config.ED247    = obj.ed247folder_;
+            
+            obj.print("\t- LibXML2 folder : '%s'", obj.libxml2folder_)
+            config.LibXML2  = obj.libxml2folder_;
+            
+            obj.print("\t- QNX folder : '%s'", obj.qnxfolder_)
+            config.QNXLib   = obj.qnxfolder_;
+            
+            obj.print("Save configuration")
+            save(config)
+            
+        end
+        
     end
     
     %% HELPER METHODS (PROTECTED)
@@ -280,6 +299,7 @@ classdef Dependencies < matlab.mixin.SetGet
             
             download(obj)
             install(obj)
+            configure(obj)
             
             if nargout
                 varargout = {obj};
