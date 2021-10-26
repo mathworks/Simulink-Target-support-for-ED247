@@ -55,4 +55,5 @@ function initialize
 % local installation
 config = ed247.Configuration.default();
 
+config.addMinGWToPath()
 config.addLibrariesToPath()
