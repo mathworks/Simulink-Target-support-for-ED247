@@ -26,9 +26,10 @@ sysTarget = get_param(bdroot, 'RTWSystemTargetFile');
 switch sysTarget
 
 	case 'slrealtime.tlc'
-
+        slrealtime.qnxSetupFcn;
         qnxVersion = getenv('SLREALTIME_QNX_VERSION');
         if isempty(qnxVersion)
+            % Value for MATLAB R2020b
             qnxVersion = 'qnx700';
         end
 		makeInfo.linkLibsObjs{end+1} = fullfile(getenv('SLREALTIME_QNX_SP_ROOT'),qnxVersion,'target','qnx7','x86_64','usr','lib','libxml2.so');
