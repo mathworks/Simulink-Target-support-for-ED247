@@ -168,9 +168,9 @@ classdef Dependencies < matlab.mixin.SetGet
                 obj.print("Create folder '%s'", fullfile(obj.ed247folder_,"bin"))
                 mkdir(fullfile(obj.ed247folder_,"bin"))
             end
-            if ~isfolder(fullfile(obj.ed247folder_,"inc"))
-                obj.print("Create folder '%s'", fullfile(obj.ed247folder_,"inc"))
-                mkdir(fullfile(obj.ed247folder_,"inc"))
+            if ~isfolder(fullfile(obj.ed247folder_,"include"))
+                obj.print("Create folder '%s'", fullfile(obj.ed247folder_,"include"))
+                mkdir(fullfile(obj.ed247folder_,"include"))
             end
             if ~isfolder(fullfile(obj.ed247folder_,"lib"))
                 obj.print("Create folder '%s'", fullfile(obj.ed247folder_,"lib"))
@@ -183,7 +183,7 @@ classdef Dependencies < matlab.mixin.SetGet
             hostlibraryfiles   = fullfile(obj.temporaryfolder_, "_install");
             obj.print("Copy ED247 host library into '%s'", obj.ed247folder_)
             copyfile(fullfile(hostlibraryfiles, "bin", "*ed247*"),      fullfile(obj.ed247folder_,"bin"))
-            copyfile(fullfile(hostlibraryfiles, "include", "ed247.h"),  fullfile(obj.ed247folder_,"inc"))
+            copyfile(fullfile(hostlibraryfiles, "include", "ed247.h"),  fullfile(obj.ed247folder_,"include"))
             copyfile(fullfile(hostlibraryfiles, "lib", "*ed247*"),      fullfile(obj.ed247folder_,"lib"))
             
             %
@@ -216,6 +216,25 @@ classdef Dependencies < matlab.mixin.SetGet
             obj.print("Copy LibXML2 library into '%s'", obj.libxml2folder_)
             copyfile(fullfile(hostlibraryfiles, "include", "libxml2"),  fullfile(obj.libxml2folder_,"include"))
             copyfile(fullfile(hostlibraryfiles, "lib", "*libxml2*"),    fullfile(obj.libxml2folder_,"lib"))
+            
+        end
+        
+        function configure(obj)
+           
+            obj.print("Update configuration")
+            config = ed247.Configuration.default();
+            
+            obj.print("\t- ED247 folder : '%s'", obj.ed247folder_)
+            config.ED247    = obj.ed247folder_;
+            
+            obj.print("\t- LibXML2 folder : '%s'", obj.libxml2folder_)
+            config.LibXML2  = obj.libxml2folder_;
+            
+            obj.print("\t- QNX folder : '%s'", obj.qnxfolder_)
+            config.QNXLib   = obj.qnxfolder_;
+            
+            obj.print("Save configuration")
+            save(config)
             
         end
         
@@ -255,7 +274,7 @@ classdef Dependencies < matlab.mixin.SetGet
             
             if ispc()
                 host = "windows";
-                suffix = "gcc";
+                suffix = "vs";
             else
                 host = "linux";
                 suffix = "";
@@ -280,6 +299,7 @@ classdef Dependencies < matlab.mixin.SetGet
             
             download(obj)
             install(obj)
+            configure(obj)
             
             if nargout
                 varargout = {obj};
@@ -297,7 +317,7 @@ classdef Dependencies < matlab.mixin.SetGet
                 
                 if ispc()
                     host = "windows";
-                    suffix = "gcc";
+                    suffix = "vs";
                 else
                     host = "linux";
                     suffix = "";
