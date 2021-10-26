@@ -17,14 +17,18 @@ namespace ed247simulink {
 	vsprintf(str, fmt, args);
 	va_end(args);
 
+ #ifdef DEBUG
+
  #ifndef MATLAB_MEX_FILE
-	printfcn = &printf;
+	printf("%s",str);
  #else
-	printfcn = &ssPrintf;
+	ssPrintf("%s",str);
  #endif
 
- #ifdef DEBUG
-	(*printfcn)("%s",str);
+ #endif
+
+ #ifdef SIMULINK_REAL_TIME
+ 	LOG(info,0) << str << std::endl;
  #endif
  
  #ifdef TOFILE

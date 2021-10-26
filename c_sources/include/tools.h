@@ -16,6 +16,11 @@
  #else
 	#include "simstruc.h"
  #endif
+
+ // Include Logger for Simulink Real-Time
+ #ifdef SIMULINK_REAL_TIME
+	#include "Logger.hpp"
+ #endif
  
  #define STRING_MAX_LENGTH 		512
  
