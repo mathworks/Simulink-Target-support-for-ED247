@@ -91,7 +91,7 @@ linux:test:
   extends: .linux-task
   variables:
     RELEASE: R2020b
-    CMD: ci.Test.runOnGitLabCI(
+    CMD: ci.Test.runOnGitLabCI()
   artifacts:
     reports:
       cobertura: ./Coverage.xml
