@@ -191,13 +191,17 @@ classdef Dependencies < matlab.mixin.SetGet
             %
             % Copy target library (QNX) to dependency folder
             %
-            targetlibraryfiles      = fullfile(obj.temporaryfolder_, "_install_qnx");            
-            if ~isfolder(obj.qnxfolder_)
-                obj.print("Create folder '%s'", obj.qnxfolder_)
-                mkdir(obj.qnxfolder_)
+            if ~isempty(obj.qnxfolder_) && obj.qnxfolder_ ~= ""
+                targetlibraryfiles      = fullfile(obj.temporaryfolder_, "_install_qnx");
+                if ~isfolder(obj.qnxfolder_)
+                    obj.print("Create folder '%s'", obj.qnxfolder_)
+                    mkdir(obj.qnxfolder_)
+                end
+                obj.print("Copy ED247 target library into '%s'", obj.qnxfolder_)
+                copyfile(fullfile(targetlibraryfiles, "*.*"), obj.qnxfolder_)
+            else
+                obj.print("Skip installation of target library")
             end
-            obj.print("Copy ED247 target library into '%s'", obj.qnxfolder_)
-            copyfile(fullfile(targetlibraryfiles, "*.*"), obj.qnxfolder_)
                         
         end
         
