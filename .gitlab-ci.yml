@@ -1,4 +1,5 @@
-stages:    
+stages:
+  - environment-building    
   - prepare
   - compile
   - test
@@ -38,7 +39,7 @@ linux:container:
   tags:
     - Linux
     - Docker
-  stage: prepare
+  stage: environment-building
   needs: []
   image: docker:19.03.12
   script:
