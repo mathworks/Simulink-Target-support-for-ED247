@@ -63,12 +63,17 @@ schema.callback = @(varargin) connectLine(obj,source);
 end
             
 function initialize
+% 
+% Setup Operating System path to enable access to libraries
+% (addLibrariesToPath)
+%
+% Setup MinGW on Windows because end-user does not want to
+% install/configure compiler, it shall be done "automatically" (here)
+%
 
-% Set environment variable to use the right MinGW64
-% /!\ This function is not generic and have to be updated depending on
-% local installation
 config = ed247.Configuration.default();
 
 config.addLibrariesToPath()
+config.addMinGWToPath()
 
 end
