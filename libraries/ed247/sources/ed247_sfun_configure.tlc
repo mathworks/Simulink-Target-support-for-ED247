@@ -39,7 +39,7 @@ static ed247simulink::Tools* %<modelname>_tools;
 %% Define configurationFile variable
 %%
 %openfile tmpBuf
-const char configurationFile[] = "%<filename>";
+const char configurationFile[] = "/home/slrt/applications/%<modelname>/misc/%<filename>";
 %closefile tmpBuf
 %<LibSetSourceFileSection(cData,"Definitions",tmpBuf)>
 
