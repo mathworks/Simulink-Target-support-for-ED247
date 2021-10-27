@@ -138,7 +138,6 @@ classdef ConfigurationUI < matlab.mixin.SetGet
         function PbOKCallback(obj)
             save(obj.config_)
             close(obj.view_.FgConfiguration)
-            projectOpen()
         end
         
         function PbCancelCallback(obj)
@@ -155,10 +154,6 @@ classdef ConfigurationUI < matlab.mixin.SetGet
         
         function CmCloseMenuSelectedFcn(obj)
             close(obj.view_.FgConfiguration)
-        end
-        
-        function CmReloadMenuSelectedFcn(obj) %#ok<MANU>
-            projectOpen()
         end
         
         function CmGettingStartedMenuSelectedFcn(obj) %#ok<MANU>
