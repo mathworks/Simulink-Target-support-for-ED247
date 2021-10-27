@@ -12,6 +12,14 @@ end
   
 cm.addCustomMenuFcn('Simulink:ContextMenu', @getMyMenuItems);
 
+% Get default (factory) customizations
+hObj = cm.RTWBuildCustomizer;
+
+% Register build process hooks
+hObj.addUserHook('exit', 'addXmlFile(modelName, dependencyObject);');
+
+end
+
 function schemaFcns = getMyMenuItems(~)
 
 schemaFcns = {};
@@ -34,6 +42,8 @@ elseif ~isempty(getfield(get(gcbh,'PortHandles'),'Outport')) && ...
     
 end
 
+end
+
 function schema = getCreateBus(obj)
 
 schema = sl_action_schema;
@@ -41,12 +51,16 @@ schema.label = '[ED247] Create Bus and subsystem';
 schema.userdata = 'ed247_create_bus';
 schema.callback = @(varargin) createBus(obj);
 
+end
+
 function schema = getConnectLine(obj,source)
 
 schema = sl_action_schema;
 schema.label = '[ED247] Connect line to Send block';
 schema.userdata = 'ed247_connect_line';
 schema.callback = @(varargin) connectLine(obj,source);
+
+end
             
 function initialize
 
@@ -55,5 +69,11 @@ function initialize
 % local installation
 config = ed247.Configuration.default();
 
+<<<<<<< HEAD
 config.addMinGWToPath()
 config.addLibrariesToPath()
+=======
+config.addLibrariesToPath()
+
+end
+>>>>>>> feature/31-cpp

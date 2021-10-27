@@ -32,10 +32,10 @@ namespace ed247simulink {
  #endif
  
  #ifdef TOFILE
- std::ofstream debugfile;
- debugfile.open ("debug.log", std::ios_base::app);
- debugfile << str; 
- debugfile.close();
+    std::ofstream debugfile;
+    debugfile.open ("debug.log", std::ios_base::app);
+    debugfile << str; 
+    debugfile.close();
  #endif
 
  }
@@ -50,7 +50,12 @@ namespace ed247simulink {
         return 0;
     }
 	myprintf("\tNO\n");
-    return 1;
+    #ifdef SIMULINK_REAL_TIME
+        LOG(error,0) << "ECIC config XML file not found. Aborting execution." << std::endl;
+        exit(EXIT_FAILURE);
+    #else
+        return 1;
+    #endif
  }
 
  void Tools::fileparts(const char* path, char* folder) {
