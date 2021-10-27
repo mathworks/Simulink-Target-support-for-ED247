@@ -28,7 +28,7 @@ namespace ed247simulink {
  #endif
 
  #ifdef SIMULINK_REAL_TIME
- 	LOG(info,0) << str << std::endl;
+ 	LOG(debug,0) << str << std::endl;
  #endif
  
  #ifdef TOFILE
