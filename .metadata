@@ -5,6 +5,6 @@ Version=2.0.0
 Developer=MathWorks Consulting Services
 Maintainer=IYYSW
 --- Windows ---
-ED247=C:\Files\SANDBOX\git\ED247\ed247_for_simulink\deps\ED247
-LibXML2=C:\Files\SANDBOX\git\ED247\ed247_for_simulink\deps\LibXML2
-MinGW=C:\Files\PROGRAMS\ThirdParty\MinGW64\4.9.2-airbus
+ED247=C:\Users\promero\git_work\Utilities\ED247_LIBRARY_my\_install_win64
+LibXML2=C:\Users\promero\git_work\Utilities\ED247_LIBRARY_my\_install_win64
+MinGW=

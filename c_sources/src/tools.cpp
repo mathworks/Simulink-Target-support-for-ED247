@@ -51,7 +51,7 @@ namespace ed247simulink {
     }
 	myprintf("\tNO\n");
     #ifdef SIMULINK_REAL_TIME
-        LOG(error,0) << "ECIC config XML file not found. Aborting execution." << std::endl;
+        LOG(error,0) << "Config XML file not found. Aborting execution." << std::endl;
         exit(EXIT_FAILURE);
     #else
         return 1;
