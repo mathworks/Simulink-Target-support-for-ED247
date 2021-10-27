@@ -69,11 +69,6 @@ function initialize
 % local installation
 config = ed247.Configuration.default();
 
-<<<<<<< HEAD
-config.addMinGWToPath()
-config.addLibrariesToPath()
-=======
 config.addLibrariesToPath()
 
 end
->>>>>>> feature/31-cpp
