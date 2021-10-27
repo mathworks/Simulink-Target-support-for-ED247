@@ -15,7 +15,7 @@ function addXmlFile(modelName, dependencyObject)
     if isfile(mldatxPath)
         appObj = slrealtime.internal.Application(mldatxPath);
         for i = 1:length(xmlFiles)
-            appObj.add(['/bin/' xmlFiles(i).name], xmlFiles(i).path);
+            appObj.add(['/misc/' xmlFiles(i).name], xmlFiles(i).path);
         end
     end
 end
