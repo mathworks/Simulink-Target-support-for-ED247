@@ -51,8 +51,8 @@ sourcefiles{end+1} = fullfile(adapterfolder, 'src', 'ed247_interface.cpp');
 sourcefiles{end+1} = fullfile(adapterfolder, 'src', 'tools.cpp');
 
 if isunix()
-    %sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'libed247_static.a');
-    sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'libed247.so');
+    sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'libed247_static.a');
+    sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'libxml2.a');
 elseif ispc()
     sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'ed247.lib');
 else
