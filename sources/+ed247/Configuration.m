@@ -354,23 +354,23 @@ classdef Configuration < matlab.mixin.SetGet
             
             common = configuration{strcmpi(groups,'common')};
             
-            if isfield(common,'Name')
+            if isfield(common,'Name') || isprop(common,'Name')
                 obj.name_ = common.Name;
             end
             
-            if isfield(common,'Date')
+            if isfield(common,'Date') || isprop(common,'Date')
                 obj.date_ = common.Date;
             end
             
-            if isfield(common,'Version')
+            if isfield(common,'Version') || isprop(common,'Version')
                 obj.version_ = common.Version;
             end
             
-            if isfield(common,'Developer')
+            if isfield(common,'Developer') || isprop(common,'Developer')
                 obj.developer_ = common.Developer;
             end
             
-            if isfield(common,'Maintainer')
+            if isfield(common,'Maintainer') || isprop(common,'Maintainer')
                 obj.maintainer_ = common.Maintainer;
             end
             
@@ -384,19 +384,19 @@ classdef Configuration < matlab.mixin.SetGet
                 configuration = struct();
             end
                         
-            if isfield(configuration,'ED247') && isdir(configuration.ED247) %#ok<ISDIR> Backward compatibility with r2016b
+            if (isfield(configuration,'ED247') || isprop(configuration,'ED247')) && isdir(configuration.ED247) %#ok<ISDIR> Backward compatibility with r2016b
                 obj.ed247_ = configuration.ED247;
             end
             
-            if isfield(configuration,'QNXLib') && isdir(configuration.QNXLib) %#ok<ISDIR> Backward compatibility with r2016b
+            if (isfield(configuration,'QNXLib') || isprop(configuration,'QNXLib')) && isdir(configuration.QNXLib) %#ok<ISDIR> Backward compatibility with r2016b
                 obj.qnxlib_ = configuration.QNXLib;
             end
             
-            if isfield(configuration,'LibXML2') && isdir(configuration.LibXML2) %#ok<ISDIR> Backward compatibility with r2016b
+            if (isfield(configuration,'LibXML2') || isprop(configuration,'LibXML2')) && isdir(configuration.LibXML2) %#ok<ISDIR> Backward compatibility with r2016b
                 obj.libxml2_ = configuration.LibXML2;
             end
                         
-            if isfield(configuration,'MinGW') && isdir(configuration.MinGW) %#ok<ISDIR> Backward compatibility with r2016b
+            if (isfield(configuration,'MinGW') || isprop(configuration,'MinGW')) && isdir(configuration.MinGW) %#ok<ISDIR> Backward compatibility with r2016b
                 obj.mingw_ = configuration.MinGW;
             end
             
