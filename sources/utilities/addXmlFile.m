@@ -17,10 +17,11 @@ blockInfo = arrayfun(@ed247.blocks.Configure,configBlocks);
 
 %
 % Assemble the list of XML files :
-%   - ECIC : One per COnfiguration block
+%   - ECIC : One per Configuration block
 %   - ICD : From 0 to many depending on ECIC configuration
 %
 xmlpaths = [{blockInfo.ECICFile}'; vertcat(blockInfo.ICDFiles)];
+xmlpaths(cellfun(@isempty,xmlpaths)) = []; % Empty XML path leads to ADD command crash
 
 %
 % Generate the structure xmlFiles which contains the name of each XML file

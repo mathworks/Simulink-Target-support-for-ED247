@@ -7,7 +7,7 @@
     <param.summary />
     <param.description />
     <param.screenshot />
-    <param.version>2.0.0</param.version>
+    <param.version>2.1.1</param.version>
     <param.output>${PROJECT_ROOT}\ED247_for_Simulink.mltbx</param.output>
     <param.products.name />
     <param.products.id />
@@ -30,7 +30,14 @@
     archives/
     work/
     *.prj
-    *.mlproj</param.exclude.filters>
+    *.mlproj
+Dockerfile
+results/
+c_sources/build/
+c_sources/tests/
+c_sources/work/
+c_sources/CMakeLists.txt
+c_sources/*.sh</param.exclude.filters>
     <param.exclude.pcodedmfiles>true</param.exclude.pcodedmfiles>
     <param.examples />
     <param.demosxml />

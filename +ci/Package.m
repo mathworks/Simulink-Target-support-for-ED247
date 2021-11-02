@@ -50,7 +50,7 @@ classdef Package < matlab.mixin.SetGet
             % Package toolbox
             %
             toolboxproject = fullfile(obj.project_.RootFolder,'ToolboxPackagingConfiguration.prj');
-            toolboxfile = fullfile(obj.project_.RootFolder, sprintf('ED247_for_Simulink-r%s.mltbx', version('-release')));
+            toolboxfile = fullfile(obj.project_.RootFolder, sprintf('ED247_for_Simulink-v%s-r%s.mltbx', toolboxVersion, version('-release')));
             
             %
             % Patch
@@ -59,6 +59,7 @@ classdef Package < matlab.mixin.SetGet
             %
             txt = fileread(toolboxproject);
             txt = regexprep(txt,'C:.*?\\ed247_for_simulink',regexptranslate('escape',pwd));
+            txt = regexprep(txt,'\r\n','\n');
             fid = fopen(toolboxproject,'wt');fprintf(fid,'%s',txt);fclose(fid);
             pause(1) % Pause to ensure that MATLAB path is updated
             
@@ -126,6 +127,7 @@ classdef Package < matlab.mixin.SetGet
             proj = ci.openProject();
                         
             obj = ci.Package(proj);
+            package(obj);
                         
             if nargout
                 varargout = {obj};
