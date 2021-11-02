@@ -11,9 +11,7 @@
  #include <cstdlib>
  #include <string>
 
- extern "C" {
-	 #include "ed247_interface.h"
- }
+ #include "ed247_interface.h"
 
  TEST_F(IssuesTest, ELACFull)
  {
@@ -22,20 +20,29 @@
 	IO_t *data;
 	std::string filename = filefolder_ + "/ELACe2C_ECIC.xml";
 
+	data_characteristics_t* inputs;
+	data_characteristics_t* outputs;
+
+	ed247simulink::Tools tools;
+	ed247simulink::ED247Connector connector = ed247simulink::ED247Connector(filename.c_str(),&tools);
+
 	// [ SETUP ]
-	io_allocate_memory(&data);
+	connector.allocateMemory();
 
 	// [ EXERCISE ]
-	status = read_ed247_configuration(filename.c_str(),data,NULL);
+	status = connector.readED247Configuration();
 	ASSERT_EQ(status, CONFIGURATION_SUCCESS);
 
-	EXPECT_EQ(data->inputs->nstreams, 12);
-	EXPECT_EQ(data->inputs->nsignals, 553);
+	inputs = connector.getInputs();
+	outputs = connector.getOutputs();
 
-	EXPECT_EQ(data->outputs->nstreams, 27);
-	EXPECT_EQ(data->outputs->nsignals, 599);
+	EXPECT_EQ(inputs->nstreams, 12);
+	EXPECT_EQ(inputs->nsignals, 573);
+
+	EXPECT_EQ(outputs->nstreams, 27);
+	EXPECT_EQ(outputs->nsignals, 599);
 
 	// [ TEARDOWN ]
-	io_free_memory(data);
+	connector.freeMemory();
 
  }

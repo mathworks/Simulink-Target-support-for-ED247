@@ -9,43 +9,58 @@
  #include <iostream>
  #include <cstdlib>
  #include <string>
-   
- extern "C" {
-	 #include "ed247_cmd_xml.h"
- }
- 
+
+ #include "ed247_cmd_xml.h"
+
  TEST_F(ConfigurationTest, InvalidICDFile)
  {
 
 	/* [ SETUP ] */
 	cmd_read_status_t status;
-	cmd_data_t *data;
 	const char *filename = "";
 
+	cmd_data_t *data;
+	data = (cmd_data_t*)malloc(sizeof(cmd_data_t));
+	EXPECT_TRUE(data != NULL);
+
+	ed247simulink::Tools tools;
+	ed247simulink::Cmd cmd = ed247simulink::Cmd(&tools);
+
 	/* [ EXERCISE ] */
-	status = cmd_read_data(filename,data);
+	status = cmd.readData(filename,data);
 
 	/* [ VERIFY ] */
 	EXPECT_EQ(status, CMD_READ_INVALID_FILE);
 
+	// [ TEARDOWN ]
+	free(data);
+
  }
-   
+
  TEST_F(ConfigurationTest, BridgeMessageDescription)
  {
-	
+
 	cmd_read_status_t status;
-	cmd_data_t *data;
 	std::string filename = filefolder_ + "/bridge_messages_description.xml";
 
+	cmd_data_t *data;
+	data = (cmd_data_t*)malloc(sizeof(cmd_data_t));
+	EXPECT_TRUE(data != NULL);
+
+	ed247simulink::Tools tools;
+	ed247simulink::Cmd cmd = ed247simulink::Cmd(&tools);
+
 	/* [ EXERCISE ] */
-	cmd_read_data(filename.c_str(), data);
-	
+	status = cmd.readData(filename.c_str(), data);
+
 	/* [ VERIFY ] */
+	EXPECT_EQ(status,CMD_READ_OK);
+
 	// Number of elements
-    EXPECT_EQ(data->counter.a664, 2); // A664 messages
-    EXPECT_EQ(data->counter.a429, 4); // A429 buses
-    EXPECT_EQ(data->counter.nad, 5); // NAD variables
-		
+	EXPECT_EQ(data->counter.a664, 2); // A664 messages
+	EXPECT_EQ(data->counter.a429, 4); // A429 buses
+	EXPECT_EQ(data->counter.nad, 5); // NAD variables
+
 	// A664 details
 	// ------------
 	//
@@ -60,7 +75,7 @@
 	EXPECT_EQ(		data->a664[1].sample_max_size_bytes,	4);
 	EXPECT_EQ(		data->a664[1].period_us,				64000);
 	EXPECT_STREQ(	data->a664[1].comment,					"T11_T11_PART1");
-	
+
 	// A429 details
 	// ------------
 	//
@@ -72,7 +87,7 @@
 	EXPECT_STREQ(	data->a429[0].messages[0].label,		"350");
 	EXPECT_STREQ(	data->a429[0].messages[0].sdi,			"10");
 	EXPECT_EQ(		data->a429[0].messages[0].period_us,	1000000);
-	EXPECT_STREQ(	data->a429[0].messages[0].comment,		"T11_T11_PART1");	
+	EXPECT_STREQ(	data->a429[0].messages[0].comment,		"T11_T11_PART1");
 	EXPECT_STREQ(	data->a429[0].messages[1].name,			"T11M4_A429_SIMU2SWIM_BUS_1_200_10_I");
 	EXPECT_EQ(		data->a429[0].messages[1].direction,	ED247_DIRECTION_OUT);
 	EXPECT_EQ(		data->a429[0].messages[1].type,			A429_MESSAGE_SAMPLING);
@@ -188,5 +203,8 @@
 	EXPECT_EQ(		data->nad[4].direction,					ED247_DIRECTION_IN);
 	EXPECT_EQ(		data->nad[4].type,						ED247_NAD_TYPE_UINT8);
 	EXPECT_STREQ(	data->nad[4].comment,					"T1");
+
+	// [ TEARDOWN ]
+	free(data);
 
  }

@@ -9,7 +9,7 @@ classdef (Abstract) aBlock < matlab.mixin.SetGet
     end
     
     %% DEPENDENT PROPERTIES
-    properties (Dependent)        
+    properties (Dependent)
         Configuration
         ECICFile
         ICDFiles
@@ -40,9 +40,9 @@ classdef (Abstract) aBlock < matlab.mixin.SetGet
     
     %% ACCESSORS
     methods
-       
+        
         function configuration = get.Configuration(obj)
-           
+            
             configuration = struct.empty;
             
             modelname   = bdroot(obj.block_);
@@ -60,29 +60,31 @@ classdef (Abstract) aBlock < matlab.mixin.SetGet
         end
         
         function ecicfile = get.ECICFile(obj)
-           
+            
             modelname   = bdroot(obj.block_);
             mdlwrksp    = get_param(modelname,'ModelWorkspace');
             
+            ecicfile = '';
             if ~isempty(mdlwrksp) && mdlwrksp.hasVariable('ED247Configuration') && numel(mdlwrksp.getVariable('ED247Configuration')) == 1
                 ecic = ed247.ECIC.fromStruct(mdlwrksp.getVariable('ED247Configuration'));
-                ecicfile = ecic.ECICFile;
-            else
-                ecicfile = '';
+                if ~isempty(ecic)
+                    ecicfile = ecic.ECICFile;
+                end
             end
             
         end
         
         function icdfiles = get.ICDFiles(obj)
-           
+            
             modelname   = bdroot(obj.block_);
             mdlwrksp    = get_param(modelname,'ModelWorkspace');
             
+            icdfiles = {};
             if ~isempty(mdlwrksp) && mdlwrksp.hasVariable('ED247Configuration')
                 ecic = ed247.ECIC.fromStruct(mdlwrksp.getVariable('ED247Configuration'));
-                icdfiles = ecic.ICDFiles;
-            else
-                icdfiles = {};
+                if ~isempty(ecic)
+                    icdfiles = ecic.ICDFiles;
+                end
             end
             
         end
@@ -91,7 +93,7 @@ classdef (Abstract) aBlock < matlab.mixin.SetGet
     
     %% PROTECTED HELPERS
     methods (Access = protected)
-       
+        
         function assert(obj,varargin) %#ok<INUSL>
             assert(varargin{:})
         end

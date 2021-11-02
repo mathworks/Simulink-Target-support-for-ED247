@@ -22,7 +22,7 @@
 %% Declare configurationFile variable
 %%
 %openfile tmpBuf
-extern char *configurationFile;
+extern const char configurationFile[];
 %closefile tmpBuf
 %<LibSetSourceFileSection(hFile,"Declarations",tmpBuf)>
 
@@ -30,7 +30,8 @@ extern char *configurationFile;
 %% Declare IO variable
 %%
 %openfile tmpBuf
-static IO_t *%<modelname>_io;
+static ed247simulink::ED247Connector* %<modelname>_connector;
+static ed247simulink::Tools* %<modelname>_tools;
 %closefile tmpBuf
 %<LibSetSourceFileSection(cSource,"Declarations",tmpBuf)>
 
@@ -38,7 +39,7 @@ static IO_t *%<modelname>_io;
 %% Define configurationFile variable
 %%
 %openfile tmpBuf
-char *configurationFile = "%<filename>";
+const char configurationFile[] = "/home/slrt/applications/%<modelname>/misc/%<filename>";
 %closefile tmpBuf
 %<LibSetSourceFileSection(cData,"Definitions",tmpBuf)>
 
@@ -48,8 +49,19 @@ char *configurationFile = "%<filename>";
 
 %assign modelname = LibGetModelName()
 
-io_allocate_memory((IO_t **)&(%<modelname>_io));
-read_ed247_configuration(configurationFile, (IO_t *)%<modelname>_io, "");
+/*
+ * Instantiate global/common objects
+ */
+%<modelname>_tools = new ed247simulink::Tools();
+%<modelname>_connector = new ed247simulink::ED247Connector(configurationFile,"",%<modelname>_tools);
+
+/*
+ * Initialize connector
+ *	- Allocate memory
+ *	- Read configuration
+ */
+%<modelname>_connector->allocateMemory();
+%<modelname>_connector->readED247Configuration();
 
 %endfunction
 
@@ -65,6 +77,9 @@ read_ed247_configuration(configurationFile, (IO_t *)%<modelname>_io, "");
 
 %assign modelname = LibGetModelName()
 
-io_free_memory((IO_t *)%<modelname>_io);
+/*
+ * Free memory
+ */
+%<modelname>_connector->freeMemory();
 
 %endfunction

@@ -19,16 +19,21 @@
 		%assign portIdx = SFcnParamSettings.PortIndex[sigIdx]
 		%assign refreshIdx = SFcnParamSettings.RefreshIndex[sigIdx]
 		
+		/* Set refresh value */
 		%if ISEQUAL(refreshIdx,-1.0)
-			((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].do_refresh = 1;
+			%<modelname>_connector->getInputs()->signals[%<sigIdx>].do_refresh = 1;
 		%else
-			((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].do_refresh = (int) %<LibBlockInputSignal(refreshIdx, "", "", 0)>;
+			%<modelname>_connector->getInputs()->signals[%<sigIdx>].do_refresh = (int) %<LibBlockInputSignal(refreshIdx, "", "", 0)>;
 		%endif
-		((IO_t *)%<modelname>_io)->inputs->signals[%<sigIdx>].valuePtr = (void*)%<LibBlockInputSignalAddr(portIdx, "", "", 0)>;
+		/* Set data */
+		%<modelname>_connector->getInputs()->signals[%<sigIdx>].valuePtr = (void*)%<LibBlockInputSignalAddr(portIdx, "", "", 0)>;
 
 	%endforeach
 
-	send_simulink_to_ed247(%<modelname>_io);
+	/*
+	 * Call ED247 Core library to send data
+	 */
+	%<modelname>_connector->sendSimulinkToED247();
 
 %endif
 

@@ -1,0 +1,110 @@
+stages:
+  - environment-building    
+  - prepare
+  - compile
+  - test
+  - package
+
+.windows-task:  
+  tags:
+    - Windows
+  variables:
+    MW_MINGW64_LOC: "C:\\Tools\\MinGW64\\4.9.2-airbus"
+    LIBXML_LOC: "$CI_PROJECT_DIR\\deps\\libxml2"
+    ED247_LOC: "$CI_PROJECT_DIR\\deps\\ed247"
+    QNX_LOC: "$CI_PROJECT_DIR\\deps\\ed247_qnx"
+  cache:
+    paths:
+        - $CI_PROJECT_DIR/deps
+  before_script:
+    - $env:Path = [System.Environment]::ExpandEnvironmentVariables([System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User"))
+    - $env:ED247_TOOLS = [System.Environment]::ExpandEnvironmentVariables([System.Environment]::GetEnvironmentVariable("ED247_TOOLS","Machine"))
+  script:
+    - launch_matlab $RELEASE -batch "$CMD"
+
+.linux-task:
+  tags:
+    - Linux
+    - Docker
+  image: matlab-ed247:r2020b
+  variables:
+    ED247_LOC: $CI_PROJECT_DIR/deps/ed247
+  cache:
+    paths:
+        - $CI_PROJECT_DIR/deps
+  script:
+    matlab -r "$CMD"
+
+linux:container:
+  tags:
+    - Linux
+    - Docker
+  stage: environment-building
+  needs: []
+  image: docker:19.03.12
+  script:
+    - docker build . -t matlab-ed247:r2020b
+
+linux:prepare:
+  stage: prepare  
+  needs: ["linux:container"]
+  extends: .linux-task
+  variables:
+    RELEASE: R2020b
+    CMD: ci.Dependencies.runOnGitLabCI()
+
+windows:prepare:
+  stage: prepare  
+  needs: []
+  extends: .windows-task
+  variables:
+    RELEASE: R2020b
+    CMD: ci.Dependencies.runOnGitLabCI()
+
+linux:mex:
+  stage: compile  
+  needs: ["linux:prepare"]
+  extends: .linux-task
+  variables:
+    RELEASE: R2020b
+    CMD: ci.Compile.runOnGitLabCI()
+  artifacts:
+    name: Linux-MEX
+    paths:
+        - libraries/ed247/*.mex*
+    
+windows:mex:
+  stage: compile  
+  needs: ["windows:prepare"]
+  extends: .windows-task
+  variables:
+    RELEASE: R2020b
+    CMD: ci.Compile.runOnGitLabCI()
+  artifacts:
+    name: Windows-MEX
+    paths:
+        - libraries/ed247/*.mex*
+
+linux:test:
+  stage: test  
+  needs: ["linux:mex"]
+  extends: .linux-task
+  variables:
+    RELEASE: R2020b
+    CMD: ci.Test.runOnGitLabCI()
+  artifacts:
+    reports:
+      cobertura: ./Coverage.xml
+      junit: ./TestResults.xml
+
+windows:test:
+  stage: test  
+  needs: ["windows:mex"]
+  extends: .windows-task
+  variables:
+    RELEASE: R2020b
+    CMD: ci.Test.runOnGitLabCI()
+  artifacts:
+    reports:
+      cobertura: ./Coverage.xml
+      junit: ./TestResults.xml

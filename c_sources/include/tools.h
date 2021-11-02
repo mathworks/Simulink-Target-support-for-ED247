@@ -1,4 +1,9 @@
-
+/******************************************************************************
+ *
+ * Copyright (c) 2021 The MathWorks Inc.
+ *
+ */
+ 
  #ifndef __ED247SLADAPTERTOOLS__
  #define __ED247SLADAPTERTOOLS__
  
@@ -11,6 +16,11 @@
  #else
 	#include "simstruc.h"
  #endif
+
+ // Include Logger for Simulink Real-Time
+ #ifdef SIMULINK_REAL_TIME
+	#include "Logger.hpp"
+ #endif
  
  #define STRING_MAX_LENGTH 		512
  
@@ -20,17 +30,19 @@
 	#define FILESEP "/" 
  #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
- 
- void myprintf(const char *fmt, ...); 
- int fileexists(const char * filename);
- void fileparts(const char* path, char* folder);
- 
-#ifdef __cplusplus
-}
-#endif
+#include <fstream>
 
- #endif
- 
+namespace ed247simulink {
+
+	class Tools {
+
+		public:
+			void myprintf(const char *fmt, ...);
+			int fileexists(const char * filename);
+			void fileparts(const char* path, char* folder);
+
+	};
+
+}
+
+#endif

@@ -73,7 +73,9 @@ typedef enum {
 	SIGNAL_GET_INFO_FAILURE,
 	SIGNAL_LIST_FREE_FAILURE,
 	STREAM_LIST_FREE_FAILURE,
-	STREAM_REACH_ARRAY_LIMIT
+	STREAM_REACH_ARRAY_LIMIT,
+	INVALID_DIRECTION,
+	INVALID_TYPE
 } configuration_status_t;
 
 typedef enum {
@@ -94,6 +96,7 @@ typedef enum {
 	STREAM_POP_SAMPLE_FAILURE,
 	NO_DATA_BEFORE_TIMEOUT,
 	WAIT_FRAME_FAILURE,
+	UNKNOWN_RECEIVE_STREAM_TYPE,
 	RECEIVE_A825_SKIP
 } receive_status_t;
 
@@ -156,43 +159,69 @@ typedef struct {
 	data_characteristics_t *outputs;
 } IO_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    
-/*
- * ED247 INTERFACE
- */
-configuration_status_t read_ed247_configuration(const char* filename, IO_t *io, const char* logfilename);
-send_status_t send_simulink_to_ed247(IO_t *io);
-receive_status_t receive_ed247_to_simulink(IO_t *io, int *n);
+namespace ed247simulink {
 
-/*
- * MEMORY MANAGEMENT
- */
-io_allocation_status_t io_allocate_memory(IO_t ** io);
-io_free_status_t io_free_memory(IO_t * io);
+	class ED247Connector {
 
-/*
- * LOCAL FUNCTIONS
- */
- static configuration_status_t local_signals_from_ecic(IO_t* io, ed247_stream_t stream, const ed247_stream_info_t* stream_info);
- static configuration_status_t local_signals_from_icd(IO_t* io, ed247_stream_t stream, const ed247_stream_info_t* stream_info, char* folder);
- 
-/*
- * DEBUG / HELPERS
- */
-static BuiltInDTypeId NAD2SimulinkDataType(ed247_nad_type_t type);
-static char checkStatus(ed247_status_t status, char* fcnname, int level);
-static int sizeofNADDataType(ed247_nad_type_t type);
+		private:
+			IO_t*	_io;
+			Tools*	_tools;
 
-#ifndef __MYPRINTFDEBUG__
-#define __MYPRINTFDEBUG__
-void myprintf(const char *fmt, ...);
-#endif
+			const char* _filename;
+			const char* _logfilename;
 
-#ifdef __cplusplus
+		public:
+			ED247Connector();
+			ED247Connector(const char* filename);
+			ED247Connector(const char* filename,const char* logfilename);
+			ED247Connector(const char* filename,Tools* tools);
+			ED247Connector(const char* filename,const char* logfilename,Tools* tools);
+
+		public:
+			/*
+			 * ACCESSORS
+			 */
+			data_characteristics_t* getInputs();
+			data_characteristics_t* getOutputs();
+
+			/*
+			 * ED247 INTERFACE
+			 */
+			configuration_status_t readED247Configuration();
+			send_status_t sendSimulinkToED247();
+			receive_status_t receiveED247ToSimulink(int *n);
+
+			/*
+			 * DISPLAY
+			 */
+			void displayConfiguration();
+
+			/*
+			 * MEMORY MANAGEMENT
+			 */
+			io_allocation_status_t allocateMemory();
+			io_free_status_t freeMemory();
+
+		protected:
+			 configuration_status_t localSignalsFromECIC(ed247_stream_t stream, const ed247_stream_info_t* stream_info);
+			 configuration_status_t localSignalsFromICD(ed247_stream_t stream, const ed247_stream_info_t* stream_info, char* folder);
+
+		private:
+			/*
+			 * DEBUG / HELPERS
+			 */
+			BuiltInDTypeId NAD2SimulinkDataType(ed247_nad_type_t type);
+			char checkStatus(ed247_status_t status, const char* fcnname, int level);
+			int sizeofNADDataType(ed247_nad_type_t type);
+
+	/*
+		#ifndef __MYPRINTFDEBUG__
+		#define __MYPRINTFDEBUG__
+		void myprintf(const char *fmt, ...);
+		#endif
+	*/
+	};
+
 }
-#endif
 
 #endif

@@ -4,22 +4,35 @@
 #include "simstruc.h"
 #include "ed247_interface.h"
 
-#define ED247_SEND_INITIALIZE
-void sendInitialize(SimStruct *S, IO_t *io);
+namespace ed247sfcn {
 
-#define ED247_SEND_START
-void sendStart(SimStruct *S, IO_t *io);
+	class Send {
 
-#define ED247_SEND_OUTPUTS
-void sendOutputs(SimStruct *S, IO_t* io);
+	private:
+		ed247simulink::ED247Connector* _connector;
+		ed247simulink::Tools* _tools;
+		SimStruct* _S;
+		DimsInfo_T* _di;
 
-#define ED247_SEND_UPDATE
-void sendUpdate(SimStruct *S, IO_t* io);
+	public:
+		/*
+		 * CONSTRUCTORS
+		 */
+		Send(SimStruct *S, DimsInfo_T* di, ed247simulink::ED247Connector* connector);
+		Send(SimStruct *S, DimsInfo_T* di, ed247simulink::ED247Connector* connector, ed247simulink::Tools* tools);
 
-#define ED247_SEND_TERMINATE
-void sendTerminate(SimStruct *S, IO_t* io);
+		/*
+		 * S-Function API
+		 */
+		void initialize();
+		void start();
+		void outputs();
+		void update();
+		void terminate();
+		void RTW(real_T* blockTypeID, int_T* nSignals, real_T portIndex[MAX_SIGNALS], real_T refreshIndex[MAX_SIGNALS]);
 
-#define ED247_SEND_RTW
-void sendRTW(SimStruct *S, IO_t* io, real_T* blockTypeID, int_T* nSignals, real_T portIndex[100], real_T refreshIndex[100]);
+	};
+
+}
 
 #endif
