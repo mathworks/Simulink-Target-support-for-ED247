@@ -8,6 +8,10 @@ classdef (SharedTestFixtures={ ...
     %% CLASS SETUP
     methods (TestClassSetup)
         
+        function checkParallelComputingToolbox(testCase)
+            testCase.assumeNotEmpty(which("gcp"), "Parallel Computing Toolbox is required to run these tests (not installed)")
+        end
+        
         function verifySFunction(testCase)
             testCase.assertEqual(exist('ed247_sfun','file'),3, ...
                 'MEX file for S-Function "ed247_sfun" does not exist')

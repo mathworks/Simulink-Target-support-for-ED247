@@ -206,6 +206,8 @@ classdef (SharedTestFixtures={ ...
         
         function testNADMain(testCase)
            
+            testCase.assumeTrue(ispc(), "FIXME : Disable test on Linux")
+            
             % [ SETUP ]
             filename = which("ecic_func_exchange_nad_uc_main.xml");
             
@@ -239,6 +241,8 @@ classdef (SharedTestFixtures={ ...
         
         function testNADTester(testCase)
            
+            testCase.assumeTrue(ispc(), "FIXME : Disable test on Linux")
+            
             % [ SETUP ]
             filename = which("ecic_func_exchange_nad_uc_tester.xml");
             

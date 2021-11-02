@@ -9,6 +9,10 @@ classdef (SharedTestFixtures={...
     %% CLASS SETUP
     methods (TestClassSetup)
         
+        function enableOnWindowsOnly(testCase)
+            testCase.assumeTrue(ispc(), "slrealtime.tlc is compatible on Windows only")
+        end
+        
         function setFileFolder(testCase)
             proj = currentProject();
             testCase.filefolder_ = fullfile(proj.RootFolder,'tests','_files');
