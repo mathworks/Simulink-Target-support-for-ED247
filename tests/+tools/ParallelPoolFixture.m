@@ -43,7 +43,7 @@ classdef ParallelPoolFixture < matlab.unittest.fixtures.Fixture
             catch me
                 
                 if strcmp(me.identifier,"MATLAB:UndefinedFunction")
-                    testCase.assumeTrue(false, "Parallel Computing Toolbox is not installed")
+                    fixture.assumeTrue(false, "Parallel Computing Toolbox is not installed")
                 else
                     rethrow(me)
                 end
