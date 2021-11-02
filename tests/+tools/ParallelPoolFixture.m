@@ -30,12 +30,26 @@ classdef ParallelPoolFixture < matlab.unittest.fixtures.Fixture
     methods
         
         function setup(fixture)
-            p = gcp('nocreate');
-            if isempty(p)
-                fixture.pool_ = parpool('local',2);
-            else
-                fixture.pool_ = p;
+            
+            try
+                
+                p = gcp('nocreate');
+                if isempty(p)
+                    fixture.pool_ = parpool('local',2);
+                else
+                    fixture.pool_ = p;
+                end
+                
+            catch me
+                
+                if strcmp(me.identifier,"MATLAB:UndefinedFunction")
+                    testCase.assumeTrue(false, "Parallel Computing Toolbox is not installed")
+                else
+                    rethrow(me)
+                end
+                
             end
+            
         end
         
         function teardown(fixture) %#ok<MANU>
