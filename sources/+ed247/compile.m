@@ -22,12 +22,10 @@ config = ed247.Configuration.default();
 mexfolder       = config.MEX;
 adapterfolder   = config.Adapter;
 ed247folder     = config.ED247;
-libxml2folder   = config.LibXML2;
 
 sfunsourcefolder = ed247.Folder.SFUN_SOURCES.Path;
 
 assert(isdir(ed247folder), sprintf('Invalid ED247 configuration "%s".\nSet folder using <a href="matlab:ed247.ConfigurationUI.open()">Configuration App</a>.', ed247folder)) %#ok<ISDIR>
-assert(isdir(libxml2folder), sprintf('Invalid LibXML2 configuration "%s".\nSet folder using <a href="matlab:ed247.ConfigurationUI.open()">Configuration App</a>.', libxml2folder)) %#ok<ISDIR>
 
 %% Inputs
 % Analyze optional arguments
@@ -54,6 +52,7 @@ sourcefiles{end+1} = fullfile(adapterfolder, 'src', 'tools.cpp');
 
 if isunix()
     sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'libed247_static.a');
+    sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'libxml2.a');
 elseif ispc()
     sourcefiles{end+1} = fullfile(ed247folder, 'lib', 'ed247.lib');
 else
@@ -63,8 +62,7 @@ end
 % Include directories
 includedirectories{end+1} = fullfile(adapterfolder, 'include');
 includedirectories{end+1} = fullfile(ed247folder,   'include');
-includedirectories{end+1} = fullfile(libxml2folder, 'include','libxml2');
-includedirectories{end+1} = fullfile(libxml2folder, 'include');
+includedirectories{end+1} = fullfile(ed247folder,   'include','libxml2');
 includedirectories{end+1} = sfunsourcefolder;
 
 if p.Results.Verbose

@@ -28,7 +28,7 @@ namespace ed247simulink {
  #endif
 
  #ifdef SIMULINK_REAL_TIME
- 	LOG(info,0) << str << std::endl;
+ 	LOG(debug,0) << str << std::endl;
  #endif
  
  #ifdef TOFILE
@@ -44,14 +44,14 @@ namespace ed247simulink {
     /* try to open file to read */
     FILE *file;
 	myprintf("Does file \"%s\" exist ?", filename);
-    if (file = fopen(filename, "r")){
+    if ((file = fopen(filename, "r"))){
         fclose(file);
 		myprintf("\tYES\n");
         return 0;
     }
 	myprintf("\tNO\n");
     #ifdef SIMULINK_REAL_TIME
-        LOG(error,0) << "ECIC config XML file not found. Aborting execution." << std::endl;
+        LOG(error,0) << "Config XML file not found. Aborting execution." << std::endl;
         exit(EXIT_FAILURE);
     #else
         return 1;
