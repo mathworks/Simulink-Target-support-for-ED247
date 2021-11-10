@@ -28,7 +28,7 @@ xmlpaths(cellfun(@isempty,xmlpaths)) = []; % Empty XML path leads to ADD command
 % + the full path
 %
 [~,xmlnames] = fileparts(xmlpaths);
-xmlnames = cellfun(@(x) [x,'.xml'], xmlnames, 'UniformOutput', false);
+xmlnames = cellfun(@(x) [x,'.xml'], cellstr(xmlnames), 'UniformOutput', false);
 xmlFiles = struct( ...
     "name",     xmlnames, ...
     "path",     xmlpaths);
