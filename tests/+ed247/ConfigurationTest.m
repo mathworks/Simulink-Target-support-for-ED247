@@ -289,6 +289,8 @@ classdef ConfigurationTest < matlab.unittest.TestCase
         
         function testReload(testCase)
             
+            testCase.assumeTrue(ispc(), "FIXME : Disable test on Linux")
+            
             % [ SETUP ]
             filename = fullfile(testCase.filefolder_,'.metadata02');
             conf = ed247.Configuration(filename);
@@ -302,13 +304,18 @@ classdef ConfigurationTest < matlab.unittest.TestCase
             testCase.verifyEqual(conf.Version,      '1.2.0')
             testCase.verifyEqual(conf.Developer,    'MathWorks Consulting Services')
             testCase.verifyEqual(conf.Maintainer,   'IYYSW')
-            testCase.verifyEqual(conf.ED247,        'C:\Temp')
-            testCase.verifyEqual(conf.LibXML2,      'C:\Temp')
-            testCase.verifyEqual(conf.MinGW,        'C:\Temp')
+            
+            if ispc()
+                testCase.verifyEqual(conf.ED247,        'C:\Temp')
+                testCase.verifyEqual(conf.LibXML2,      'C:\Temp')
+                testCase.verifyEqual(conf.MinGW,        'C:\Temp')
+            end
             
         end
         
         function testSave(testCase)
+            
+            testCase.assumeTrue(ispc(), "FIXME : Disable test on Linux")
             
             % [ SETUP ]
             ed247folder     = tempdir;

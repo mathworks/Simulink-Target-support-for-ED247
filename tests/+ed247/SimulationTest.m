@@ -7,7 +7,7 @@ classdef (SharedTestFixtures={ ...
     
     %% CLASS SETUP
     methods (TestClassSetup)
-        
+                
         function verifySFunction(testCase)
             testCase.assertEqual(exist('ed247_sfun','file'),3, ...
                 'MEX file for S-Function "ed247_sfun" does not exist')
