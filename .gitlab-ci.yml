@@ -108,3 +108,14 @@ windows:test:
     reports:
       cobertura: ./Coverage.xml
       junit: ./TestResults.xml
+
+create-toolbox:
+  stage: package  
+  needs: ["windows:mex","linux:mex"]
+  extends: .windows-task
+  variables:
+    RELEASE: R2020b
+    CMD: ci.Package.runOnGitLabCI()
+  artifacts:
+    paths:
+      - ./*.mltbx
