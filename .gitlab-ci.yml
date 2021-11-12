@@ -29,6 +29,7 @@ stages:
   image: matlab-ed247:r2020b
   variables:
     ED247_LOC: $CI_PROJECT_DIR/deps/ed247
+    HOME: /tmp
   cache:
     paths:
         - $CI_PROJECT_DIR/deps
@@ -112,7 +113,7 @@ windows:test:
 create-toolbox:
   stage: package  
   needs: ["windows:mex","linux:mex"]
-  extends: .windows-task
+  extends: .linux-task
   variables:
     RELEASE: R2020b
     CMD: ci.Package.runOnGitLabCI()
