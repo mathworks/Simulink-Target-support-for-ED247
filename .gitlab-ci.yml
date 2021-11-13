@@ -114,6 +114,8 @@ create-toolbox:
   stage: package  
   needs: ["windows:mex","linux:mex"]
   extends: .linux-task
+  only:
+    - master
   variables:
     RELEASE: R2020b
     CMD: ci.Package.runOnGitLabCI()
