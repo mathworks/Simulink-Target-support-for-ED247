@@ -36,7 +36,7 @@ Optional (for Real-Time execution on Speedgoat)
 ### 3rd Party Products:
 3p:
 - [ED247 library](https://github.com/airbus/ED247_LIBRARY)
-- (Windows) [MinGW64](https://url-to-product2)
+- (Windows) [MinGW64](https://www.mingw-w64.org/)
 
 ## Installation
 
