@@ -7,6 +7,7 @@ Maintainer=IYYSW
 --- Windows ---
 ED247=
 LibXML2=
+QNXLib=
 MinGW=C:\Users\odufour\AppData\Local\Temp\thisisanonexistingfolder
 --- Linux ---
 ED247=/home/user/ed247

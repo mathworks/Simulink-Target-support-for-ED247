@@ -6,5 +6,6 @@ Developer=MathWorks Consulting Services
 Maintainer=IYYSW
 --- Windows ---
 ED247=C:\Files\SANDBOX\git\ED247\ed247_for_simulink\deps\ED247
-LibXML2=C:\Files\SANDBOX\git\ED247\ed247_for_simulink\deps\LibXML2
+LibXML2=
+QNXLib=
 MinGW=C:\Files\PROGRAMS\ThirdParty\MinGW64\4.9.2-airbus

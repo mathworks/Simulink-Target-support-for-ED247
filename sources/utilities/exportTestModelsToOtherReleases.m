@@ -1,4 +1,7 @@
 function exportTestModelsToOtherReleases(basename)
+%
+% Copyright 2020 The MathWorks, Inc.
+%
 
 currentfolder = pwd;
 popd = onCleanup(@() cd(currentfolder));
