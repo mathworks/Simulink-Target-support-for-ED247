@@ -25,7 +25,7 @@ save(config)
 
 Additional information about set up
 
-### MathWorks Products (http://www.mathworks.com)
+### MathWorks Products (https://www.mathworks.com)
 
 Requires MATLAB release R2020b or newer
 - [Simulink](https://www.mathworks.com/products/simulink.html)
